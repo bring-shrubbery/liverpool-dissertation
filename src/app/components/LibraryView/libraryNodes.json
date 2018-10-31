@@ -1,0 +1,42 @@
+{
+    "input": {
+        "signalGenerator": {
+            "title": "Basic Signal Generator",
+            "description": "Generates basic signal or signals based on the settings",
+            "settings": {
+                "frequency": 1,
+                "amplitude": 1,
+                "size": 1,
+                "phase": 0,
+                "resolution": 100,
+                "type": "SIN_SIGNAL"
+            }
+        },
+        "fourierSeries": {
+            "title": "Fourier Series",
+            "description": "Generate signal using fourier series principle"
+        }
+    }, "processors": {
+        "multiplex": {
+            "title": "Multiplex",
+            "description": "Multiplex all input signals and output one combined signal"
+        },
+        "convolution": {
+            "title": "Convolution",
+            "description": "Performes convolution on the input signal"
+        },
+        "autoCorrelation": {
+            "title": "Auto-Correlation",
+            "description": "Performs auto-correlation on the input signals"
+        },
+        "crossCorrelation": {
+            "title": "Cross-Correlation",
+            "description": "Performs cross-correlation on the input signals"
+        }
+    }, "output": {
+        "scope": {
+            "title": "Multi-input Scope",
+            "description": "Outputs inputted signals to the screen"
+        }
+    }
+}
