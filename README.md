@@ -24,8 +24,8 @@ To run server execute npm script from terminal:
     - Interface: `npm run start-app`
     - Library: `npm run start-library`
 - *Production bundle:*
-    - Interface: `npm run start-app`
-    - Library: `npm run start-library`
+    - Interface: `npm run build-app`
+    - Library: `npm run build-library`
 
 ## Running the tests
 
