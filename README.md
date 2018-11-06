@@ -20,12 +20,12 @@ To run it you will need to install dependencies which can be easily done by goin
 ### Running development and production versions
 
 To run server execute npm script from terminal:
-- *Development server:*
-    - Interface: `npm run start-app`
-    - Library: `npm run start-library`
-- *Production bundle:*
-    - Interface: `npm run build-app`
-    - Library: `npm run build-library`
+* *Development server:*
+    * Interface: `npm run start-app`
+    * Library: `npm run start-library`
+* *Production bundle:*
+    * Interface: `npm run build-app`
+    * Library: `npm run build-library`
 
 ## Running the tests
 
@@ -33,7 +33,7 @@ No automated tests have been set up yet.
 
 ### Style tests
 
-Linting hasn't been set up for this projetc yet.
+Linting hasn't been set up for this project yet.
 
 ## License
 
