@@ -1,18 +1,18 @@
-let errors = require('./errors');
+let {SIGNAL_ERROR} = require('./errors');
 
-let signal = function ({amplitude, frequency, phase, size, resolution, type, data}) {
+let signal = function ({amplitude, frequency, phase, size, resolution, type, data, pps}) {
 
     // Chack for provided parameters only if data is not provided
     // or if all data is provided
     if(!data || (amplitude && frequency && phase && size && resolution && type)) {
         // Before creating signal object check if all required properties were provided
         let errorCause = null;
-        if (!amplitude) errorCause = "NO_AMPLITUDE"
-        if (!frequency) errorCause = "NO_FREQUENCY"
-        if (!phase && phase !== 0 && phase !== "0") errorCause = "NO_PHASE"
-        if (!size) errorCause = "NO_SIZE"
-        if (!resolution) errorCause = "NO_RESOLUTION"
-        if (!type) errorCause = "NO_TYPE"
+        if (!amplitude) return SIGNAL_ERROR.NO_AMPLITUDE();
+        if (!frequency) return SIGNAL_ERROR.NO_FREQUENCY();
+        if (!phase && phase !== 0 && phase !== "0") return SIGNAL_ERROR.NO_PHASE();
+        if (!size) return SIGNAL_ERROR.NO_SIZE();
+        if (!resolution) return SIGNAL_ERROR.NO_RESOLUTION();
+        if (!type) return SIGNAL_ERROR.NO_TYPE();
 
         // Returning an error will prevent generating signal
         const err = errors.throwParameterError(errorCause);
@@ -33,18 +33,22 @@ let signal = function ({amplitude, frequency, phase, size, resolution, type, dat
         this.period = 1 / frequency;
         this.numberOfPeriods = this.size / this.period;
         this.totalPoints = this.numberOfPeriods * this.resolution;
+        this.pps = frequency * resolution;
 
         // Generate data from provided data
         this.updateData();
-    } else {
+    } else if(data && pps) {
         this.amplitude = null;
         this.frequency = null;
         this.phase = null;
         this.size = null;
         this.resolution = null;
         this.type = null;
-
+        
+        this.pps = pps
         this.data = data;
+    } else {
+        // TODO: Error: Custom data nees pps (points per second) property
     }
     
 }
