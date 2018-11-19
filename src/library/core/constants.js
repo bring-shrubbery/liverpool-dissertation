@@ -1,6 +1,6 @@
 let PI = Math.PI;
 
-const constants = {
+module.exports = {
     PI: PI,
     TWO_PI: PI * 2,
     SIGNAL_TYPE: {
@@ -14,6 +14,4 @@ const constants = {
         ACOS: 'ACOS_SIGNAL',
         ATAN: 'ATAN_SIGNAL'
     }
-}
-
-module.exports = constants;
+};
