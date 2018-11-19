@@ -1,7 +1,7 @@
 let constants = require('./constants');
 
 let signals = function () {
-    this.constants = constants;
+    const {PI, TWO_PI, SIGNAL_TYPE} = constants;
 }
 
 module.exports = signals;
