@@ -9,7 +9,7 @@ module.exports = {
         index: './website/index.js',
         blog: './website/blog.js'
     }, output: {
-        path: path.resolve(__dirname, 'website/build'),
+        path: path.resolve(__dirname, 'docs'),
         filename: '[name].bundle.js'
     },
     devtool: 'inline-source-map',
@@ -55,7 +55,7 @@ module.exports = {
     //     failOnError: true
     // },
     plugins: [
-        new CleanWebpackPlugin(['./website/build']),
+        new CleanWebpackPlugin(['./docs']),
         new HtmlWebpackPlugin({
             title: "Signals.js",
             template: "./website/index.html",
