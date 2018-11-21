@@ -70,18 +70,21 @@ export default function Blog () {
         )
     });
 
-    const blogPosts = [];
+    let blogPosts = [];
 
     for(let post in blogData) {
         let blogPost = blogData[post];
         let postDate = new Date(Date.parse(blogPost.date));
 
         blogPosts.push(
-            <div className="blog-post" key={post} id={monthNameLookup[postDate.getMonth()]}>
-                <h2>{blogPost.title}</h2>
-                <small><i>Posted on {postDate.toLocaleDateString()}</i></small>
-                <div className="blog-post-body" dangerouslySetInnerHTML={{__html:marked.parse(blogPost.body)}}></div>
-            </div>
+            <React.Fragment>
+                <div className="blog-post" key={post} id={monthNameLookup[postDate.getMonth()]}>
+                    <h2>{blogPost.title}</h2>
+                    <small><i>Posted on {postDate.toLocaleDateString()}</i></small>
+                    <div className="blog-post-body" dangerouslySetInnerHTML={{__html:marked.parse(blogPost.body)}}></div>
+                </div>
+                <hr/>
+            </React.Fragment>
         )
     }
     

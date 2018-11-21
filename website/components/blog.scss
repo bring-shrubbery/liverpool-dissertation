@@ -17,7 +17,7 @@
 }
 
 main {
-    margin-top: 10px;
+    // margin-top: 10px;
 }
 
 .bd-sidebar {
@@ -35,7 +35,7 @@ main {
 @media (min-width: 768px) {
     .bd-sidebar {
         border-right: 1px solid rgba(0,0,0,0.1);
-        height: calc(100vh - 3rem);
+        height: calc(100vh - 4rem);
     }
     
     .bd-wrapper {
