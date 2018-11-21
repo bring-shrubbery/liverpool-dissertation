@@ -2,74 +2,6 @@ import React, {Component} from 'react';
 import './composer.scss';
 import libraryNodes from '../LibraryView/libraryNodes.json';
 
-class BackgroundGrid extends Component {
-    constructor () {
-        super();
-
-        this.state = {
-            gridSize: 50,
-            composerZoom: 1,
-            zoomSpeed: 0.0005,
-            didUpdateZoom: true,
-            windowWidth: 1,
-            windowHeight: 1,
-            widthGridCount: 1,
-            heightGridCount: 1
-        }
-
-        // this.handleScroll = this.handleScroll.bind(this);
-        this.updateSizes = this.updateSizes.bind(this);
-    }
-
-    // handleScroll (e) {
-    //     if(!this.state.didUpdateZoom) {
-    //         let newZoom = this.state.composerZoom + this.state.zoomSpeed * e.deltaY;
-
-    //         if(this.state.composerZoom < 0.4) {
-    //             newZoom = 0.4;
-    //         }
-    
-    //         this.setState({
-    //             composerZoom: newZoom,
-    //             didUpdateZoom: true
-    //         })
-
-    //         this.updateSizes();
-    //     }
-    // }
-
-    componentDidMount () {
-        this.updateSizes();
-    }
-
-    updateSizes () {
-        const composerNode = document.getElementById('composer-view');
-        const width = composerNode.offsetWidth;
-        const height = composerNode.offsetHeight;
-        
-        this.setState({
-            windowWidth: width,
-            windowHeight: height,
-            widthGridCount: width / this.state.gridSize / this.state.composerZoom,
-            heightGridCount: height / this.state.gridSize / this.state.composerZoom,
-            didUpdateZoom: false
-        })
-    }
-
-    render () {
-        return (
-            <div id={'composer-view-background'} 
-                    onClick={e => console.log(e)}
-                    style={{
-                        // width: this.state.windowWidth,
-                        // height: this.state.windowHeight
-                    }}>
-                
-            </div>
-        )
-    }
-}
-
 class Composer extends Component {
     constructor (props) {
         super(props);
@@ -95,7 +27,7 @@ class Composer extends Component {
     addNode (e) {
         e.preventDefault();
 
-        let functionId = String(e.dataTransfer.getData("text"));
+        let functionId = String(e.dataTransfer.getData("id"));
 
         const canvas = document.getElementById('composer-canvas');
         const canvasOriginX = canvas.offsetParent.offsetLeft;
@@ -135,6 +67,7 @@ class Composer extends Component {
 
         let newNode = {
             title: nodeData.title,
+            settings: nodeData.settings,
             functionId: newFunctionId,
             positionX: dropPositionX,
             positionY: dropPositionY,
@@ -159,9 +92,7 @@ class Composer extends Component {
                 const positionX = el.positionX + globalX;
                 const positionY = el.positionY + globalY;
 
-                console.log(positionX, positionY);
-
-                return <InputNode title={el.title} 
+                return <Node title={el.title} 
                                 functionId={el.functionId}
                                 key={el.functionId} 
                                 positionX={positionX}
@@ -205,6 +136,8 @@ class Composer extends Component {
                 lastDragX: onCanvasPositionX,
                 lastDragY: onCanvasPositionY
             })
+
+            this.props.globalPositionUpdate(this.state.globalX, this.state.globalY);
         }.bind(this);
     }
 
@@ -242,7 +175,7 @@ class Composer extends Component {
     }
 }
 
-class InputNode extends Component {
+class Node extends Component {
     constructor (props) {
         super(props);
 
@@ -253,7 +186,7 @@ class InputNode extends Component {
             selected: false
         }
 
-        // Settings object is separate as we don't need to redraw UI elements whn settings change
+        // Settings object is separate as we don't need to redraw UI elements when settings change
         this.settings = {
 
         }
@@ -286,18 +219,21 @@ class InputNode extends Component {
                         width: `${this.state.width}px`
                     }}
                     onClick={e => e.stopPropagation()}
-                    onMouseDown={e => e.stopPropagation()}>
+                    onMouseDown={e => {
+                        e.stopPropagation();
+                        this.setState({isDragging: false});
+                    }}>
                 <h2 onClick={this.handleSelect}>{this.props.title}</h2>
                 <div className={'composer-node-input-output-container'}>
                     <ul className={'composer-node-input-list'}>
-                        <li>Output 1</li>
-                        <li>Output 2</li>
-                        <li>Output 3</li>
-                    </ul>
-                    <ul className={'composer-node-output-list'}>
                         <li>Input 1</li>
                         <li>Input 2</li>
                         <li>Input 3</li>
+                    </ul>
+                    <ul className={'composer-node-output-list'}>
+                        <li>Output 1</li>
+                        <li>Output 2</li>
+                        <li>Output 3</li>
                     </ul>
                 </div>
             </div>
@@ -306,16 +242,84 @@ class InputNode extends Component {
 }
 
 export default class ComposerView extends Component {
-    // constructor (props) {
-    //     super(props);
-    // }
+    constructor (props) {
+        super(props);
+
+        this.state = {
+            x: 0,
+            y: 0
+        }
+
+        this.globalPositionUpdate = this.globalPositionUpdate.bind(this);
+    }
+
+    globalPositionUpdate(x, y) {
+        this.setState({x: x, y: y});
+    }
 
     render () {
         return (
             <div id={'composer-view'}>
-                <Composer/>
-                {/* <BackgroundGrid/> */}
+                <Composer globalPositionUpdate={this.globalPositionUpdate}/>
+                <BgGrid x={this.state.x} y={this.state.y}/>
             </div>
         )
+    }
+}
+
+class BgGrid extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            gridSize: 50,
+            x: props.x,
+            y: props.y
+        }
+    }
+    
+    componentDidMount() {
+        const backgroundDiv = document.getElementById('composer-view-background');
+        const backgroundDivWidth = backgroundDiv.offsetWidth;
+        const backgroundDivHeight = backgroundDiv.offsetHeight;
+
+        const hlines = [...Array(Math.ceil(backgroundDivHeight / this.state.gridSize)).keys()].map(
+            el => {
+                return <li key={el} className={'composer-background-horizontal-lines'} style={{width: backgroundDivWidth*3, height: this.state.gridSize, top: el*this.state.gridSize, left: 0}}></li>
+            }
+        );
+
+        const vlines = [...Array(Math.ceil(backgroundDivWidth / this.state.gridSize)).keys()].map(
+            el => {
+                return <li key={el} className={'composer-background-vertical-lines'} style={{width: this.state.gridSize, height: backgroundDivHeight*3, top: 0, left: el*this.state.gridSize}}></li>
+            }
+        );
+
+        this.setState({
+            horizontalLines: hlines,
+            verticalLines: vlines
+        });
+    }
+
+    componentWillReceiveProps() {
+        let xpos = this.props.x / this.state.gridSize - Math.floor(this.props.x / this.state.gridSize);
+        xpos = xpos * this.state.gridSize;
+
+        let ypos = this.props.y / this.state.gridSize - Math.floor(this.props.y / this.state.gridSize);
+        ypos = ypos * this.state.gridSize;
+
+        this.setState({
+            x: xpos,
+            y: ypos
+        })
+    }
+
+    render() {
+        return (
+            <div id={'composer-view-background'}>
+                <ul style={{top: this.state.y - this.state.gridSize}}>{this.state.horizontalLines}</ul>
+                <ul style={{left: this.state.x - this.state.gridSize}}>{this.state.verticalLines}</ul>
+            </div>
+        );
     }
 }

@@ -8,7 +8,9 @@ function LibraryItem (props) {
         <li className={'library-list-node'} 
             id={props.functionId} 
             draggable={'true'} 
-            onDragStart={e => e.dataTransfer.setData("text", e.target.id)}>
+            onDragStart={e => {
+                e.dataTransfer.setData("id", e.target.id);
+            }}>
             <h1>{props.title}</h1>
             <p>{props.description}</p>
             {/* <span>input</span> */}
@@ -65,7 +67,8 @@ export default class LibraryView extends Component {
                                 searchTerm={this.state.searchTerm} 
                                 title={item.title} 
                                 description={item.description}
-                                functionId={node}/>
+                                functionId={node}
+                                settings={item.settings}/>
                 );
             }
         }

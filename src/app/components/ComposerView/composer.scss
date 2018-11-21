@@ -1,3 +1,8 @@
+$box-border: #DEDEDE;
+$composer-background: #FBFBFB;
+$text-color: #434343;
+$bg-grid-color: #DDD;
+
 #composer-view {
     width: 100%;
     height: 100%;
@@ -16,7 +21,31 @@
         overflow: hidden;
         
 
-        background-color: #FBFBFB;
+        background-color: $composer-background;
+
+        ul {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+
+            list-style-type: none;
+
+            .composer-background-horizontal-lines {
+                background: none;
+                position: absolute;
+                border-bottom: $bg-grid-color solid 1px;
+            }
+
+            .composer-background-vertical-lines {
+                background: none;
+                position: absolute;
+                border-right: $bg-grid-color solid 1px;
+            }
+        }
     }
 
     #composer-canvas {
@@ -36,7 +65,7 @@
             user-select: none;
 
             border-radius: 5px;
-            border: 1px solid #DEDEDE;
+            border: 1px solid $box-border;
 
             display: grid;
             grid-template-rows: fit-content(50px) fit-content(50px);
@@ -44,13 +73,14 @@
             h2 {
                 font-size: 10pt;
                 text-align: center;
+                font-weight: 400;
 
                 margin: 0;
                 padding: 5px 10px;
 
                 width: calc(100% - 20px);
 
-                border-bottom: 1px solid #DEDEDE;
+                border-bottom: 1px solid $box-border;
             }
 
             h2:hover {
@@ -67,7 +97,7 @@
 
                 font-size: 9pt;
 
-                color: #434343;
+                color: $text-color;
 
                 ul {
                     list-style: none;
@@ -83,7 +113,7 @@
                     grid-column: 1 / 2;
                     text-align: left;
 
-                    border-right: 1px solid #DEDEDE;
+                    border-right: 1px solid $box-border;
 
                     padding-left: 10px;
                 }

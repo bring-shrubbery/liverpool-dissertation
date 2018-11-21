@@ -11,10 +11,6 @@
                 "resolution": 100,
                 "type": "SIN_SIGNAL"
             }
-        },
-        "fourierSeries": {
-            "title": "Fourier Series",
-            "description": "Generate signal using fourier series principle"
         }
     }, "processors": {
         "multiplex": {
