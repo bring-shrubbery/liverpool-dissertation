@@ -7,7 +7,8 @@ module.exports = {
     mode: 'development',
     entry: {
         index: './website/index.js',
-        blog: './website/blog.js'
+        blog: './website/blog.js',
+        convolution: './website/html_examples/convolution_example/sketch.js'
     }, output: {
         path: path.resolve(__dirname, 'docs'),
         filename: '[name].bundle.js'
@@ -68,6 +69,13 @@ module.exports = {
             template: "./website/index.html",
             filename: "blog.html",
             chunks: ['blog'],
+            inject: true
+        }),
+        new HtmlWebpackPlugin({
+            title: "Convolution Example",
+            template: "./website/html_examples/convolution_example/index.html",
+            filename: "convolution.html",
+            chunks: ['convolution'],
             inject: true
         })
     ]
