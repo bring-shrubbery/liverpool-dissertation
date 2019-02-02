@@ -5,8 +5,6 @@
   "private": true,
   "scripts": {
     "start": "webpack-dev-server --open",
-    "compile_server": "webpack --config ./webpack.config.server.js",
-    "compile_editor": "webpack --config ./webpack.config.editor.js",
     "server": "webpack && node ./build/server.js"
   },
   "repository": {
