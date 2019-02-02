@@ -7,6 +7,9 @@
     "start": "webpack-dev-server --open",
     "server": "webpack && node ./build/server.js"
   },
+  "engines": {
+    "node": "11.8.x"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vincentrodriguez/signals-app.git"
