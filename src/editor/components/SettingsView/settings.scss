@@ -1,0 +1,69 @@
+#settings-view {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    position: relative;
+
+    background-color: #EBEBEB;
+
+    // grid-row: 2 / 3;
+    grid-column: 3 / 4;
+
+    h1 {
+        margin: 0;
+        padding: 5px;
+        width: 100%;
+
+        font-size: 12pt;
+        text-align: center;
+        font-weight: 400;
+
+        background: #F5F5F5;
+        border-bottom: 1px solid #666;
+    }
+
+    span {
+        top: 48%;
+        width: 100%;
+        position: absolute;
+        text-align: center;
+        font-weight: 300;
+        font-style: italic;
+        color: #999;
+    }
+
+    #settings-container {
+        width: 100%;
+        height: fit-content;
+
+        .setting-top-level-list {
+            margin: 0;
+            padding: 0%;
+            list-style-type: none;
+
+            .settings-setting-list-item {
+                margin: 0;
+                padding: 5px;
+
+                display: grid;
+                grid-template-columns: 3fr 2fr;
+                grid-template-rows: auto;
+
+                h5 {
+                    margin: 0;
+                    padding: 5px;
+                    width: auto;
+                    font-weight: 400;
+                }
+
+                input {
+                    margin: 0;
+                    padding: 5px;
+                    width: auto;
+                }
+            }
+        }
+    }
+}

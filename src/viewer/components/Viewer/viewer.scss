@@ -1,0 +1,26 @@
+#viewer {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    #viewer-input-nodes {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+
+        grid-column: 1 / 2;
+    }
+
+    #viewer-output-nodes {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+
+        grid-column: 2 / 3;
+    }
+}

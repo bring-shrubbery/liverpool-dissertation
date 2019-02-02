@@ -1,0 +1,209 @@
+$box-border: #DEDEDE;
+$composer-background: #FBFBFB;
+$composer-nodes-index: 11;
+$composer-background-index: 9;
+$composer-canvas-index: 13;
+$text-color: #434343;
+$bg-grid-color: #DDD;
+
+canvas {
+    pointer-events:none;
+}
+
+#composer-view {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+
+    
+
+    #composer-view-background {
+        position: absolute;
+        top: 0;
+        z-index: $composer-background-index;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        
+
+        background-color: $composer-background;
+
+        ul {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+
+            list-style-type: none;
+
+            .composer-background-horizontal-lines {
+                background: none;
+                position: absolute;
+                border-bottom: $bg-grid-color solid 1px;
+            }
+
+            .composer-background-vertical-lines {
+                background: none;
+                position: absolute;
+                border-right: $bg-grid-color solid 1px;
+            }
+        }
+    }
+
+    #composer-canvas {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        z-index: 2;
+
+        position: relative;
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            margin: 0;
+            padding: 0;
+            z-index: $composer-canvas-index;
+        }
+
+        #composer-node-container {
+            z-index: $composer-nodes-index;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+
+            .composer-node {
+                z-index: $composer-nodes-index + 1;
+                margin: 0;
+                padding: 0;
+                background: #EEE;
+                position: absolute;
+                user-select: none;
+
+                border-radius: 5px;
+                border: 1px solid $box-border;
+
+                display: grid;
+                grid-template-rows: fit-content(50px) fit-content(50px);
+
+                h2 {
+                    font-size: 10pt;
+                    text-align: center;
+                    font-weight: 400;
+
+                    margin: 0;
+                    padding: 5px 10px;
+
+                    width: calc(100% - 20px);
+
+                    border-bottom: 1px solid $box-border;
+                }
+
+                h2:hover {
+                    cursor: move;
+                }
+
+                .composer-node-input-output-container {
+                    width: 100%;
+                    height: 100%;
+                    display: grid;
+                    grid-template-columns: 50% 50%;
+                    margin: 0;
+                    padding: 0;
+
+                    font-size: 9pt;
+
+                    color: $text-color;
+
+                    ul {
+                        list-style: none;
+                        margin: 0;
+                        padding: 5px;
+                        
+                        li {
+                            position: relative;
+                            margin: 2px;
+
+                            span {
+                                position: absolute;
+                                z-index: 1000;
+                                width: 10px;
+                                height: 10px;
+                                background: #FAFAFA;
+                                border: 1px solid #DEDEDE;
+                                border-radius: 8px;
+                            }
+
+                            span:hover {
+                                border: 1px solid red;
+                                background: #DEDEDE;
+                                cursor: grab;
+                            }
+
+                            span.connected {
+                                background: #222;
+                                // box-sizing: border-box;
+                                border-color: white;
+                                border-width: 2px;
+                            }
+                            
+                            span.connected:hover {
+                                border-color: greenyellow;
+                                border-width: 2px;
+                                cursor: pointer;
+                            }
+
+                            span.composer-node-connectors-selected {
+                                border: 1px solid red;
+                            }
+                        }
+
+                        .composer-node-input-labels {
+                            span {
+                                left: -19px;
+                                top: 3px;
+                                
+                            }
+                        }
+
+                        .composer-node-output-labels {
+                            span {
+                                right: -19px;
+                                top: 3px;
+                            }
+                        }
+                    }
+
+                    ul.composer-node-input-list {
+                        grid-column: 1 / 2;
+                        text-align: left;
+
+                        border-right: 1px solid $box-border;
+
+                        padding-left: 10px;
+                    }
+
+                    ul.composer-node-output-list {
+                        grid-column: 2 / 3;
+                        text-align: right;
+
+                        padding-right: 10px;
+                    }
+                }
+            }
+
+            .selected {
+                border: 1px solid red !important;
+            }
+        }
+    }
+}
+

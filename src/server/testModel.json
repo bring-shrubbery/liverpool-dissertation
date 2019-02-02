@@ -1,0 +1,59 @@
+{
+    "connectors": [
+        {
+            "connectorStart": {
+                "nodeId": "signalGenerator",
+                "settingId": "sine"
+            },
+            "connectorEnd": {
+                "nodeId": "scope",
+                "settingId": "signal"
+            }
+        }
+    ],
+    "nodes": {
+        "signalGenerator": {
+            "title": "Signal Generator",
+            "x": "150",
+            "y": "300",
+            "width": "150",
+            "inputs": [
+                {
+                    "title": "phase",
+                    "type": "signal"
+                }
+            ],
+            "outputs": [
+                {
+                    "title": "sine",
+                    "type": "signal"
+                }
+            ],
+            "generators": {
+                "sine": "[amplitude]*sin(2*[PI]*[frequency]*[time]+[phase])"
+            },
+            "settings": {
+                "frequency": "1",
+                "amplitude": "1",
+                "phase": "0"
+            }
+        }, "scope": {
+            "title": "Scope",
+            "x": "350",
+            "y": "300",
+            "width": "150",
+            "inputs": [
+                {
+                    "title": "signal",
+                    "type": "signal"
+                }
+            ],
+            "outputs": [
+            ],
+            "settings": {
+                "yScale": "1",
+                "xScale": "1"
+            }
+        }
+    }
+}

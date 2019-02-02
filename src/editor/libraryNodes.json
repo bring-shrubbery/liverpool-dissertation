@@ -1,0 +1,71 @@
+{
+    "input": {
+        "signalGenerator": {
+            "title": "Signal Generator",
+            "description": "Generates basic signal or signals based on the settings",
+            "default_settings": {
+                "signals":[
+                    {
+                        "frequency": 1,
+                        "amplitude": 1,
+                        "size": 1,
+                        "phase": 0,
+                        "resolution_constant": 100,
+                        "type": "SIN_SIGNAL"
+                    }
+                ]
+            },
+            "input_connections": [],
+            "output_connections": [
+                "signal"
+            ]
+        }, "scalar": {
+            "title": "Scalar",
+            "description": "Creates single number that can be modified through settings or through input connection",
+            "default_settings": {
+                "value": "1"
+            },
+            "input_connections": [],
+            "output_connections": [
+                "value"
+            ]
+        }
+    }, "processors": {
+        "multiplex": {
+            "title": "Multiplex",
+            "description": "Multiplex all input signals and output one combined signal",
+            "input_connections": [
+                "signal 1",
+                "signal 2"
+            ],
+            "output_connections": [
+                "result"
+            ]
+        }, "convolution": {
+            "title": "Convolution",
+            "description": "Performs convolution on two signals, also accepts offset as an input.",
+            "input_connections": [
+                "signal 1",
+                "signal 2",
+                "tao"
+            ],
+            "output_connections": [
+                "result"
+            ]
+        }
+    }, "output": {
+        "scope": {
+            "title": "Multi-input Scope",
+            "description": "Outputs inputted signals to the screen",
+            "input_connections": [
+                "signal 1",
+                "signal 2",
+                "signal 3",
+                "area"
+            ],
+            "output_connections": [
+                "touch dx"
+            ]
+        }
+    }
+}

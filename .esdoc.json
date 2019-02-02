@@ -1,0 +1,5 @@
+{
+  "source": "./src/library",
+  "destination": "./docs/documentation",
+  "plugins": [{"name": "esdoc-standard-plugin"}]
+}
