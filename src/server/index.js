@@ -75,6 +75,7 @@ app.get('/render', (req, res) => {
 })
 
 // Run server
-app.listen(5000, () => {
-    console.log("\x1b[32m", "\nListening on: https://localhost:5000\n");
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+    console.log("\x1b[32m", "\nListening on: https://localhost:"+port+"\n");
 });
