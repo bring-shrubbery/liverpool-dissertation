@@ -285,7 +285,13 @@ class Canvas extends Component {
 
             // this.drawCircle(ctx, cPos.x, cPos.y, 6, "black");
 
-            this.drawLine(ctx, x1, y1, x2, y2, "#222");
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.bezierCurveTo(x1 - 150, y1, x2 + 150, y2, x2, y2);
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = "#222";
+            ctx.stroke();
+            // this.drawLine(ctx, x1, y1, x2, y2, "#222");
         }
     }
 
