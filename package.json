@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "start": "webpack-dev-server --open",
-    "server": "webpack && node ./build/server.js"
+    "build": "webpack",
+    "server": "webpack && node ./build/server.js",
+    "lines": "go run linecounter.go"
   },
   "engines": {
     "node": "11.8.x"
@@ -59,6 +61,7 @@
     "url-loader": "^1.1.2",
     "webpack-cli": "^3.1.2",
     "webpack-dev-middleware": "^3.5.1",
-    "webpack-dev-server": "^3.1.14"
+    "webpack-dev-server": "^3.1.14",
+    "webpack-shell-plugin": "^0.5.0"
   }
 }
