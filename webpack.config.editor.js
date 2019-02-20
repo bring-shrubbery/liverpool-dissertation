@@ -1,7 +1,7 @@
 let path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const CleanWebpackPlugin = require('clean-webpack-plugin');
-const WebpackShellPlugin = require('webpack-shell-plugin');
+// const WebpackShellPlugin = require('webpack-shell-plugin');
 
 const editorConfig = {
     mode: 'development',
@@ -40,10 +40,6 @@ const editorConfig = {
             filename: "editor.html",
             chunks: ["editor"],
             inject: false
-        }),
-        new WebpackShellPlugin({
-            onBuildStart: ['echo "Webpack Start"'],
-            onBuildEnd: ['node ./build/server.js']
         })
     ]
 }

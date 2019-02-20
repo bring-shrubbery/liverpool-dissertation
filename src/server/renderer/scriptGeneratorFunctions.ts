@@ -389,18 +389,10 @@ export function generateTouchControllers(nodes: NodeCollection): string {
         }
         
         let offsetScript = `if(!didAttach${i}) {
-            let onHoldDown = function (e) {
-                window.touchLastPositionX = e.touches[0].pageX;
-                window.touchLastPositionY= e.touches[0].pageY;
-
+            document.getElementById("${attachedScope.value}").onmousedown = function (e) {
                 window.onmouseup = function () {
                     window.onmouseup = null;
                     window.onmousemove = null;
-                }
-
-                window.ontouchend = function () {
-                    window.ontouchend = null;
-                    window.ontouchmove = null;
                 }
 
                 window.onmousemove = function (e) {
@@ -413,6 +405,16 @@ export function generateTouchControllers(nodes: NodeCollection): string {
                     }
 
                     window.update();
+                }
+            }
+
+            document.getElementById("${attachedScope.value}").ontouchstart = function (e) {
+                window.touchLastPositionX = e.touches[0].pageX;
+                window.touchLastPositionY= e.touches[0].pageY;
+
+                window.ontouchend = function () {
+                    window.ontouchend = null;
+                    window.ontouchmove = null;
                 }
 
                 window.ontouchmove = function (e) {
@@ -432,11 +434,7 @@ export function generateTouchControllers(nodes: NodeCollection): string {
                     window.touchLastPositionX = e.changedTouches[0].pageX;
                     window.touchLastPositionY = e.changedTouches[0].pageY;
                 }
-
-            }
-
-            document.getElementById("${attachedScope.value}").onmousedown = onHoldDown;
-            document.getElementById("${attachedScope.value}").ontouchstart = onHoldDown;
+            };
 
             didAttach${i}OffsetX = true;
             didAttach${i}OffsetY = true;
