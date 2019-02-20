@@ -17,10 +17,12 @@ function renderHtml (requestJson) {
     const scriptArray = scriptGenerator(allNodes, allConnections);
     let composedScriptString = "";
     for(let s in scriptArray) {
+        if(s == 0) continue;
         composedScriptString += scriptArray[s];
     }
     console.timeEnd("Script Parser");
     let scripts = `<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>\n`;
+    scripts += `<script>${scriptArray[0]}</script>`;
     scripts += `<script>${composedScriptString}</script>`;
     
     // Combine former results
