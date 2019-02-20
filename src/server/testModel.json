@@ -3,10 +3,55 @@
         {
             "connectorStart": {
                 "nodeId": "signalGenerator",
-                "settingId": "sine"
+                "settingId": "signal"
             },
             "connectorEnd": {
                 "nodeId": "scope",
+                "settingId": "signal"
+            }
+        }, {
+            "connectorStart": {
+                "nodeId": "signalGenerator2",
+                "settingId": "signal"
+            },
+            "connectorEnd": {
+                "nodeId": "scope2",
+                "settingId": "signal"
+            }
+        }, {
+            "connectorStart": {
+                "nodeId": "touchInput",
+                "settingId": "offset"
+            },
+            "connectorEnd": {
+                "nodeId": "signalGenerator2",
+                "settingId": "frequency"
+            }
+        }, {
+            "connectorStart": {
+                "nodeId": "signalGenerator",
+                "settingId": "signal"
+            },
+            "connectorEnd": {
+                "nodeId": "modulation",
+                "settingId": "signal1"
+            }
+        }, {
+            "connectorStart": {
+                "nodeId": "signalGenerator2",
+                "settingId": "signal"
+            },
+            "connectorEnd": {
+                "nodeId": "modulation",
+                "settingId": "signal2"
+            }
+        }, {
+            "connectorStart": {
+                "nodeId": "modulation",
+                "settingId": "signal"
+            },
+            "connectorEnd": {
+                "nodeId": "scope3",
                 "settingId": "signal"
             }
         }
@@ -14,33 +59,92 @@
     "nodes": {
         "signalGenerator": {
             "title": "Signal Generator",
-            "x": "150",
-            "y": "300",
+            "x": "380",
+            "y": "250",
             "width": "150",
-            "inputs": [
-                {
-                    "title": "phase",
-                    "type": "signal"
-                }
-            ],
+            "inputs": [],
             "outputs": [
                 {
-                    "title": "sine",
+                    "title": "signal",
                     "type": "signal"
                 }
             ],
-            "generators": {
-                "sine": "[amplitude]*sin(2*[PI]*[frequency]*[time]+[phase])"
-            },
-            "settings": {
-                "frequency": "1",
-                "amplitude": "1",
-                "phase": "0"
-            }
+            "generators": [
+                {
+                    "title":"signal",
+                    "value": "[amplitude]*sin(2*[PI]*[frequency]*[time]+[phase])",
+                    "type": "signal"
+                }
+            ],
+            "settings": [
+                {
+                    "title": "frequency",
+                    "value": "1",
+                    "type": "number",
+                    "input": false,
+                    "output": false
+                }, {
+                    "title": "amplitude",
+                    "value": "1",
+                    "type": "number",
+                    "input": false,
+                    "output": false
+                }, {
+                    "title": "phase",
+                    "value": "0",
+                    "type": "number",
+                    "input": false,
+                    "output": false
+                }
+            ]
+        }, "signalGenerator2": {
+            "title": "Signal Generator",
+            "x": "380",
+            "y": "550",
+            "width": "150",
+            "inputs": [{
+                "title": "frequency",
+                "type": "number",
+                "default": "0"
+            }],
+            "outputs": [
+                {
+                    "title": "signal",
+                    "type": "signal"
+                }
+            ],
+            "generators": [
+                {
+                    "title":"signal",
+                    "value": "[amplitude]*sin(2*[PI]*[frequency]*[time]+[phase])",
+                    "type": "signal"
+                }
+            ],
+            "settings": [
+                {
+                    "title": "frequency",
+                    "value": "5",
+                    "type": "number",
+                    "input": false,
+                    "output": false
+                }, {
+                    "title": "amplitude",
+                    "value": "1",
+                    "type": "number",
+                    "input": false,
+                    "output": false
+                }, {
+                    "title": "phase",
+                    "value": "0",
+                    "type": "number",
+                    "input": false,
+                    "output": false
+                }
+            ]
         }, "scope": {
             "title": "Scope",
-            "x": "350",
-            "y": "300",
+            "x": "700",
+            "y": "200",
             "width": "150",
             "inputs": [
                 {
@@ -48,12 +152,120 @@
                     "type": "signal"
                 }
             ],
-            "outputs": [
+            "outputs": [],
+            "settings": [
+                {
+                    "title": "yScale",
+                    "value": "1",
+                    "type": "number"
+                }, {
+                    "title": "xScale",
+                    "value": "1",
+                    "type": "number"
+                }
+            ]
+        }, "scope2": {
+            "title": "Scope",
+            "x": "700",
+            "y": "600",
+            "width": "150",
+            "inputs": [
+                {
+                    "title": "signal",
+                    "type": "signal"
+                }
             ],
-            "settings": {
-                "yScale": "1",
-                "xScale": "1"
-            }
+            "generators": [], 
+            "outputs": [],
+            "settings": [
+                {
+                    "title": "yScale",
+                    "value": "1",
+                    "type": "number"
+                }, {
+                    "title": "xScale",
+                    "value": "1",
+                    "type": "number"
+                }
+            ]
+        }, "scope3": {
+            "title": "Scope",
+            "x": "800",
+            "y": "400",
+            "width": "150",
+            "inputs": [
+                {
+                    "title": "signal",
+                    "type": "signal"
+                }
+            ],
+            "generators": [], 
+            "outputs": [],
+            "settings": [
+                {
+                    "title": "yScale",
+                    "value": "1",
+                    "type": "number"
+                }, {
+                    "title": "xScale",
+                    "value": "1",
+                    "type": "number"
+                }
+            ]
+        }, "touchInput": {
+            "title": "Touch Input",
+            "x": "200",
+            "y": "400",
+            "width": "150",
+            "height": "100",
+            "inputs": [],
+            "outputs": [
+                {
+                    "title": "offset",
+                    "type": "number"
+                }
+            ], 
+            "generators": [], 
+            "settings": [
+                {
+                    "title": "Sensitivity",
+                    "value": "0.001",
+                    "type": "number"
+                }, {
+                    "title": "Attached Scope",
+                    "value": "scope2",
+                    "type": "scopeReference"
+                }
+            ]
+        }, "modulation": {
+            "title": "Modulation",
+            "x": "600",
+            "y": "400",
+            "width": "150",
+            "height": "100",
+            "inputs": [
+                {
+                    "title": "signal1",
+                    "type": "signal"
+                }, {
+                    "title": "signal2",
+                    "type": "signal"
+                }
+            ],
+            "outputs": [
+                {
+                    "title": "signal",
+                    "type": "signal"
+                }
+            ],
+            "generators": [
+                {
+                    "title": "signal",
+                    "value": "[signal1]*[signal2]",
+                    "type": "signal"
+                }
+            ],
+            "settings": []
         }
     }
 }
