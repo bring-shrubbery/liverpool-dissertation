@@ -1,0 +1,84 @@
+.collapse-view {
+    margin: 0;
+    padding: 0;
+    width: 250px;
+    height: 100%;
+
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: 1fr;
+
+    background-color: #ccc;
+
+    user-select: none;
+
+    .collapse-children {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    .collapse-children.hidden {
+        display: none !important;
+        width: 0;
+
+        transition: width 0.5s;
+        transition: display 0.1s;
+    }
+
+    .collapse-sidebar {
+        margin: 0;
+        padding: 0;
+        width: 5px;
+        height: 100%;
+        position: relative;
+
+        transition: width 0.2s;
+
+        display: table;
+
+        overflow: hidden;
+
+        .collapse-toggle {
+            color: white;
+
+            position: absolute;
+            left: 20px;
+            top: 47%;
+
+            transition: left 0.2s;
+        }
+    }
+    
+    .collapse-sidebar.closed {
+        width: 15px;
+    }
+    
+    .collapse-sidebar:hover {
+        cursor: pointer;
+        width: 15px;
+
+        transition: width 0.5s;
+
+        .collapse-toggle {
+            left: 3px;
+
+            transition: left 0.5s;
+        }
+    }
+}
+
+.collapse-view.left {
+    grid-template-columns: max-content auto;
+
+    .collapse-children {
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+    }
+
+    .collapse-sidebar {
+        grid-column: 1 / 2;
+        grid-row: 1 / 2;
+    }
+}

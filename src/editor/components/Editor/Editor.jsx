@@ -2,9 +2,12 @@ import React, {Component} from 'react';
 import '../../index.scss';
 import './editor.scss';
 
+// Component imports
 import ComposerView from '../ComposerView/ComposerView.jsx';
 import LibraryView from '../LibraryView/LibraryView.jsx';
 import SettingsView from '../SettingsView/SettingsView.jsx';
+import CollapseView from '../CollapseView/CollapseView.jsx';
+import Toolbar from './Toolbar.jsx';
 
 // Redux
 import { Provider } from 'react-redux';
@@ -15,9 +18,14 @@ export default class Editor extends Component {
         return (
             <Provider store={store}>
                 <div id={'editor-view'}>
-                    <LibraryView/>
+                    <Toolbar/>
+                    <CollapseView right>
+                        <LibraryView/>
+                    </CollapseView>
                     <ComposerView/>
-                    <SettingsView/>
+                    <CollapseView left>
+                        <SettingsView/>
+                    </CollapseView>
                 </div>
             </Provider>
         )

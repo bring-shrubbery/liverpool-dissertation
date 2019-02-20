@@ -346,6 +346,8 @@ class Node extends Component {
             justMoved: false,
             upToDate: true
         }
+
+        this.nodeMouseDown = this.nodeMouseDown.bind(this);
     }
 
     componentWillUpdate () {
@@ -448,6 +450,95 @@ class Node extends Component {
         }
     }
 
+    nodeMouseDown (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        this.setState({
+            clickedDown: true
+        })
+
+        this.props.dispatch(
+            nodeClickDown(this.props.functionId)
+        );
+
+        const onMouseMove = e => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // If holding mouse
+            if(this.state.clickedDown) {
+                const mousePosition = {
+                    x: e.clientX,
+                    y: e.clientY
+                }
+
+                const currentNodePosition = {
+                    x: this.state.x,
+                    y: this.state.y
+                }
+
+                if(!this.state.justMoved) {
+                    // If this is initial call
+                    this.setState({
+                        justMoved: true,
+                        mouseClickPositionX: mousePosition.x - currentNodePosition.x,
+                        mouseClickPositionY: mousePosition.y - currentNodePosition.y
+                    });
+                } else {
+                    document.updateCanvas();
+
+                    this.setState({
+                        x: mousePosition.x - this.state.mouseClickPositionX,
+                        y: mousePosition.y - this.state.mouseClickPositionY
+                    });
+                    
+                }
+            }
+        }
+
+        window.onmousemove = onMouseMove;
+
+        const onMouseUp = e => {
+            // If clicked down before
+            if(this.state.clickedDown) {
+                // If moved mouse before relesing mouse
+                if(this.state.justMoved) {
+                    // Set final node position
+                    this.props.dispatch(
+                        nodeMouseMoveUpdate(
+                            this.props.functionId, 
+                            this.state.x,
+                            this.state.y)
+                    )
+
+                    this.setState({
+                        clickedDown: false,
+                        justMoved: false
+                    })
+                } else {
+                    this.props.dispatch(
+                        nodeClickUp(this.props.functionId, e.shiftKey)
+                    );
+
+                    // Reset variables if just clicked
+                    this.setState({
+                        clickedDown: false,
+                        justMoved: false,
+                        selected: this.props.nodeData.selected
+                    });
+                }
+            }
+
+            window.onmousemove = null;
+            window.onmouseup = null;
+            window.ontouchend = null;
+        }
+
+        window.onmouseup = onMouseUp;
+        window.ontouchend = onMouseUp;
+    }
+
     render() {
         return (
             <div className={'composer-node' + (this.props.nodeData.selected ? ' selected' : '')}  
@@ -457,88 +548,8 @@ class Node extends Component {
                         left: `${this.state.x + this.props.composerPosition.x - this.props.nodeData.width / 2}px`,
                         width: `${this.props.nodeData.width}px`
                     }}
-                    onMouseDown={e => {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        this.setState({
-                            clickedDown: true
-                        })
-
-                        this.props.dispatch(
-                            nodeClickDown(this.props.functionId)
-                        );
-
-                        window.onmousemove = e => {
-                            e.preventDefault();
-                            e.stopPropagation();
-    
-                            // If holding mouse
-                            if(this.state.clickedDown) {
-                                const mousePosition = {
-                                    x: e.clientX,
-                                    y: e.clientY
-                                }
-    
-                                const currentNodePosition = {
-                                    x: this.state.x,
-                                    y: this.state.y
-                                }
-    
-                                if(!this.state.justMoved) {
-                                    // If this is initial call
-                                    this.setState({
-                                        justMoved: true,
-                                        mouseClickPositionX: mousePosition.x - currentNodePosition.x,
-                                        mouseClickPositionY: mousePosition.y - currentNodePosition.y
-                                    });
-                                } else {
-                                    document.updateCanvas();
-
-                                    this.setState({
-                                        x: mousePosition.x - this.state.mouseClickPositionX,
-                                        y: mousePosition.y - this.state.mouseClickPositionY
-                                    });
-                                    
-                                }
-                            }
-                        }
-
-                        window.onmouseup = e => {
-                            // If clicked down before
-                            if(this.state.clickedDown) {
-                                // If moved mouse before relesing mouse
-                                if(this.state.justMoved) {
-                                    // Set final node position
-                                    this.props.dispatch(
-                                        nodeMouseMoveUpdate(
-                                            this.props.functionId, 
-                                            this.state.x,
-                                            this.state.y)
-                                    )
-
-                                    this.setState({
-                                        clickedDown: false,
-                                        justMoved: false
-                                    })
-                                } else {
-                                    this.props.dispatch(
-                                        nodeClickUp(this.props.functionId, e.shiftKey)
-                                    );
-
-                                    // Reset variables if just clicked
-                                    this.setState({
-                                        clickedDown: false,
-                                        justMoved: false,
-                                        selected: this.props.nodeData.selected
-                                    });
-                                }
-                            }
-
-                            window.onmousemove = null;
-                            window.onmouseup = null;
-                        }
-                    }}
+                    onMouseDown={this.nodeMouseDown}
+                    onTouchStart={this.nodeMouseDown}
                     >
                 <h2>{this.props.nodeData.title}</h2>
                 <div className={'composer-node-input-output-container'}>

@@ -81,4 +81,3 @@ function findSelectedNode (allNodes) {
 
     return {selectedNode: null,selectedNodeKey: null};
 }
-
