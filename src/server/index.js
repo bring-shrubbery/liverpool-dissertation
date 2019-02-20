@@ -12,8 +12,10 @@ import bodyParser from 'body-parser'
 // Data Parsing
 import {
     renderSignals
-} from './signalsRender'
+} from './renderer'
 import testModel from './testModel.json'
+
+const dateNow = () => String(Date().toString()).substr(0, 24) + "\t| \t"
 
 // Static files
 app.use(express.static(__dirname + '/public'))
@@ -21,7 +23,7 @@ app.use(express.static(__dirname + '/public'))
 // --- ROUTES ---
 app.get('/editor/:id', (req, res) => {
     const projectId = req.params.id;
-    console.log("\x1b[34m", "Requested to edit project " + projectId);
+    console.log(dateNow() + " Requested to edit project " + projectId);
     
     fs.readFile(path.resolve(__dirname, './public/editor/editor.html'), 'utf8', (err, data) => {
         if (err) {
@@ -55,7 +57,7 @@ app.get('/projects', (req, res) => {
 app.post('/render', bodyParser.json());
 
 app.post('/render', (req, res) => {
-    console.log("\x1b[34m", "POST /RENDER route requested");
+    console.log(dateNow() + "POST /RENDER route requested");
 
     const reqJson = req.params.body;
     const renderedString = renderSignals(reqJson);
@@ -66,7 +68,7 @@ app.post('/render', (req, res) => {
 
 // Default test visualisation
 app.get('/render', (req, res) => {
-    console.log("\x1b[34m", "GET /RENDER route requested");
+    console.log(dateNow() + " GET /RENDER route requested");
 
     const renderedString = renderSignals(testModel);
 
@@ -74,8 +76,13 @@ app.get('/render', (req, res) => {
     res.end(renderedString);
 })
 
+app.get("/", (req, res) => {
+    res.setHeader('Content-Type', 'text/html');
+    res.end("<ul><li><a href='/projects'>projects</a></li><li><a href='/render'>render</a></li><li><a href='/editor/projectid'>editor</a></li></ul>");
+})
+
 // Run server
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
-    console.log("\x1b[32m", "\nListening on: https://localhost:"+port+"\n");
+    console.log("\nListening on: https://localhost:"+port+"\n");
 });

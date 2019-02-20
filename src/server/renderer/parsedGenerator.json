@@ -1,0 +1,49 @@
+[{
+    "type": "number",
+    "value": "2"
+}, {
+    "type": "operator",
+    "value": "+"
+}, {
+    "type": "scope",
+    "value": null,
+    "code": [{
+        "type": "scope",
+        "value": null,
+        "code": [{
+            "type": "operator",
+            "value": "-"
+        }, {
+            "type": "number",
+            "value": "1"
+        }]
+    }, {
+        "type": "operator",
+        "value": "*"
+    }, {
+        "type": "var",
+        "value": "variable"
+    }, {
+        "type": "operator",
+        "value": "*"
+    }, {
+        "type": "math",
+        "value": "sin",
+        "code": [{
+            "type": "number",
+            "value": "2"
+        }, {
+            "type": "operator",
+            "value": "*"
+        }, {
+            "type": "var",
+            "value": "PI"
+        }, {
+            "type": "operator",
+            "value": "*"
+        }, {
+            "type": "number",
+            "value": "90"
+        }]
+    }]
+}]

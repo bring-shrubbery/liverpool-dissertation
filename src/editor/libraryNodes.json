@@ -15,9 +15,12 @@
                     }
                 ]
             },
-            "input_connections": [],
-            "output_connections": [
-                "signal"
+            "inputs": [],
+            "outputs": [
+                {
+                    "title": "signal",
+                    "type": "signal"
+                }
             ]
         }, "scalar": {
             "title": "Scalar",
@@ -25,8 +28,8 @@
             "default_settings": {
                 "value": "1"
             },
-            "input_connections": [],
-            "output_connections": [
+            "inputs": [],
+            "outputs": [
                 "value"
             ]
         }
@@ -34,22 +37,22 @@
         "multiplex": {
             "title": "Multiplex",
             "description": "Multiplex all input signals and output one combined signal",
-            "input_connections": [
+            "inputs": [
                 "signal 1",
                 "signal 2"
             ],
-            "output_connections": [
+            "outputs": [
                 "result"
             ]
         }, "convolution": {
             "title": "Convolution",
             "description": "Performs convolution on two signals, also accepts offset as an input.",
-            "input_connections": [
+            "inputs": [
                 "signal 1",
                 "signal 2",
                 "tao"
             ],
-            "output_connections": [
+            "outputs": [
                 "result"
             ]
         }
@@ -57,13 +60,13 @@
         "scope": {
             "title": "Multi-input Scope",
             "description": "Outputs inputted signals to the screen",
-            "input_connections": [
+            "inputs": [
                 "signal 1",
                 "signal 2",
                 "signal 3",
                 "area"
             ],
-            "output_connections": [
+            "outputs": [
                 "touch dx"
             ]
         }

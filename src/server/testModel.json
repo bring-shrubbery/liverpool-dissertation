@@ -21,11 +21,20 @@
         }, {
             "connectorStart": {
                 "nodeId": "touchInput",
-                "settingId": "offset"
+                "settingId": "OffsetX"
             },
             "connectorEnd": {
                 "nodeId": "signalGenerator2",
                 "settingId": "frequency"
+            }
+        }, {
+            "connectorStart": {
+                "nodeId": "touchInput",
+                "settingId": "OffsetY"
+            },
+            "connectorEnd": {
+                "nodeId": "signalGenerator2",
+                "settingId": "amplitude"
             }
         }, {
             "connectorStart": {
@@ -54,6 +63,15 @@
                 "nodeId": "scope3",
                 "settingId": "signal"
             }
+        }, {
+            "connectorStart": {
+                "nodeId": "scalar",
+                "settingId": "number"
+            },
+            "connectorEnd": {
+                "nodeId": "signalGenerator2",
+                "settingId": "offset"
+            }
         }
     ],
     "nodes": {
@@ -72,14 +90,14 @@
             "generators": [
                 {
                     "title":"signal",
-                    "value": "[amplitude]*sin(2*[PI]*[frequency]*[time]+[phase])",
+                    "value": "[amplitude]*sin(2*[PI]*[frequency]*[time]+[phase])+[offset]",
                     "type": "signal"
                 }
             ],
             "settings": [
                 {
                     "title": "frequency",
-                    "value": "1",
+                    "value": "20",
                     "type": "number",
                     "input": false,
                     "output": false
@@ -95,17 +113,31 @@
                     "type": "number",
                     "input": false,
                     "output": false
+                }, {
+                    "title": "offset",
+                    "value": "0",
+                    "type": "number",
+                    "input": false,
+                    "output": false
                 }
             ]
         }, "signalGenerator2": {
             "title": "Signal Generator",
-            "x": "380",
+            "x": "420",
             "y": "550",
             "width": "150",
             "inputs": [{
                 "title": "frequency",
                 "type": "number",
-                "default": "0"
+                "default": "1"
+            }, {
+                "title": "amplitude",
+                "type": "number",
+                "default": "1"
+            }, {
+                "title": "offset",
+                "type": "number",
+                "default": "1"
             }],
             "outputs": [
                 {
@@ -116,7 +148,7 @@
             "generators": [
                 {
                     "title":"signal",
-                    "value": "[amplitude]*sin(2*[PI]*[frequency]*[time]+[phase])",
+                    "value": "[amplitude]*sin(2*[PI]*[frequency]*[time]+[phase])+[offset]",
                     "type": "signal"
                 }
             ],
@@ -139,6 +171,12 @@
                     "type": "number",
                     "input": false,
                     "output": false
+                }, {
+                    "title": "offset",
+                    "value": "0",
+                    "type": "number",
+                    "input": false,
+                    "output": false
                 }
             ]
         }, "scope": {
@@ -153,17 +191,11 @@
                 }
             ],
             "outputs": [],
-            "settings": [
-                {
-                    "title": "yScale",
-                    "value": "1",
-                    "type": "number"
-                }, {
-                    "title": "xScale",
-                    "value": "1",
-                    "type": "number"
-                }
-            ]
+            "settings": [{
+                "title": "AutoScale",
+                "value": "true",
+                "type": "boolean"
+            }]
         }, "scope2": {
             "title": "Scope",
             "x": "700",
@@ -177,17 +209,11 @@
             ],
             "generators": [], 
             "outputs": [],
-            "settings": [
-                {
-                    "title": "yScale",
-                    "value": "1",
-                    "type": "number"
-                }, {
-                    "title": "xScale",
-                    "value": "1",
-                    "type": "number"
-                }
-            ]
+            "settings": [{
+                "title": "AutoScale",
+                "value": "false",
+                "type": "boolean"
+            }]
         }, "scope3": {
             "title": "Scope",
             "x": "800",
@@ -201,17 +227,11 @@
             ],
             "generators": [], 
             "outputs": [],
-            "settings": [
-                {
-                    "title": "yScale",
-                    "value": "1",
-                    "type": "number"
-                }, {
-                    "title": "xScale",
-                    "value": "1",
-                    "type": "number"
-                }
-            ]
+            "settings": [{
+                "title": "AutoScale",
+                "value": "true",
+                "type": "boolean"
+            }]
         }, "touchInput": {
             "title": "Touch Input",
             "x": "200",
@@ -221,7 +241,10 @@
             "inputs": [],
             "outputs": [
                 {
-                    "title": "offset",
+                    "title": "OffsetX",
+                    "type": "number"
+                }, {
+                    "title": "OffsetY",
                     "type": "number"
                 }
             ], 
@@ -229,12 +252,20 @@
             "settings": [
                 {
                     "title": "Sensitivity",
-                    "value": "0.001",
+                    "value": "0.01",
                     "type": "number"
                 }, {
                     "title": "Attached Scope",
                     "value": "scope2",
                     "type": "scopeReference"
+                }, {
+                    "title": "Offset X",
+                    "value": "true",
+                    "type": "boolean"
+                }, {
+                    "title": "Offset Y",
+                    "value": "true",
+                    "type": "boolean"
                 }
             ]
         }, "modulation": {
@@ -266,6 +297,23 @@
                 }
             ],
             "settings": []
+        }, "scalar": {
+            "title": "Scalar",
+            "x": "150",
+            "y": "600",
+            "width": "150",
+            "height": "100",
+            "inputs": [],
+            "outputs": [{
+                "title": "number",
+                "type": "number"
+            }], 
+            "generators": [],
+            "settings": [{
+                "title": "number",
+                "value": "1",
+                "type": "number"
+            }]
         }
     }
 }
