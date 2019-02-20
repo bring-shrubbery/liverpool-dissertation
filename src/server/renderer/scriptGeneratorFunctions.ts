@@ -350,14 +350,14 @@ export function getTouchInputs(allNodes: NodeCollection): {uncalculatedNodes: No
 
 export function initTime(start: number, stop: number, step: number) {
     let e = "let t = ";
-    let time: number[] = [];
 
-    for(let i = start; i <= stop; i+=step) {
-        time.push(parseFloat(i.toFixed(3)));
-    }
-
-    e += JSON.stringify(time);
-    e += ";\n";
+    e+= `(function(){
+        let r = [];
+        for(let i = ${start}; i < ${stop}; i+=${step}) {
+            r.push(i);
+        }
+        return r;
+    })();`
 
     return e;
 }
