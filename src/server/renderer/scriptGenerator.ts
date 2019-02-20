@@ -182,7 +182,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
                             {
                                 label: "signal",
                                 backgroundColor: 'rgba(0, 0, 0, 0)',
-                                borderColor: 'rgb(255, 120, 132)',
+                                borderColor: '${scopeColor(currentScope.settings[1].value)}',
                                 data: data
                             }
                         ]
@@ -237,4 +237,13 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
     // return UglifyJS.minify(executable);
 
     return exeArray;
+}
+
+
+function scopeColor(color: string): string {
+    switch(color) {
+        case "red": return 'rgb(255, 120, 132)';
+        case "blue": return 'rgb(132, 120, 255)';
+        case "green": return 'rgb(50, 210, 60)';
+    }
 }

@@ -390,8 +390,8 @@ export function generateTouchControllers(nodes: NodeCollection): string {
         
         let offsetScript = `if(!didAttach${i}) {
             let onHoldDown = function (e) {
-                window.touchLastPositionX = e.changedTouches[0].pageX;
-                window.touchLastPositionY= e.changedTouches[0].pageY;
+                window.touchLastPositionX = e.touches[0].pageX;
+                window.touchLastPositionY= e.touches[0].pageY;
 
                 window.onmouseup = function () {
                     window.onmouseup = null;

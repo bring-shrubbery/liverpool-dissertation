@@ -195,6 +195,10 @@
                 "title": "AutoScale",
                 "value": "true",
                 "type": "boolean"
+            }, {
+                "title": "Color",
+                "value": "blue",
+                "type": "color"
             }]
         }, "scope2": {
             "title": "Scope",
@@ -213,6 +217,10 @@
                 "title": "AutoScale",
                 "value": "false",
                 "type": "boolean"
+            }, {
+                "title": "Color",
+                "value": "green",
+                "type": "color"
             }]
         }, "scope3": {
             "title": "Scope",
@@ -231,6 +239,10 @@
                 "title": "AutoScale",
                 "value": "true",
                 "type": "boolean"
+            }, {
+                "title": "Color",
+                "value": "red",
+                "type": "color"
             }]
         }, "touchInput": {
             "title": "Touch Input",
