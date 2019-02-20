@@ -14,10 +14,14 @@ function renderHtml (requestJson) {
 
     // Generate Scripts
     console.time("Script Parser");
-    const script = scriptGenerator(allNodes, allConnections);
+    const scriptArray = scriptGenerator(allNodes, allConnections);
+    const composedScriptString = "";
+    for(let s in scriptArray) {
+        composedScriptString += scriptArray[s];
+    }
     console.timeEnd("Script Parser");
     let scripts = `<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>\n`;
-    scripts += `<script>${script[0]}${script[1]}</script>`;
+    scripts += `<script>${composedScriptString}</script>`;
     
     // Combine former results
     const scriptedHtml = jsxString.slice(0, jsxString.length - 6) + scripts + "</div>";

@@ -18,6 +18,7 @@ import UglifyJS from "uglify-js"
 
 export function scriptGenerator(allNodes: NodeCollection, allConnections: Connector[]) {
     // Executable to store generated javascript code. Any initialisation code should be here.
+    let exeArray: string[] = [];
     let executable = "var graphs = {};";
 
     // Setup time
@@ -133,7 +134,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
 
     // 2. Loop through all scopes and draw graphs
 
-    const nodeFunctions = executable;
+    exeArray.push(executable);
     executable = "";
 
     executable += "function update() {\n";
@@ -222,12 +223,18 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
                 graphs.${s} = myChart;
             }
         `;
+
+        exeArray.push(executable);
+        executable = "";
     }
 
     executable += "};\n"
     executable += "update();"
 
+    exeArray.push(executable);
+    executable = "";
+
     // return UglifyJS.minify(executable);
 
-    return [nodeFunctions, executable];
+    return exeArray;
 }
