@@ -15,7 +15,7 @@ function renderHtml (requestJson) {
     // Generate Scripts
     console.time("Script Parser");
     const scriptArray = scriptGenerator(allNodes, allConnections);
-    const composedScriptString = "";
+    let composedScriptString = "";
     for(let s in scriptArray) {
         composedScriptString += scriptArray[s];
     }
