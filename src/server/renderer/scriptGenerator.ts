@@ -13,9 +13,6 @@ import {
 
 import { tokenizeGenerator } from './generatorTokenizer';
 
-import UglifyJS from "uglify-js"
-
-
 export function scriptGenerator(allNodes: NodeCollection, allConnections: Connector[]) {
     // Executable to store generated javascript code. Any initialisation code should be here.
     let exeArray: string[] = [];
@@ -216,7 +213,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
                                     stepSize: 0.5
                                 }
                             }]
-                        }`}
+                        }`}${generateTitle(currentScope.settings[2])}
                     }
                 });
     
@@ -245,5 +242,19 @@ function scopeColor(color: string): string {
         case "red": return 'rgb(255, 120, 132)';
         case "blue": return 'rgb(132, 120, 255)';
         case "green": return 'rgb(50, 210, 60)';
+        default: return 'rgb(255, 120, 132)';
+    }
+}
+
+function generateTitle(setting: NodeSettingsShape): string {
+    switch(setting.title) {
+        case "": return "";
+        default: {
+            return (`, title: {
+                display: true,
+                text: '${setting.value}',
+                position: 'left'
+            }`)
+        }
     }
 }

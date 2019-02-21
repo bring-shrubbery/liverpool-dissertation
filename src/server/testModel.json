@@ -199,6 +199,10 @@
                 "title": "Color",
                 "value": "blue",
                 "type": "color"
+            }, {
+                "title": "Title",
+                "value": "Carrier Signal",
+                "type": "text"
             }]
         }, "scope2": {
             "title": "Scope",
@@ -221,6 +225,10 @@
                 "title": "Color",
                 "value": "green",
                 "type": "color"
+            }, {
+                "title": "Title",
+                "value": "Data Signal",
+                "type": "text"
             }]
         }, "scope3": {
             "title": "Scope",
@@ -243,6 +251,10 @@
                 "title": "Color",
                 "value": "red",
                 "type": "color"
+            }, {
+                "title": "Title",
+                "value": "AM Modulated Signal",
+                "type": "text"
             }]
         }, "touchInput": {
             "title": "Touch Input",
