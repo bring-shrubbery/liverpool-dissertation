@@ -109,7 +109,7 @@ export default class Node extends Component {
                     });
                 }
             }
-
+            
             window.onmousemove = null;
             window.onmouseup = null;
         }
@@ -189,8 +189,9 @@ export default class Node extends Component {
                         selected: this.props.nodeData.selected
                     });
                 }
-            }
 
+            }
+            
             window.ontouchmove = null;
             window.ontouchend = null;
         }
@@ -404,14 +405,14 @@ export default class Node extends Component {
                     onMouseDown={this.nodeMouseDown}
                     onTouchStart={this.nodeTouchDown}
                     onMouseUp={e => {
-                        e.stopPropagation();
                         if(!this.state.clickedDown) {
+                            e.stopPropagation();
                             this.props.dispatch(cancelNewConnector())
                         }
                     }}
                     onTouchEnd = {e => {
-                        e.stopPropagation();
                         if(!this.state.clickedDown) {
+                            e.stopPropagation();
                             this.props.dispatch(cancelNewConnector());
                         }
                     }}
