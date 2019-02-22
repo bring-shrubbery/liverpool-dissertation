@@ -407,18 +407,12 @@ export default class Node extends Component {
                         e.stopPropagation();
                         if(!this.state.clickedDown) {
                             this.props.dispatch(cancelNewConnector())
-            
-                            window.onmouseup = null;
-                            window.onmousemove = null;
                         }
                     }}
                     onTouchEnd = {e => {
                         e.stopPropagation();
                         if(!this.state.clickedDown) {
                             this.props.dispatch(cancelNewConnector());
-            
-                            window.ontouchend = null;
-                            window.ontouchmove = null;
                         }
                     }}
                     >
