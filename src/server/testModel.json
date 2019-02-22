@@ -3,7 +3,7 @@
         {
             "connectorStart": {
                 "nodeId": "signalGenerator",
-                "settingId": "signal"
+                "settingId": "sine"
             },
             "connectorEnd": {
                 "nodeId": "scope",
@@ -39,10 +39,10 @@
         }, {
             "connectorStart": {
                 "nodeId": "signalGenerator",
-                "settingId": "signal"
+                "settingId": "sine"
             },
             "connectorEnd": {
-                "nodeId": "modulation",
+                "nodeId": "am",
                 "settingId": "signal1"
             }
         }, {
@@ -51,12 +51,12 @@
                 "settingId": "signal"
             },
             "connectorEnd": {
-                "nodeId": "modulation",
+                "nodeId": "am",
                 "settingId": "signal2"
             }
         }, {
             "connectorStart": {
-                "nodeId": "modulation",
+                "nodeId": "am",
                 "settingId": "signal"
             },
             "connectorEnd": {
@@ -83,13 +83,13 @@
             "inputs": [],
             "outputs": [
                 {
-                    "title": "signal",
+                    "title": "sine",
                     "type": "signal"
                 }
             ],
             "generators": [
                 {
-                    "title":"signal",
+                    "title":"sine",
                     "value": "[amplitude]*sin(2*[PI]*[frequency]*[time]+[phase])+[offset]",
                     "type": "signal"
                 }
@@ -292,8 +292,8 @@
                     "type": "boolean"
                 }
             ]
-        }, "modulation": {
-            "title": "Modulation",
+        }, "am": {
+            "title": "AM",
             "x": "600",
             "y": "400",
             "width": "150",

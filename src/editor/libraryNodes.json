@@ -1,74 +1,167 @@
 {
     "input": {
-        "signalGenerator": {
+        "touchInput": {
+            "title": "Touch Input",
+            "description": "Gets touch input from the scope.",
+            "x": "200",
+            "y": "400",
+            "width": "150",
+            "height": "100",
+            "inputs": [],
+            "outputs": [
+                {
+                    "title": "OffsetX",
+                    "type": "number"
+                }, {
+                    "title": "OffsetY",
+                    "type": "number"
+                }
+            ], 
+            "generators": [], 
+            "settings": [
+                {
+                    "title": "Sensitivity",
+                    "value": "0.01",
+                    "type": "number"
+                }, {
+                    "title": "Attached Scope",
+                    "value": "scope2",
+                    "type": "scopeReference"
+                }, {
+                    "title": "Offset X",
+                    "value": "true",
+                    "type": "boolean"
+                }, {
+                    "title": "Offset Y",
+                    "value": "true",
+                    "type": "boolean"
+                }
+            ]
+        }, "scalar": {
+            "title": "Scalar",
+            "description": "Single scalar output",
+            "x": "150",
+            "y": "600",
+            "width": "150",
+            "height": "100",
+            "inputs": [],
+            "outputs": [{
+                "title": "number",
+                "type": "number"
+            }], 
+            "generators": [],
+            "settings": [{
+                "title": "number",
+                "value": "1",
+                "type": "number"
+            }]
+        }, "signalGenerator": {
             "title": "Signal Generator",
-            "description": "Generates basic signal or signals based on the settings",
-            "default_settings": {
-                "signals":[
-                    {
-                        "frequency": 1,
-                        "amplitude": 1,
-                        "size": 1,
-                        "phase": 0,
-                        "resolution_constant": 100,
-                        "type": "SIN_SIGNAL"
-                    }
-                ]
-            },
+            "description": "Generates a basic signal",
+            "x": "380",
+            "y": "250",
+            "width": "150",
             "inputs": [],
             "outputs": [
                 {
                     "title": "signal",
                     "type": "signal"
                 }
-            ]
-        }, "scalar": {
-            "title": "Scalar",
-            "description": "Creates single number that can be modified through settings or through input connection",
-            "default_settings": {
-                "value": "1"
-            },
-            "inputs": [],
-            "outputs": [
-                "value"
+            ],
+            "generators": [
+                {
+                    "title":"signal",
+                    "value": "[amplitude]*sin(2*[PI]*[frequency]*[time]+[phase])+[offset]",
+                    "type": "signal"
+                }
+            ],
+            "settings": [
+                {
+                    "title": "frequency",
+                    "value": "20",
+                    "type": "number",
+                    "input": false,
+                    "output": false
+                }, {
+                    "title": "amplitude",
+                    "value": "1",
+                    "type": "number",
+                    "input": false,
+                    "output": false
+                }, {
+                    "title": "phase",
+                    "value": "0",
+                    "type": "number",
+                    "input": false,
+                    "output": false
+                }, {
+                    "title": "offset",
+                    "value": "0",
+                    "type": "number",
+                    "input": false,
+                    "output": false
+                }
             ]
         }
     }, "processors": {
-        "multiplex": {
-            "title": "Multiplex",
-            "description": "Multiplex all input signals and output one combined signal",
+        "am": {
+            "title": "AM Modulation",
+            "description": "Modulates two signals using AM modulation",
+            "x": "600",
+            "y": "400",
+            "width": "150",
+            "height": "100",
             "inputs": [
-                "signal 1",
-                "signal 2"
+                {
+                    "title": "signal1",
+                    "type": "signal"
+                }, {
+                    "title": "signal2",
+                    "type": "signal"
+                }
             ],
             "outputs": [
-                "result"
-            ]
-        }, "convolution": {
-            "title": "Convolution",
-            "description": "Performs convolution on two signals, also accepts offset as an input.",
-            "inputs": [
-                "signal 1",
-                "signal 2",
-                "tao"
+                {
+                    "title": "signal",
+                    "type": "signal"
+                }
             ],
-            "outputs": [
-                "result"
-            ]
+            "generators": [
+                {
+                    "title": "signal",
+                    "value": "[signal1]*[signal2]",
+                    "type": "signal"
+                }
+            ],
+            "settings": []
         }
     }, "output": {
         "scope": {
-            "title": "Multi-input Scope",
-            "description": "Outputs inputted signals to the screen",
+            "title": "Scope",
+            "description": "Displays a scope with the provided input signal.",
+            "x": "700",
+            "y": "200",
+            "width": "150",
             "inputs": [
-                "signal 1",
-                "signal 2",
-                "signal 3",
-                "area"
+                {
+                    "title": "signal",
+                    "type": "signal"
+                }
             ],
-            "outputs": [
-                "touch dx"
-            ]
+            "outputs": [],
+            "settings": [{
+                "title": "AutoScale",
+                "value": "true",
+                "type": "boolean"
+            }, {
+                "title": "Color",
+                "value": "blue",
+                "type": "color"
+            }, {
+                "title": "Title",
+                "value": "Carrier Signal",
+                "type": "text"
+            }]
         }
     }
 }

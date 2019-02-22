@@ -1,7 +1,7 @@
 const defaultState = {
     allNodes: {},
     allConnections: [],
-    currentlyCreatedConnection: {},
+    isCreatingConnection: false,
     composerCoordinates: {
         x: 0,
         y: 0,
@@ -23,9 +23,9 @@ const composerDefaultState = {
     allNodes: {
         ...document.editorData.nodes
     },
-    allConnections: {
+    allConnections: [
         ...document.editorData.connectors
-    }
+    ]
 }
 
 export default function reducer (state = composerDefaultState, action) {
@@ -261,6 +261,137 @@ export default function reducer (state = composerDefaultState, action) {
                     x: state.composerCoordinates.x + action.payload.x,
                     y: state.composerCoordinates.y + action.payload.y
                 }
+            }
+        }
+
+        case "COMPOSER_CONNECTOR_DISCONNECT": {
+            // console.log(state.allConnections)
+
+            let allConnections = [...state.allConnections];
+
+            for(let c in allConnections) {
+                const currentConnection = allConnections[c];
+
+                if(currentConnection.connectorEnd.nodeId == action.payload.nodeId) {
+                    if(currentConnection.connectorEnd.settingId == action.payload.settingId) {
+                        allConnections.splice(c, 1);
+                        // delete allConnections[c]
+                    }
+                }
+            }
+
+            return {
+                ...state,
+                allConnections: allConnections,
+                allNodes: {...state.allNodes}
+            }
+        }
+
+        case "COMPOSER_CONNECTOR_START": {
+            let allConnections = [...state.allConnections];
+
+            allConnections.push({
+                connectorStart: {
+                    nodeId: action.payload.connectorStart.nodeId,
+                    settingId: action.payload.connectorStart.settingId
+                },
+                connectorEnd: {
+                    x: action.payload.mousePosition.x,
+                    y: action.payload.mousePosition.y 
+                }
+            })
+            
+            return {
+                ...state,
+                allConnections: allConnections
+            }
+        }
+
+        case "COMPOSER_CONNECTOR_UPDATE": {
+            let allConnections = [...state.allConnections];
+
+            for(let c in allConnections) {
+                const current = allConnections[c];
+
+                if(current.connectorEnd.x && current.connectorEnd.y) {
+                    allConnections[c].connectorEnd = {
+                        x: action.payload.mousePosition.x,
+                        y: action.payload.mousePosition.y
+                    }
+                    
+                    break;
+                }
+            }
+
+            return {
+                ...state,
+                allConnections: allConnections
+            }
+        }
+
+        case "COMPOSER_CONNECTOR_CANCEL": {
+            let allConnections = [...state.allConnections];
+
+            for(let c in allConnections) {
+                let connector = allConnections[c];
+
+                if(connector.connectorEnd.x && connector.connectorEnd.y) {
+                    allConnections.splice(c, 1);
+                }
+            }
+
+            return {
+                ...state,
+                allConnections: allConnections
+            }
+        }
+
+        case "COMPOSER_CONNECTOR_END": {
+            let allConnections = [...state.allConnections];
+
+            // Check if this input is already connected
+            const end = action.payload.connectorEnd;
+            let alreadyExists = false;
+
+            for(let c in allConnections) {
+                const connectorEnd = allConnections[c].connectorEnd;
+
+                // If already exists, cancel
+                if(connectorEnd.nodeId === end.nodeId && connectorEnd.settingId === end.settingId) {
+                    for(let connectorId in allConnections) {
+                        let connector = allConnections[connectorId];
+        
+                        if(connector.connectorEnd.x && connector.connectorEnd.y) {
+                            allConnections.splice(connectorId, 1);
+                        }
+                    }
+
+                    alreadyExists = true;
+                    break;
+                }
+            }
+
+            if(!alreadyExists) {
+                // Find new connection and update it
+                for(let c in allConnections) {
+                    let connector = allConnections[c];
+    
+                    if(connector.connectorEnd.x && connector.connectorEnd.y) {
+                        let newConnection = {
+                            connectorStart: allConnections[c].connectorStart,
+                            connectorEnd: action.payload.connectorEnd
+                        }
+    
+                        allConnections[c] = newConnection;
+    
+                        break;
+                    }
+                }
+            }
+
+            return {
+                ...state,
+                allConnections: allConnections
             }
         }
 

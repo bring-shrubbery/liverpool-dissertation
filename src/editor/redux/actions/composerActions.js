@@ -46,30 +46,6 @@ export function nodeSettingsExpandArray(nodeId, settingId) {
     }
 }
 
-export function startConnectingNode(originPosition, mousePosition) {
-    return {
-        type: "COMPOSER_START_NODE_CONNECTION",
-        payload: {
-            ox: originPosition.x,
-            oy: originPosition.y,
-            ex: mousePosition.x,
-            ey: mousePosition.y
-        }
-    }
-}
-
-export function endConnectingNode(originPosition, mousePosition) {
-    return {
-        type: "COMPOSER_START_NODE_CONNECTION",
-        payload: {
-            ox: originPosition.x,
-            oy: originPosition.y,
-            ex: mousePosition.x,
-            ey: mousePosition.y
-        }
-    }
-}
-
 export function nodeClickDown(id) {
     return {
         type: "COMPOSER_NODE_CLICK_DOWN",
@@ -116,5 +92,64 @@ export function backgroundUpdatePosition(x, y) {
             x: x,
             y: y
         }
+    }
+}
+
+export function disconnectNode(nodeId, settingId) {
+    return {
+        type: "COMPOSER_CONNECTOR_DISCONNECT",
+        payload: {
+            nodeId: nodeId,
+            settingId: settingId
+        }
+    }
+}
+
+export function startNewConnector (nodeId, settingId, posX, posY) {
+    return {
+        type: "COMPOSER_CONNECTOR_START",
+        payload: {
+            connectorStart: {
+                nodeId: nodeId,
+                settingId: settingId
+            }, mousePosition: {
+                x: posX,
+                y: posY
+            }
+        }
+    }
+}
+
+export function updateNewConnector (nodeId, settingId, posX, posY) {
+    return {
+        type: "COMPOSER_CONNECTOR_UPDATE",
+        payload: {
+            connectorStart: {
+                nodeId: nodeId,
+                settingId: settingId
+            }, mousePosition: {
+                x: posX,
+                y: posY
+            }
+        }
+    } 
+}
+
+export function endNewConnector (endNodeId, endSettingId) {
+    return {
+        type: "COMPOSER_CONNECTOR_END",
+        payload: {
+            connectorEnd: {
+                nodeId: endNodeId,
+                settingId: endSettingId
+            }
+        }
+    } 
+}
+
+export function cancelNewConnector() {
+    return {
+        type: "COMPOSER_CONNECTOR_CANCEL",
+        payload: 1
     }
 }

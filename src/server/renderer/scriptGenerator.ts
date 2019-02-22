@@ -174,7 +174,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
                 }
                 var myChart = new Chart(ctx, {
                     type: 'line',
-                    data: {labels: t.map(ti => ti.toFixed(1)),
+                    data: {labels: t.map(ti => ti.toFixed(2)),
                         datasets: [
                             {
                                 label: "signal",
@@ -204,7 +204,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
                                 ticks: {
                                     max: 1,
                                     min: -1,
-                                    stepSize: 0.5
+                                    stepSize: 0.01
                                 }
                             }], yAxes: [{
                                 ticks: {

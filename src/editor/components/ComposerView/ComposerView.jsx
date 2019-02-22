@@ -1,16 +1,18 @@
-import React, {Component} from 'react';
-import './composer.scss';
+import React, {Component} from 'react'
+import './composer.scss'
 
-import {composerAddNode,
+import {
+    composerAddNode,
     composerUpdateSize,
     deleteSelectedNodes,
-    deselectAll,
-    nodeClickDown,
-    nodeClickUp,
-    nodeMouseMoveUpdate,
-    backgroundUpdatePosition} from '../../redux/actions/composerActions';
+    deselectAll
+} from '../../redux/actions/composerActions'
 
-import { connect } from 'react-redux';
+import BgGrid from './BgGrid.jsx'
+import Node from './Node.jsx'
+import Canvas from './Canvas.jsx'
+
+import { connect } from 'react-redux'
 
 @connect((store) => {
     return {
@@ -84,9 +86,7 @@ export default class ComposerView extends Component {
     }
 
     handleKeyPress (ev) {
-        
         console.log(ev.keyCode);
-        ev.preventDefault();
 
         switch(ev.keyCode) {
             case 8: { // backspace
@@ -102,8 +102,6 @@ export default class ComposerView extends Component {
     }
 
     handleBackgroundClick(e) {
-        // e.preventDefault();
-
         this.props.dispatch(deselectAll());
         this.forceUpdate();
     }
@@ -138,8 +136,6 @@ export default class ComposerView extends Component {
                         connectorId: null
                     };
     
-                    
-    
                     let parent = node.parentNode;
 
                     currentNodePosition.connectorId = parent.innerText;
@@ -166,8 +162,6 @@ export default class ComposerView extends Component {
 
         let outputNodesPositions = nodePositionObtainer(outputNodes);
         let inputNodesPositions = nodePositionObtainer(inputNodes);
-
-        // console.log(outputNodesPositions, inputNodesPositions);
 
         return {
             outputNodesPositions: outputNodesPositions,
@@ -204,426 +198,4 @@ export default class ComposerView extends Component {
             </div>
         )
     }
-}
-
-class Canvas extends Component {
-    constructor (props) {
-        super(props);
-
-        this.state = {
-            width: props.width,
-            height: props.height,
-            connectors: {}
-        }
-
-        document.updateCanvas = () => this.forceUpdate();
-    }
-
-    componentDidUpdate() {
-        var c = document.getElementById("main-canvas");
-        var ctx = c.getContext("2d");
-
-        ctx.clearRect(0, 0, this.props.width*2, this.props.height * 2);
-        
-        let positions = this.props.connectorPositions();
-        
-        const inputPositions = positions.inputNodesPositions;
-        const outputPositions = positions.outputNodesPositions;
-
-        let lineCoordinates = [];
-
-        for(let c in this.props.stateConnectors) {
-            const currentConnector = this.props.stateConnectors[c];
-
-            const connectorStart = currentConnector.connectorStart;
-            const connectorEnd = currentConnector.connectorEnd;
-
-            let connectorPosition = {};
-
-            for(let i in inputPositions) {
-                let position = inputPositions[i];
-                let nodeId = position.nodeId;
-                let connectorId = position.connectorId;
-    
-                if(connectorEnd.nodeId === nodeId && connectorEnd.settingId === connectorId) {
-                    connectorPosition.startPosition = {
-                        x: position.x,
-                        y: position.y
-                    }
-                }
-            }
-
-            for(let i in outputPositions) {
-                let position = outputPositions[i];
-                let nodeId = position.nodeId;
-                let connectorId = position.connectorId;
-    
-                if(connectorStart.nodeId === nodeId && connectorStart.settingId === connectorId) {
-                    connectorPosition.endPosition = {
-                        x: position.x,
-                        y: position.y
-                    }
-                }
-            }
-
-            lineCoordinates.push(connectorPosition);
-        }
-
-        // console.log(lineCoordinates);
-        
-
-        for(let i in lineCoordinates) {
-            const pos = lineCoordinates[i];
-
-            const x1 = pos.startPosition.x * 2 + 16;
-            const y1 = pos.startPosition.y * 2 - 93;
-            const x2 = pos.endPosition.x * 2 - 134;
-            const y2 = pos.endPosition.y * 2 - 93;
-
-            // cPos.x = cPos.x * 2 + 12;
-            // cPos.y = cPos.y * 2 - 94
-
-            // this.drawCircle(ctx, cPos.x, cPos.y, 6, "black");
-
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.bezierCurveTo(x1 - 150, y1, x2 + 150, y2, x2, y2);
-            ctx.lineWidth = 5;
-            ctx.strokeStyle = "#222";
-            ctx.stroke();
-            // this.drawLine(ctx, x1, y1, x2, y2, "#222");
-        }
-    }
-
-    componentDidMount() {
-
-    }
-
-    drawCircle(ctx, x, y, r, color) {
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, 2 * Math.PI);
-        ctx.fillStyle = color;
-        ctx.fill();
-    }
-
-    drawLine(ctx, x1, y1, x2, y2, color) {
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = color;
-        ctx.stroke();
-    }
-
-    render () {
-        return (
-            <canvas id="main-canvas"
-                    width={this.props.width * 2}
-                    height={this.props.height * 2}
-                    style={{
-                        width: this.props.width,
-                        height: this.props.height
-                    }}></canvas>
-        )
-    }
-}
-
-// --- NOT FINISHED ---
-// TODO:
-// * Connector handlers
-class Node extends Component {
-    constructor(props) {
-        super(props);
-
-        const nodeData = this.props.nodeData;
-
-        this.state = {
-            x: parseInt(nodeData.x),
-            y: parseInt(nodeData.y),
-            inputConnections: nodeData.inputs,
-            outputConnections: nodeData.outputs,
-            clickedDown: false,
-            justMoved: false,
-            upToDate: true
-        }
-
-        this.nodeMouseDown = this.nodeMouseDown.bind(this);
-    }
-
-    componentWillUpdate () {
-        let ci = [];
-        let co = [];
-
-        for(let i in this.props.connectors) {
-            let c = this.props.connectors[i];
-
-            if(c.connectorStart.nodeId === this.props.id) {
-                co.push(c.connectorStart.settingId);
-            }
-
-            if(c.connectorEnd.nodeId === this.props.id) {
-                ci.push(c.connectorEnd.settingId);
-            }
-        }
-
-        if(this.props.nodeData.inputs) {
-            this.inputLabels = [...this.props.nodeData.inputs].map(label =>{
-                let connected = false;
-
-                for(let i in ci) {
-                    if(label.title === ci[i]) {
-                        connected = true;
-                        break;
-                    }
-                }
-
-                // console.log()
-                return (<li className="composer-node-input-labels" key={label.title}>
-                    {label.title}
-                    <span onClick={e => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                    }}
-                    onMouseDown = {e => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                    }}
-                    onMouseUp = {e => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    }}
-                    className={
-                        'composer-node-input-span' 
-                        + (this.props.nodeData.selected ? ' composer-node-connectors-selected': '')
-                        + (connected ? ' connected': '')
-                        }></span>
-                    </li>);
-            })
-        } else {
-            this.inputLabels = null;
-        }
-    
-        if(this.props.nodeData.outputs) {
-            this.outputLabels = [...this.props.nodeData.outputs].map(label =>{
-                let connected = false;
-
-                for(let i in co) {
-                    if(label.title === co[i]) {
-                        connected = true;
-                        break;
-                    }
-                }
-
-                return (<li className="composer-node-output-labels" key={label.title}>
-                    {label.title}
-                    <span onClick={e => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                    }}
-                    onMouseDown = {e => {
-                        e.stopPropagation();
-                        e.preventDefault();
-
-                    }}
-                    onMouseUp = {e => {
-                        window.onmousemove = null;
-                        window.onmouseup = null;
-                    }}
-                    onMouseLeave = {e => {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        window.onmouseup = () => {
-                            window.onmousemove = null;
-                            window.onmouseup = null;
-                        }
-                    }}
-                    className={
-                        'composer-node-output-span' 
-                        + (this.props.nodeData.selected ? ' composer-node-connectors-selected': '')
-                        + (connected ? ' connected': '')
-                        }></span>
-                    </li>)
-            })
-        } else {
-            this.outputLabels = null;
-        }
-    }
-
-    nodeMouseDown (e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        this.setState({
-            clickedDown: true
-        })
-
-        this.props.dispatch(
-            nodeClickDown(this.props.functionId)
-        );
-
-        const onMouseMove = e => {
-            e.preventDefault();
-            e.stopPropagation();
-
-            // If holding mouse
-            if(this.state.clickedDown) {
-                const mousePosition = {
-                    x: e.clientX,
-                    y: e.clientY
-                }
-
-                const currentNodePosition = {
-                    x: this.state.x,
-                    y: this.state.y
-                }
-
-                if(!this.state.justMoved) {
-                    // If this is initial call
-                    this.setState({
-                        justMoved: true,
-                        mouseClickPositionX: mousePosition.x - currentNodePosition.x,
-                        mouseClickPositionY: mousePosition.y - currentNodePosition.y
-                    });
-                } else {
-                    document.updateCanvas();
-
-                    this.setState({
-                        x: mousePosition.x - this.state.mouseClickPositionX,
-                        y: mousePosition.y - this.state.mouseClickPositionY
-                    });
-                    
-                }
-            }
-        }
-
-        window.onmousemove = onMouseMove;
-
-        const onMouseUp = e => {
-            // If clicked down before
-            if(this.state.clickedDown) {
-                // If moved mouse before relesing mouse
-                if(this.state.justMoved) {
-                    // Set final node position
-                    this.props.dispatch(
-                        nodeMouseMoveUpdate(
-                            this.props.functionId, 
-                            this.state.x,
-                            this.state.y)
-                    )
-
-                    this.setState({
-                        clickedDown: false,
-                        justMoved: false
-                    })
-                } else {
-                    this.props.dispatch(
-                        nodeClickUp(this.props.functionId, e.shiftKey)
-                    );
-
-                    // Reset variables if just clicked
-                    this.setState({
-                        clickedDown: false,
-                        justMoved: false,
-                        selected: this.props.nodeData.selected
-                    });
-                }
-            }
-
-            window.onmousemove = null;
-            window.onmouseup = null;
-            window.ontouchend = null;
-        }
-
-        window.onmouseup = onMouseUp;
-        window.ontouchend = onMouseUp;
-    }
-
-    render() {
-        return (
-            <div className={'composer-node' + (this.props.nodeData.selected ? ' selected' : '')}  
-                    id={this.props.functionId} 
-                    style={{
-                        top: `${this.state.y + this.props.composerPosition.y}px`, 
-                        left: `${this.state.x + this.props.composerPosition.x - this.props.nodeData.width / 2}px`,
-                        width: `${this.props.nodeData.width}px`
-                    }}
-                    onMouseDown={this.nodeMouseDown}
-                    onTouchStart={this.nodeMouseDown}
-                    >
-                <h2>{this.props.nodeData.title}</h2>
-                <div className={'composer-node-input-output-container'}>
-                    <ul className={'composer-node-input-list'}>
-                        {this.inputLabels}
-                    </ul>
-                    <ul className={'composer-node-output-list'}>
-                        {this.outputLabels}
-                    </ul>
-                </div>
-            </div>
-        );
-    }
-}
-
-
-// --- STABLE ---
-function BgGrid (props) {
-    const gridSize = props.gridSize;
-    const x = props.x;
-    const y = props.y;
-    const width = props.width;
-    const height = props.height;
-
-    const HorizontalLines = [...Array(Math.ceil(height / gridSize)).keys()].map(
-        el => {
-            return (<li key={el} 
-                        className={'composer-background-horizontal-lines'} 
-                        style={{
-                            width: width*3, 
-                            height: gridSize, 
-                            top: el*gridSize, 
-                            left: 0}}></li>);
-        }
-    );
-
-    const VerticalLines = [...Array(Math.ceil(width / gridSize)).keys()].map(
-        el => {
-            return (<li key={el} 
-                        className={'composer-background-vertical-lines'} 
-                        style={{
-                            width: gridSize, 
-                            height: height*3, 
-                            top: 0, 
-                            left: el*gridSize}}></li>);
-        }
-    );
-
-    let xpos = x / gridSize - Math.floor(x / gridSize);
-    xpos = xpos * gridSize;
-
-    let ypos = y / gridSize - Math.floor(y / gridSize);
-    ypos = ypos * gridSize;
-
-    return (
-        <div id={'composer-view-background'}
-            onClick={e => props.handleClick(e)}
-            onMouseDown={e => {
-                e.preventDefault();
-                e.stopPropagation();
-
-                window.onmousemove = ev => {
-                    props.dispatch(
-                        backgroundUpdatePosition(ev.movementX, ev.movementY)
-                    )
-                }
-
-                window.onmouseup = ev => {
-                    window.onmouseup = null;
-                    window.onmousemove = null;
-                }
-            }}>
-            <ul style={{top: ypos - gridSize}}>{HorizontalLines}</ul>
-            <ul style={{left: xpos - gridSize}}>{VerticalLines}</ul>
-        </div>
-    );
 }
