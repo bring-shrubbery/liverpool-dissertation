@@ -56,7 +56,8 @@ export default class ComposerView extends Component {
             composerAddNode({
                 nodeId: functionId, 
                 dropPositionX: dropPositionX, 
-                dropPositionY: dropPositionY
+                dropPositionY: dropPositionY,
+                completeNodes: this.props.allNodes
             })
         );
     }

@@ -35,7 +35,7 @@ export default class Toolbar extends Component {
                         <div className={'menu-subview'}>export</div>
                     </span>
                 </div>
-                <div className={'menu-button'}><a href="/render">render</a></div>
+                <div className={'menu-button'}><a href={`/render/${document.projectData.owner}/${document.projectData.pid}`}>render</a></div>
             </div>
         )
     }

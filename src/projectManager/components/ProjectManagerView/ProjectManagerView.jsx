@@ -1,45 +1,67 @@
 import React, { Component } from 'react';
 import './projectManagerView.scss';
 
-const Project = (props) => {
-    return (
-        <div className={'project-manager-project-instance'} id={props.id}>
-            <h3>{props.title}</h3>
-            <p>{props.description}</p>
-            <button id="viewer-button" onClick={props.onOpenViewer}>Open Viewer</button>
-            <button id="editor-button" onClick={props.onOpenEditor}>Open Editor</button>
-        </div>
-    )
-}
+import fetch from 'isomorphic-fetch';
 
 export default class ProjectManagerView extends Component {
     constructor(props) {
         super(props);
 
-        this.onOpenViewer = this.onOpenViewer.bind(this);
-        this.onOpenEditor = this.onOpenEditor.bind(this);
+        this.state = {
+            existingProjects: [],
+            userData: {}
+        }
+
+        this.renderProjects = this.renderProjects.bind(this);
+        this.fetchProjectsInfo = this.fetchProjectsInfo.bind(this);
     }
 
-    onOpenEditor (e) {
-        e.preventDefault();
-
-        this.props.redirect("editor");
+    renderProjects() {
+        if(this.state.existingProjects.length > 0) {
+            return this.state.existingProjects.map(project => {
+                return (<div key={project.projectId} className={'project-info'}>
+                    <ul key={'a'}>
+                        <li id={'title'}>{project.title}</li>
+                        <li id={'description'}>{project.description}</li>
+                        <li id={'links'}>
+                            <a href={`/editor/${project.owner}/${project.projectId}`}>edit</a>
+                            <a href={`/render/${project.owner}/${project.projectId}`}>render</a>
+                        </li>
+                    </ul>
+                </div>);
+            })
+        } else {
+            return null;
+        }
     }
 
-    onOpenViewer (e) {
-        e.preventDefault();
+    fetchProjectsInfo() {
+        let th = this;
+        fetch('/projects/info/admin')
+        .then(function (res) {
+            if(res.status >= 400) {
+                console.error("Server responded with "+res.status+" error.")
+                return;
+            }
 
-        this.props.redirect("viewer");
+            return res.json();
+        }).then(function(res) {
+            th.setState({
+                existingProjects: res
+            })
+        })
+    }
+
+    componentWillMount() {
+        this.fetchProjectsInfo();
     }
 
     render() {
         return (
             <div id={'project-manager'}>
-                <Project title="Last Saved Project" 
-                    description="sample project to show off on interim presentation"
-                    id={'redux_latest_store'}
-                    onOpenViewer={this.onOpenViewer}
-                    onOpenEditor={this.onOpenEditor}/>
+                <div className={'project-list'}>
+                    {this.renderProjects()}
+                </div>
             </div>
         )
     }

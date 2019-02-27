@@ -16,10 +16,10 @@ import { tokenizeGenerator } from './generatorTokenizer';
 export function scriptGenerator(allNodes: NodeCollection, allConnections: Connector[]) {
     // Executable to store generated javascript code. Any initialisation code should be here.
     let exeArray: string[] = [];
-    let executable = "var graphs = {};";
+    let executable = "var graphs = {};\n";
 
     // Setup time
-    executable += initTime(-1, 1, 0.001);
+    executable += initTime(-2, 2, 0.001);
 
 
 

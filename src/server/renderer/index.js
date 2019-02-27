@@ -5,8 +5,8 @@ import { jsxDom } from './viewerDom';
 
 function renderHtml (requestJson) {
     // Separate nodes from connectors
-    const allNodes = {...requestJson.nodes};
-    const allConnections = [...requestJson.connectors];
+    const allNodes = {...requestJson.allNodes};
+    const allConnections = [...requestJson.allConnections];
 
     // Render HTML
     const jsx = jsxDom(allNodes);

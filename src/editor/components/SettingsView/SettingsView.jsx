@@ -18,7 +18,10 @@ export default class SettingsView extends Component {
             return (
                 <div id={'settings-view'}>
                     <h1>{selectedNode.title}</h1>
-                    <Settings settingsObject={selectedNode.settings}/>
+                    <Settings settingsObject={selectedNode.settings} 
+                                nodeKey={selectedNodeKey} 
+                                node={selectedNode}
+                                dispatch={this.props.dispatch}/>
                 </div>
             )
         } else {
@@ -38,7 +41,14 @@ function Settings (props) {
     let settingDivs = [];
 
     for(let settingId in settings) {
-        settingDivs.push(<SettingDiv key={settingId} settingId={settingId} settingData={settings[settingId]}/>);
+        settingDivs.push(
+            <SettingDiv key={settingId} 
+                        settingId={settingId} 
+                        settingData={settings[settingId]}
+                        nodeKey={props.nodeKey}
+                        node={props.node}
+                        dispatch={props.dispatch}/>
+        );
     }
 
     return (
@@ -51,23 +61,45 @@ function Settings (props) {
 }
 
 function SettingDiv (props) {
-    let settingType = "number";
+    let inputElement;
+    switch(props.settingData.type) {
+        case "number": {
+            inputElement = <input type={'number'} value={props.settingData.value} onChange={e => {
+                // Update setting
+                // props.dispatch()
+            }}/>;
+            break;
+        }
 
-    // console.log(typeof props.settingData);
-    // console.log(props.settingData);
+        case "boolean": {
 
-    if(typeof props.settingData === "array") {
-        settingType = "array";
+            break;
+        }
+
+        case "signal": {
+
+            break;
+        }
+
+        case "text": {
+            inputElement = <input type={'text'} value={props.settingData.value} onChange={e => {
+                // Update Setting
+                // props.dispatch()
+            }}/>;
+            break;
+        }
+
+        default: {
+
+            break;
+        }
     }
 
 
     return (
         <li className={'settings-setting-list-item'}>
-            <h5>{props.settingId}</h5>
-            <input type={'number'}></input>
-            { settingType === "array" ?
-                <div>hello</div>
-            : null }
+            <h5>{props.settingData.title}</h5>
+            {inputElement}
         </li>
     )
 }

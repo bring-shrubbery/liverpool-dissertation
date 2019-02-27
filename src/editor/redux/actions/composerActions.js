@@ -1,7 +1,4 @@
-import libraryNodes from '../../libraryNodes.json';
-
-export function composerAddNode ({nodeId, dropPositionX, dropPositionY}) {
-    const completeNodes = {...libraryNodes["input"], ...libraryNodes["processors"], ...libraryNodes["output"]};
+export function composerAddNode ({nodeId, dropPositionX, dropPositionY, completeNodes}) {
 
     let nodeData = {...completeNodes[nodeId], settings: completeNodes[nodeId].default_settings};
     

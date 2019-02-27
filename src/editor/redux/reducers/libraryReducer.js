@@ -1,18 +1,11 @@
-import libraryNodes from '../../libraryNodes.json';
-
 const defaultState = {
-    libraryNodes: libraryNodes,
+    libraryNodes: document.libraryNodes,
     currentLibraryNodes : {},
     librarySearchTerm: "",
     librarySelectedCategory: "input"
 }
-
-const savedState = window.localStorage ? JSON.parse(window.localStorage.getItem("redux_latest_store")) : null;
-// const savedState = null;
-
-const libraryDefaultState = savedState ? savedState["library"] : defaultState;
     
-export default function reducer (state = libraryDefaultState, action) {
+export default function reducer (state = defaultState, action) {
     switch(action.type) {
         case "LIBRARY_SEARCH": {
             const newSearchTerm = String(action.payload);

@@ -1,34 +1,13 @@
+const projectData = document.projectData;
+
 const defaultState = {
-    allNodes: {},
-    allConnections: [],
-    isCreatingConnection: false,
-    composerCoordinates: {
-        x: 0,
-        y: 0,
-        zoomLevel: 1,
-        gridSize: 50,
-        width: 100,
-        height: 100,
-        focused: true
-    }
+    allNodes: {...projectData.allNodes},
+    allConnections: [...projectData.allConnections],
+    isCreatingConnection: projectData.isCreatingConnection,
+    composerCoordinates: projectData.composerCoordinates
 }
 
-// const savedState = JSON.parse(localStorage.getItem("redux_latest_store"));
-// const savedState = null;
-
-// const composerDefaultState = savedState ? savedState["composer"] : defaultState;
-
-const composerDefaultState = {
-    ...defaultState,
-    allNodes: {
-        ...document.editorData.nodes
-    },
-    allConnections: [
-        ...document.editorData.connectors
-    ]
-}
-
-export default function reducer (state = composerDefaultState, action) {
+export default function reducer (state = defaultState, action) {
     switch(action.type) {
         case "COMPOSER_ADD_NODE": {
             const originalId = action.payload.nodeId;

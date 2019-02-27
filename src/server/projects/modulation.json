@@ -1,24 +1,6 @@
 {
-    "connectors": [
+    "allConnections": [
         {
-            "connectorStart": {
-                "nodeId": "signalGenerator",
-                "settingId": "sine"
-            },
-            "connectorEnd": {
-                "nodeId": "scope",
-                "settingId": "signal"
-            }
-        }, {
-            "connectorStart": {
-                "nodeId": "signalGenerator2",
-                "settingId": "signal"
-            },
-            "connectorEnd": {
-                "nodeId": "scope2",
-                "settingId": "signal"
-            }
-        }, {
             "connectorStart": {
                 "nodeId": "touchInput",
                 "settingId": "OffsetX"
@@ -38,26 +20,35 @@
             }
         }, {
             "connectorStart": {
-                "nodeId": "signalGenerator",
-                "settingId": "sine"
+                "nodeId": "multiply",
+                "settingId": "signal"
             },
             "connectorEnd": {
-                "nodeId": "am",
-                "settingId": "signal1"
+                "nodeId": "scope2",
+                "settingId": "signal"
+            }
+        }, {
+            "connectorStart": {
+                "nodeId": "scalar2",
+                "settingId": "number"
+            },
+            "connectorEnd": {
+                "nodeId": "signalGenerator",
+                "settingId": "frequency"
             }
         }, {
             "connectorStart": {
                 "nodeId": "signalGenerator2",
-                "settingId": "signal"
+                "settingId": "sine"
             },
             "connectorEnd": {
-                "nodeId": "am",
+                "nodeId": "add",
                 "settingId": "signal2"
             }
         }, {
             "connectorStart": {
-                "nodeId": "am",
-                "settingId": "signal"
+                "nodeId": "signalGenerator3",
+                "settingId": "sine"
             },
             "connectorEnd": {
                 "nodeId": "scope3",
@@ -65,22 +56,80 @@
             }
         }, {
             "connectorStart": {
+                "nodeId": "add2",
+                "settingId": "signal"
+            },
+            "connectorEnd": {
+                "nodeId": "signalGenerator3",
+                "settingId": "frequency"
+            }
+        }, {
+            "connectorStart": {
                 "nodeId": "scalar",
                 "settingId": "number"
             },
             "connectorEnd": {
+                "nodeId": "add",
+                "settingId": "signal1"
+            }
+        }, {
+            "connectorStart": {
+                "nodeId": "signalGenerator",
+                "settingId": "sine"
+            },
+            "connectorEnd": {
+                "nodeId": "multiply",
+                "settingId": "signal2"
+            }
+        }, {
+            "connectorStart": {
+                "nodeId": "add",
+                "settingId": "signal"
+            },
+            "connectorEnd": {
+                "nodeId": "multiply",
+                "settingId": "signal1"
+            }
+        }, {
+            "connectorStart": {
+                "nodeId": "add",
+                "settingId": "signal"
+            },
+            "connectorEnd": {
+                "nodeId": "scope",
+                "settingId": "signal"
+            }
+        }, {
+            "connectorStart": {
                 "nodeId": "signalGenerator2",
-                "settingId": "offset"
+                "settingId": "sine"
+            },
+            "connectorEnd": {
+                "nodeId": "add2",
+                "settingId": "signal1"
+            }
+        }, {
+            "connectorStart": {
+                "nodeId": "scalar2",
+                "settingId": "number"
+            },
+            "connectorEnd": {
+                "nodeId": "add2",
+                "settingId": "signal2"
             }
         }
     ],
-    "nodes": {
+    "allNodes": {
         "signalGenerator": {
             "title": "Signal Generator",
-            "x": "380",
-            "y": "250",
+            "x": "502",
+            "y": "679",
             "width": "150",
-            "inputs": [],
+            "inputs": [{
+                "title": "frequency",
+                "type": "number",
+                "default": "1"
+            }],
             "outputs": [
                 {
                     "title": "sine",
@@ -123,8 +172,8 @@
             ]
         }, "signalGenerator2": {
             "title": "Signal Generator",
-            "x": "420",
-            "y": "550",
+            "x": "288",
+            "y": "609",
             "width": "150",
             "inputs": [{
                 "title": "frequency",
@@ -137,17 +186,67 @@
             }, {
                 "title": "offset",
                 "type": "number",
-                "default": "1"
+                "default": "0"
             }],
             "outputs": [
                 {
-                    "title": "signal",
+                    "title": "sine",
                     "type": "signal"
                 }
             ],
             "generators": [
                 {
-                    "title":"signal",
+                    "title":"sine",
+                    "value": "[amplitude]*sin(2*[PI]*[frequency]*[time]+[phase])+[offset]",
+                    "type": "signal"
+                }
+            ],
+            "settings": [
+                {
+                    "title": "frequency",
+                    "value": "5",
+                    "type": "number",
+                    "input": false,
+                    "output": false
+                }, {
+                    "title": "amplitude",
+                    "value": "1",
+                    "type": "number",
+                    "input": false,
+                    "output": false
+                }, {
+                    "title": "phase",
+                    "value": "0",
+                    "type": "number",
+                    "input": false,
+                    "output": false
+                }, {
+                    "title": "offset",
+                    "value": "0",
+                    "type": "number",
+                    "input": false,
+                    "output": false
+                }
+            ]
+        }, "signalGenerator3": {
+            "title": "Signal Generator",
+            "x": "731",
+            "y": "820",
+            "width": "150",
+            "inputs": [{
+                "title": "frequency",
+                "type": "number",
+                "default": "1"
+            }],
+            "outputs": [
+                {
+                    "title": "sine",
+                    "type": "signal"
+                }
+            ],
+            "generators": [
+                {
+                    "title":"sine",
                     "value": "[amplitude]*sin(2*[PI]*[frequency]*[time]+[phase])+[offset]",
                     "type": "signal"
                 }
@@ -181,8 +280,8 @@
             ]
         }, "scope": {
             "title": "Scope",
-            "x": "700",
-            "y": "200",
+            "x": "757",
+            "y": "509",
             "width": "150",
             "inputs": [
                 {
@@ -201,13 +300,13 @@
                 "type": "color"
             }, {
                 "title": "Title",
-                "value": "Carrier Signal",
+                "value": "Data Signal",
                 "type": "text"
             }]
         }, "scope2": {
             "title": "Scope",
-            "x": "700",
-            "y": "600",
+            "x": "966",
+            "y": "562",
             "width": "150",
             "inputs": [
                 {
@@ -219,7 +318,7 @@
             "outputs": [],
             "settings": [{
                 "title": "AutoScale",
-                "value": "false",
+                "value": "true",
                 "type": "boolean"
             }, {
                 "title": "Color",
@@ -227,13 +326,13 @@
                 "type": "color"
             }, {
                 "title": "Title",
-                "value": "Data Signal",
+                "value": "AM Modulated Signal",
                 "type": "text"
             }]
         }, "scope3": {
             "title": "Scope",
-            "x": "800",
-            "y": "400",
+            "x": "967",
+            "y": "755",
             "width": "150",
             "inputs": [
                 {
@@ -253,13 +352,13 @@
                 "type": "color"
             }, {
                 "title": "Title",
-                "value": "AM Modulated Signal",
+                "value": "FM Modulated Signal",
                 "type": "text"
             }]
         }, "touchInput": {
             "title": "Touch Input",
-            "x": "200",
-            "y": "400",
+            "x": "86",
+            "y": "535",
             "width": "150",
             "height": "100",
             "inputs": [],
@@ -280,7 +379,7 @@
                     "type": "number"
                 }, {
                     "title": "Attached Scope",
-                    "value": "scope2",
+                    "value": "scope",
                     "type": "scopeReference"
                 }, {
                     "title": "Offset X",
@@ -292,10 +391,10 @@
                     "type": "boolean"
                 }
             ]
-        }, "am": {
-            "title": "AM",
-            "x": "600",
-            "y": "400",
+        }, "multiply": {
+            "title": "Multiply",
+            "x": "744",
+            "y": "641",
             "width": "150",
             "height": "100",
             "inputs": [
@@ -321,10 +420,68 @@
                 }
             ],
             "settings": []
+        }, "add": {
+            "title": "Add",
+            "x": "500",
+            "y": "556",
+            "width": "150",
+            "height": "100",
+            "inputs": [
+                {
+                    "title": "signal1",
+                    "type": "signal"
+                }, {
+                    "title": "signal2",
+                    "type": "signal"
+                }
+            ],
+            "outputs": [
+                {
+                    "title": "signal",
+                    "type": "signal"
+                }
+            ],
+            "generators": [
+                {
+                    "title": "signal",
+                    "value": "[signal1]+[signal2]",
+                    "type": "signal"
+                }
+            ],
+            "settings": []
+        }, "add2": {
+            "title": "Add",
+            "x": "500",
+            "y": "856",
+            "width": "150",
+            "height": "100",
+            "inputs": [
+                {
+                    "title": "signal1",
+                    "type": "signal"
+                }, {
+                    "title": "signal2",
+                    "type": "signal"
+                }
+            ],
+            "outputs": [
+                {
+                    "title": "signal",
+                    "type": "signal"
+                }
+            ],
+            "generators": [
+                {
+                    "title": "signal",
+                    "value": "(5*[signal1])+[signal2]",
+                    "type": "signal"
+                }
+            ],
+            "settings": []
         }, "scalar": {
             "title": "Scalar",
-            "x": "150",
-            "y": "600",
+            "x": "285",
+            "y": "524",
             "width": "150",
             "height": "100",
             "inputs": [],
@@ -338,6 +495,33 @@
                 "value": "1",
                 "type": "number"
             }]
+        }, "scalar2": {
+            "title": "Scalar",
+            "x": "142",
+            "y": "742",
+            "width": "150",
+            "height": "100",
+            "inputs": [],
+            "outputs": [{
+                "title": "number",
+                "type": "number"
+            }], 
+            "generators": [],
+            "settings": [{
+                "title": "number",
+                "value": "20",
+                "type": "number"
+            }]
         }
-    }
+    },
+    "composerCoordinates": {
+        "focused": true,
+        "gridSize": 50,
+        "height": 1,
+        "width": 1,
+        "x": 13,
+        "y": -330,
+        "zoomLevel": 1
+    },
+    "isCreatingConnection": false
 }
