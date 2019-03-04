@@ -13,14 +13,17 @@ function renderHtml (requestJson) {
     const jsxString = renderToStaticMarkup(jsx);
 
     // Generate Scripts
-    console.time("Script Parser");
+    // console.time("Script Parser");
+
     const scriptArray = scriptGenerator(allNodes, allConnections);
     let composedScriptString = "";
     for(let s in scriptArray) {
         if(s == 0) continue;
         composedScriptString += scriptArray[s];
     }
-    console.timeEnd("Script Parser");
+    
+    // console.timeEnd("Script Parser");
+
     let scripts = `<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>\n`;
     scripts += `<script>${scriptArray[0]}</script>`;
     scripts += `<script>${composedScriptString}</script>`;

@@ -2,7 +2,8 @@ const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
-const editorConfig = require('./webpack.config.frontend.js');
+const editorConfig = require('./webpack.config.frontend.react.js');
+const projectsConfig = require('./webpack.config.frontend.preact.js');
 
 module.exports = [
     {
@@ -56,5 +57,6 @@ module.exports = [
             new CleanWebpackPlugin("build")
         ]
     },
-    editorConfig
+    editorConfig,
+    projectsConfig
 ]

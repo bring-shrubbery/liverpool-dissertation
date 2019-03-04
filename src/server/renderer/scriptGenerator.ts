@@ -11,8 +11,6 @@ import {
     getOtherSideOfConnector
 } from './scriptGeneratorFunctions';
 
-import { tokenizeGenerator } from './generatorTokenizer';
-
 export function scriptGenerator(allNodes: NodeCollection, allConnections: Connector[]) {
     // Executable to store generated javascript code. Any initialisation code should be here.
     let exeArray: string[] = [];
@@ -20,9 +18,6 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
 
     // Setup time
     executable += initTime(-2, 2, 0.001);
-
-
-
 
     // Calculated nodes have following shape: "nodeId:outputId"
     let calculatedNodes: string[] = [];
@@ -35,7 +30,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
     };
 
     // Separates uncalculated nodes and scopes at the start.
-    let {uncalculatedNodes, allScopes} = getUncalculatedNodes(allNodes);
+    let { uncalculatedNodes, allScopes } = getUncalculatedNodes(allNodes);
 
     // Separate touch nodes form regular nodes
     let touchNodesSeparated = getTouchInputs(uncalculatedNodes);
@@ -46,9 +41,9 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
     let touchNodes = touchNodesSeparated.touchNodes;
 
     executable += generateTouchControllers(touchNodes);
-    
-    for(let t in touchNodes) {
-        for(let o in touchNodes[t].outputs) {
+
+    for (let t in touchNodes) {
+        for (let o in touchNodes[t].outputs) {
             calculatedNodes.push(`${t}:${touchNodes[t].outputs[o].title}`)
         }
     }
@@ -57,14 +52,12 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
     // both contain nodeId and settingId as strings separated by a colon.
     let connectionDictionary = generateConnectionDictionary(allConnections);
 
-
-
     // General rules for algorithm writing:
     // * use as many functions as possible (in performance bounds)
     // * 
 
     // 0. Loop through uncalculated nodes and find scopes. Scopes do not have outputs, so no need to find inputs.
-        // 0.0 Do it in a function?
+    // 0.0 Do it in a function?
 
     // 1. Loop until all nodes are calculated
     // |   1. Check if node was calculated before, if yes go to next node. (function)
@@ -92,29 +85,29 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
 
 
     // 1. Loop until all nodes are calculated and count number of iterations for statistics
-    for(statistics.loopCounter = 0; objectSize(uncalculatedNodes) > 0; statistics.loopCounter++) {
+    for (statistics.loopCounter = 0; objectSize(uncalculatedNodes) > 0; statistics.loopCounter++) {
         // 1.0 Loop through all uncalculated nodes
-        for(let nodeKey in uncalculatedNodes) {
+        for (let nodeKey in uncalculatedNodes) {
             // Save current node into a constant
             const currentNode = uncalculatedNodes[nodeKey];
 
             // Go to next node if not all connected inputs were calculated already
-            if(!allInputsCalculated(nodeKey, currentNode.inputs, allConnections, calculatedNodes)) continue;
+            if (!allInputsCalculated(nodeKey, currentNode.inputs, allConnections, calculatedNodes)) continue;
 
             let currentNodeCalculatedOutputs: string[] = [];
 
             // Loop through every output of the node to calculate them
-            for(let o = 0; o < currentNode.outputs.length; o++) {
+            for (let o = 0; o < currentNode.outputs.length; o++) {
                 const outputKey = currentNode.outputs[o].title;
                 // If current output was calculated already, skip to next one
-                if(wasCalculated(calculatedNodes, nodeKey, outputKey)) {
+                if (wasCalculated(calculatedNodes, nodeKey, outputKey)) {
                     currentNodeCalculatedOutputs.push(`${nodeKey}:${outputKey}`);
                     continue;
                 }
 
                 // If not, calculate it and append to the executable text.
                 let { exe, wasSuccessful } = calculateOutput(nodeKey, outputKey, currentNode, allConnections);
-                if(wasSuccessful) {
+                if (wasSuccessful) {
                     executable += exe;
 
                     calculatedNodes.push(`${nodeKey}:${outputKey}`);
@@ -123,7 +116,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
                 }
             }
 
-            if(currentNodeCalculatedOutputs.length === currentNode.outputs.length) {
+            if (currentNodeCalculatedOutputs.length === currentNode.outputs.length) {
                 delete uncalculatedNodes[nodeKey];
             }
         }
@@ -136,14 +129,14 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
 
     executable += "function update() {\n";
 
-    for(let s in allScopes) {
+    for (let s in allScopes) {
         const currentScope = allScopes[s];
 
         // const outputGenerator = currentScope.generators[0];
 
         // const outputTokens = tokenizeGenerator(outputGenerator.value, s);
 
-        const { otherNodeId, otherSettingId } = getOtherSideOfConnector(allConnections, null, {nodeId: s, settingId: "signal"});
+        const { otherNodeId, otherSettingId } = getOtherSideOfConnector(allConnections, null, { nodeId: s, settingId: "signal" });
 
         executable += `
             if(graphs.${s}) {
@@ -238,7 +231,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
 
 
 function scopeColor(color: string): string {
-    switch(color) {
+    switch (color) {
         case "red": return 'rgb(255, 120, 132)';
         case "blue": return 'rgb(132, 120, 255)';
         case "green": return 'rgb(50, 210, 60)';
@@ -247,7 +240,7 @@ function scopeColor(color: string): string {
 }
 
 function generateTitle(setting: NodeSettingsShape): string {
-    switch(setting.title) {
+    switch (setting.title) {
         case "": return "";
         default: {
             return (`, title: {

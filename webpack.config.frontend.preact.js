@@ -3,11 +3,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const CleanWebpackPlugin = require('clean-webpack-plugin');
 // const WebpackShellPlugin = require('webpack-shell-plugin');
 
-const editorConfig = {
+const projectsConfig = {
     mode: 'development',
     target: 'web',
     entry: {
-        editor: './src/editor/index.js',
         projects: './src/projectManager/index.js'
     },
     output: {
@@ -36,17 +35,18 @@ const editorConfig = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: "./src/editor/index.html",
-            filename: "editor.html",
-            chunks: ["editor"],
-            inject: false // injecting happens on the server
-        }), new HtmlWebpackPlugin({
             template: "./src/projectManager/index.html",
             filename: "projects.html",
             chunks: ["projects"],
             inject: false // injecting happens on the server
         })
-    ]
+    ],
+    resolve: {
+        alias: {
+            "react": "preact-compat",
+            "react-dom": "preact-compat"
+        }
+    }
 }
 
-module.exports = editorConfig
+module.exports = projectsConfig;

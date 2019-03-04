@@ -197,6 +197,10 @@ export default class Node extends Component {
         }
     }
 
+    componentDidMount() {
+        window.onmousemove = null;
+    }
+
     render() {
         let ci = [];
         let co = [];
@@ -294,9 +298,9 @@ export default class Node extends Component {
                         }
 
                         this.props.dispatch(startNewConnector(
-                            this.props.functionId, 
+                            this.props.functionId,
                             label.title,
-                            e.clientX - canvasPosition.x - 5, 
+                            e.clientX - canvasPosition.x - 5,
                             e.clientY - canvasPosition.y + 50
                         ));
 
@@ -317,8 +321,9 @@ export default class Node extends Component {
                             ));
                         };
 
-                        window.onmouseup = e => {
-                            e.stopPropagation();
+                        window.onmouseup = ev => {
+                            ev.stopPropagation();
+                            // this.props.dispatch(cancelNewConnector(this.props.functionId, label.title));
 
                             window.onmousemove = null;
                             window.onmouseup = null;
@@ -368,6 +373,8 @@ export default class Node extends Component {
 
                         window.ontouchend = e => {
                             e.stopPropagation();
+
+                            // this.props.dispatch(cancelNewConnector(this.props.functionId, label.title));
 
                             window.ontouchmove = null;
                             window.ontouchend = null;

@@ -52,12 +52,21 @@ export default class ComposerView extends Component {
         const dropPositionX = e.pageX - composerOriginX - this.props.composerCoordinates.x;
         const dropPositionY = e.pageY - composerOriginY - this.props.composerCoordinates.y;
 
+        let allLibraryNodes = {};
+
+        for(let c in document.libraryNodes) {
+            const nodesInCategory = document.libraryNodes[c];
+            for(let n in nodesInCategory) {
+                allLibraryNodes[n] = nodesInCategory[n];
+            }
+        }
+
         this.props.dispatch(
             composerAddNode({
                 nodeId: functionId, 
                 dropPositionX: dropPositionX, 
                 dropPositionY: dropPositionY,
-                completeNodes: this.props.allNodes
+                completeNodes: allLibraryNodes
             })
         );
     }
@@ -87,7 +96,9 @@ export default class ComposerView extends Component {
     }
 
     handleKeyPress (ev) {
+        ev.preventDefault();
         console.log(ev.keyCode);
+        console.log("Registered Key: "+ev.keyCode);
 
         switch(ev.keyCode) {
             case 8: { // backspace
@@ -100,6 +111,8 @@ export default class ComposerView extends Component {
                 break;
             }
         }
+
+        this.forceUpdate();
     }
 
     handleBackgroundClick(e) {
@@ -174,13 +187,19 @@ export default class ComposerView extends Component {
         return (
             <div id={'composer-view'} 
                 ref={this.bgRef}
-                onKeyUp={this.handleKeyPress}>
+                tabIndex="0"
+                // contentEditable={true}
+                onKeyUp={this.handleKeyPress}
+                style={{
+                    outline: 'none'
+                }}>
                 <div id={'composer-canvas'}
                     onDrop={this.addNode}
                     onDragOver={e => {
                         e.preventDefault();
                         e.stopPropagation();
-                    }}>
+                    }}
+                    contentEditable={false}>
                     <Canvas width={this.props.composerCoordinates.width}
                             height={this.props.composerCoordinates.height}
                             connectorPositions={this.getConnectorPositions}

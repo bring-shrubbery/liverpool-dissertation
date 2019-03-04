@@ -9,27 +9,41 @@ export default class ProjectManagerView extends Component {
 
         this.state = {
             existingProjects: [],
-            userData: {}
+            userData: {},
+            didJustLoad: false
         }
 
         this.renderProjects = this.renderProjects.bind(this);
         this.fetchProjectsInfo = this.fetchProjectsInfo.bind(this);
+        this.reload = this.reload.bind(this);
+    }
+
+    reload() {
+        this.setState({
+            didJustLoad: false
+        });
+
+        console.log("Reset: didLoad = false;");
     }
 
     renderProjects() {
         if(this.state.existingProjects.length > 0) {
-            return this.state.existingProjects.map(project => {
+            let projectsDivs = this.state.existingProjects.map(project => {
                 return (<div key={project.projectId} className={'project-info'}>
-                    <ul key={'a'}>
-                        <li id={'title'}>{project.title}</li>
-                        <li id={'description'}>{project.description}</li>
-                        <li id={'links'}>
+                    <div id={'data-container'}>
+                        <div id={'title'}>{project.title}</div>
+                        <div id={'description'}>{project.description}</div>
+                        <div id={'links'}>
                             <a href={`/editor/${project.owner}/${project.projectId}`}>edit</a>
                             <a href={`/render/${project.owner}/${project.projectId}`}>render</a>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 </div>);
-            })
+            });
+
+            projectsDivs.push(<NewProject key={'new-project'} reload={this.reload}/>);
+
+            return projectsDivs;
         } else {
             return null;
         }
@@ -37,6 +51,7 @@ export default class ProjectManagerView extends Component {
 
     fetchProjectsInfo() {
         let th = this;
+
         fetch('/projects/info/admin')
         .then(function (res) {
             if(res.status >= 400) {
@@ -47,16 +62,16 @@ export default class ProjectManagerView extends Component {
             return res.json();
         }).then(function(res) {
             th.setState({
-                existingProjects: res
-            })
+                existingProjects: res,
+                didJustLoad: true
+            });
         })
     }
 
-    componentWillMount() {
-        this.fetchProjectsInfo();
-    }
-
     render() {
+        if(!this.state.didJustLoad) this.fetchProjectsInfo();
+        console.log("Rendered!");
+
         return (
             <div id={'project-manager'}>
                 <div className={'project-list'}>
@@ -65,4 +80,114 @@ export default class ProjectManagerView extends Component {
             </div>
         )
     }
+}
+
+
+class NewProject extends Component {
+    constructor (props) {
+        super(props);
+
+        this.state = {
+            isFilling: false,
+            isSubmitting: false,
+            isFailed: false,
+            title: "",
+            description: ""
+
+        }
+
+        this.submitNewProject = this.submitNewProject.bind(this);
+        this.moveToFilling = this.moveToFilling.bind(this);
+        this.cancelFill = this.cancelFill.bind(this);
+    }
+
+    submitNewProject (e) {
+        e.preventDefault();
+
+        let that = this;
+
+        this.setState({
+            isFilling: false,
+            isSubmitting: true
+        })
+
+        fetch(`/createProject/admin/${this.state.title}/${this.state.description}`)
+        .then((res) => {
+            this.cancelFill();
+
+            let getText = res.text();
+
+            getText.then(t => {
+                window.location.assign(t);
+            });
+        })
+        .catch((err) => {
+            that.setState({
+                isFilling: false,
+                isSubmitting: false,
+                isFailed: true
+            })
+        })
+    }
+
+    moveToFilling (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        this.setState({
+            isFilling: true,
+            isSubmitting: false
+        })
+    }
+
+    cancelFill() {
+        this.setState({
+            isFilling: false,
+            isSubmitting: false,
+            isFailed: false,
+            title: "New Project",
+            description: "Please enter description..."
+        });
+
+        this.props.reload();
+    }
+
+    render () {
+
+        return (
+            <div key={'new-project'} className={'project-new'}>
+                <NewProjectDiv  isHidden={this.state.isFilling || this.state.isSubmitting || this.state.isFailed} 
+                                onClick={this.moveToFilling}/>
+                <NewProjectForm onSubmit={this.submitNewProject} 
+                                onCancel={this.cancelFill} 
+                                title={this.state.title} 
+                                description={this.state.description}
+                                isHidden={this.state.isSubmitting || !this.state.isFilling || this.state.isFailed}
+                                onTitleUpdate={e => this.setState({title: e.target.value})}
+                                onDescriptionUpdate={e => this.setState({description: e.target.value})}/>
+            </div>
+        )
+    }
+}
+
+function NewProjectDiv(props) {
+    return (
+        <div id={'new-project-new-button'} className={props.isHidden ? 'hidden' : ''} onClick={props.onClick}>
+            <div></div>
+            <div></div>
+        </div>
+    )
+}
+
+function NewProjectForm(props) {
+    return (
+        <form id={'new-project-details'} onSubmit={props.onSubmit} className={props.isHidden ? 'hidden': ''}>
+            <label id={'new-project-title'}>Project Title</label>
+            <input id={'new-project-title-input'} type={'text'} value={props.title} onChange={props.onTitleUpdate} placeholder={'title...'}/>
+            <label id={'new-project-description'}>Description</label>
+            <textarea id={'new-project-description-input'} onChange={props.onDescriptionUpdate} value={props.description} placeholder={'description...'}/>
+            <input type={'button'} onClick={props.onCancel} value={'Cancel'}/>
+            <input type={'submit'} value={'Create'}/>
+        </form>
+    )
 }

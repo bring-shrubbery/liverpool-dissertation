@@ -18,7 +18,7 @@
                 }
             ], 
             "generators": [], 
-            "settings": [
+            "default_settings": [
                 {
                     "title": "Sensitivity",
                     "value": "0.01",
@@ -50,7 +50,7 @@
                 "type": "number"
             }], 
             "generators": [],
-            "settings": [{
+            "default_settings": [{
                 "title": "number",
                 "value": "1",
                 "type": "number"
@@ -75,7 +75,7 @@
                     "type": "signal"
                 }
             ],
-            "settings": [
+            "default_settings": [
                 {
                     "title": "frequency",
                     "value": "20",
@@ -133,7 +133,7 @@
                     "type": "signal"
                 }
             ],
-            "settings": []
+            "default_settings": []
         }
     }, "output": {
         "scope": {
@@ -149,7 +149,7 @@
                 }
             ],
             "outputs": [],
-            "settings": [{
+            "default_settings": [{
                 "title": "AutoScale",
                 "value": "true",
                 "type": "boolean"
