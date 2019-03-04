@@ -52,7 +52,7 @@ export default class Toolbar extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(this.props.projectData)
-        }).then(function (response) {
+        }).then((response) => {
             if (response.status != 200) {
                 alert(response.status + '->' + response.statusText + '->' + response.url);
             }
