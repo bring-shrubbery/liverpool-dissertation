@@ -57,7 +57,7 @@ export default class Toolbar extends Component {
                 alert(response.status + '->' + response.statusText + '->' + response.url);
             }
 
-            window.location.assign(`/render/${owner}/${projectid}`);
+            window.location.assign(`/render/${owner}/${projectId}`);
         }).catch(function(err) {
             alert("Couldn't save project: " + err.message);
         });
