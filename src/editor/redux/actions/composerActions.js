@@ -29,20 +29,6 @@ export function deselectAll () {
     }
 }
 
-export function nodeSettingsReduceArray(nodeId, settingId) {
-    return {
-        type: "SETTINGS_REDUCE_ARRAY",
-        payload: {nodeId: nodeId, settingId: settingId}
-    }
-}
-
-export function nodeSettingsExpandArray(nodeId, settingId) {
-    return {
-        type: "SETTINGS_EXPAND_ARRAY",
-        payload: {nodeId: nodeId, settingId: settingId}
-    }
-}
-
 export function nodeClickDown(id) {
     return {
         type: "COMPOSER_NODE_CLICK_DOWN",

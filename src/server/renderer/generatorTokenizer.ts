@@ -89,12 +89,12 @@ export function tokenizeGenerator (gen: string, nodeId: string): GeneratorSegmen
         }
         
         // --------------- MATH FUNCTION ----------------
-        if(g[i] === "s") {
+        if(g[i] === "s" || g[i] === "c" || g[i] === "t") {
             // Mathematical formulas are coded in three letters
             let nextThree = String(g[i] + g[i+1] + g[i+2]);
             
             // Check if next three chars are one of 
-            if(nextThree === "sin") {
+            if(nextThree === "sin" || nextThree === "cos" || nextThree === "tan") {
                 // Adjust index to next character
                 i += 3;
 

@@ -1,5 +1,5 @@
 const defaultState = {
-    libraryNodes: document.libraryNodes,
+    libraryNodes: {...document.libraryNodes},
     currentLibraryNodes : {},
     librarySearchTerm: "",
     librarySelectedCategory: "input"

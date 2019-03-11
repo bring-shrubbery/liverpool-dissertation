@@ -42,6 +42,16 @@ function calculateCode(json) {
                 executableString += "Math.sin(";
                 executableString += calculateCode(token.code);
                 executableString += ")";
+            } else if(value === "cos") {
+                // If one of the supported functions, recursevly generate string from the code parameter
+                executableString += "Math.cos(";
+                executableString += calculateCode(token.code);
+                executableString += ")";
+            } else if(value === "tan") {
+                // If one of the supported functions, recursevly generate string from the code parameter
+                executableString += "Math.tan(";
+                executableString += calculateCode(token.code);
+                executableString += ")";
             } else {
                 // If not supported function, throw error to the console
                 console.error("Unsupported math function !!!");

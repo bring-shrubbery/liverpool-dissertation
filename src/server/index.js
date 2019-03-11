@@ -18,20 +18,28 @@ import {
 // Pre-made projects and library nodes
 import libraryNodes from './libraryNodes.json'
 import modulation from './projects/modulation.json'
+import fourierSeries from './projects/fourierSeries.json'
 
 const dateNow = () => String(Date().toString()).substr(0, 24) + " | ";
 
 let database = {
-    projectsInfo: [
+    projectsInfo: [{
+        projectId: "1",
+        title: "AM/FM Modulation",
+        description: "Shows one signal modulated over other (carrier) signal using AM and FM modulation.",
+        owner: "admin"
+    }, {
+        projectId: "2",
+        title: "Fourier Series",
+        description: "Attempt at creating fourier series using this tool.",
+        owner: "admin"
+    }],
+    projectModels: [{
+            ...modulation
+        },
         {
-            projectId: "1",
-            title: "AM/FM Modulation",
-            description: "Shows one signal modulated over other (carrier) signal using AM and FM modulation.",
-            owner: "admin"
+            ...fourierSeries
         }
-    ],
-    projectModels: [
-        {...modulation}
     ],
     users: {
         admin: {
@@ -39,12 +47,12 @@ let database = {
             password: "admin"
         }
     },
-    newProject: function(username, title, description) {
+    newProject: function (username, title, description) {
         // Find new id
         let newId = 0;
 
-        for(let i in this.projectsInfo) {
-            if(parseInt(this.projectsInfo[i].projectId) > newId) newId = this.projectsInfo[i].projectId;
+        for (let i in this.projectsInfo) {
+            if (parseInt(this.projectsInfo[i].projectId) > newId) newId = this.projectsInfo[i].projectId;
         }
 
         newId++;
@@ -63,7 +71,7 @@ let database = {
 
         return newId;
     },
-    saveProject: function(projectId, json) {
+    saveProject: function (projectId, json) {
         const newProjectVersion = {
             allConnections: json.allConnections,
             allNodes: json.allNodes,
@@ -71,7 +79,7 @@ let database = {
             isCreatingConnection: json.composerCoordinates
         }
 
-        this.projectModels[projectId-1] = newProjectVersion;
+        this.projectModels[projectId - 1] = newProjectVersion;
     }
 }
 
@@ -100,8 +108,8 @@ app.get('/editor/:username/:id', (req, res) => {
 
     console.log(`${dateNow()}GET /editor/${username}/${projectId}`);
 
-    if(!database.users[username]) res.status(420).send("User with username "+username+" doesn't exist");
-    
+    if (!database.users[username]) res.status(420).send("User with username " + username + " doesn't exist");
+
     fs.readFile(path.resolve(__dirname, './public/editor.html'), 'utf8', (err, data) => {
         if (err) {
             console.error(err)
@@ -116,10 +124,10 @@ app.get('/editor/:username/:id', (req, res) => {
 
         let projectData;
 
-        for(let i = 0; i < database.projectsInfo.length; i++) {
+        for (let i = 0; i < database.projectsInfo.length; i++) {
             const project = database.projectsInfo[i];
-            
-            if(project.owner == username && project.projectId == projectId) {
+
+            if (project.owner == username && project.projectId == projectId) {
                 let pid = parseInt(projectId) - 1;
                 projectData = {
                     ...database.projectModels[pid],
@@ -147,7 +155,7 @@ app.get('/render/:username/:id', (req, res) => {
     const username = req.params.username;
     console.log(`${dateNow()}GET /render/${username}/${projectId}`);
 
-    if(!database.users[username]) res.status(420).send("User with username "+username+" doesn't exist");
+    if (!database.users[username]) res.status(420).send("User with username " + username + " doesn't exist");
 
 
     const renderedString = renderSignals(database.projectModels[projectId - 1]);
@@ -178,10 +186,10 @@ app.get("/", (req, res) => {
 app.get("/projects/info/:username", (req, res) => {
     const username = req.params.username;
 
-    if(database.users[username]) {
+    if (database.users[username]) {
         let projectsArray = [];
-        for(let i = 0; i < database.projectsInfo.length; i++) {
-            if(database.projectsInfo[i].owner === username)
+        for (let i = 0; i < database.projectsInfo.length; i++) {
+            if (database.projectsInfo[i].owner === username)
                 projectsArray.push(database.projectsInfo[i]);
         }
 
@@ -190,7 +198,7 @@ app.get("/projects/info/:username", (req, res) => {
     } else {
         res.status(420).send(`No user with username "${username}" was found.`);
     }
-    
+
 })
 
 
@@ -204,9 +212,9 @@ app.post("/save/:username/:id", function (req, res) {
 
     const projectJson = req.body;
 
-    if(!database.users[username]) res.status(420).send(`User with username ${username} doesn't exist`);
+    if (!database.users[username]) res.status(420).send(`User with username ${username} doesn't exist`);
 
-    if(!database.projectModels[projectId - 1]) res.status(421).send(`Project with id ${projectId} doesn't exist`);
+    if (!database.projectModels[projectId - 1]) res.status(421).send(`Project with id ${projectId} doesn't exist`);
 
     database.saveProject(projectId, projectJson);
 
@@ -220,7 +228,7 @@ app.get("/createProject/:username/:title/:description", (req, res) => {
     const title = req.params.title;
     const description = req.params.description;
 
-    if(!database.users[username]) res.status(420).send(`User with username ${username} doesn't exist`);
+    if (!database.users[username]) res.status(420).send(`User with username ${username} doesn't exist`);
 
     let pid = database.newProject(username, title, description);
 
@@ -230,18 +238,5 @@ app.get("/createProject/:username/:title/:description", (req, res) => {
 // Run server
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
-    console.log("\nListening on: https://localhost:"+port+"\n");
+    console.log("\nListening on: https://localhost:" + port + "\n");
 });
-
-
-// var signalGenerator3sine = function(time) {
-//     return (signalGenerator3amplitude(time)
-//         * Math.sin(
-//             (
-//                 2 * Math.PI
-//                 * signalGenerator3frequency(time)
-//                 * time
-//             ) + signalGenerator3phase(time)
-//         )
-//     ) + signalGenerator3offset(time);
-// };

@@ -11,13 +11,15 @@ import {
     getOtherSideOfConnector
 } from './scriptGeneratorFunctions';
 
+const SAMPLE_RATE = 500; // Samples per second
+
 export function scriptGenerator(allNodes: NodeCollection, allConnections: Connector[]) {
     // Executable to store generated javascript code. Any initialisation code should be here.
     let exeArray: string[] = [];
     let executable = "var graphs = {};\n";
 
     // Setup time
-    executable += initTime(-2, 2, 0.001);
+    executable += initTime(-1, 1, 1/SAMPLE_RATE);
 
     // Calculated nodes have following shape: "nodeId:outputId"
     let calculatedNodes: string[] = [];
@@ -26,11 +28,13 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
     let statistics = {
         loopCounter: 0,
         initialTotalNodes: objectSize(allNodes),
-        initialTotalConnectors: allConnections.length
+        initialTotalConnectors: allConnections.length,
+        startTime: 0,
+        endTime: 0
     };
 
-    // Separates uncalculated nodes and scopes at the start.
-    let { uncalculatedNodes, allScopes } = getUncalculatedNodes(allNodes);
+    // Separates uncalculated nodes from scopes and UI at the start.
+    let { uncalculatedNodes, allScopes, uiNodes } = getUncalculatedNodes(allNodes);
 
     // Separate touch nodes form regular nodes
     let touchNodesSeparated = getTouchInputs(uncalculatedNodes);
@@ -84,9 +88,29 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
     // |   |   1. Loop through graph array and update graphs with new data.
 
 
+    // 0.0 Loop through all ui nodes and save their output variable names
+    for(let nodeKey in uiNodes) {
+        // Save current node into a constant
+        const currentNode = uiNodes[nodeKey];
+        const outputKey = currentNode.outputs[0].title;
+
+        executable += `document.getElementById("${nodeKey}Input").oninput = function (e) {
+            ${nodeKey}${outputKey} = function (t) {
+                return parseFloat(e.target.value)
+            };
+            document.getElementById("${nodeKey}Indicator").innerText = e.target.value;
+            update();
+        };\n`;
+        executable += `var ${nodeKey}${outputKey} = function (t) { return ${uiNodes[nodeKey].settings[3].value}};\n`;
+
+        calculatedNodes.push(`${nodeKey}:${outputKey}`);
+        
+        delete uncalculatedNodes[nodeKey];
+    }
     // 1. Loop until all nodes are calculated and count number of iterations for statistics
     for (statistics.loopCounter = 0; objectSize(uncalculatedNodes) > 0; statistics.loopCounter++) {
-        // 1.0 Loop through all uncalculated nodes
+        
+        // Loop through all uncalculated nodes
         for (let nodeKey in uncalculatedNodes) {
             // Save current node into a constant
             const currentNode = uncalculatedNodes[nodeKey];
@@ -179,7 +203,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
                     }, options: {
                         elements: {
                             line: {
-                                tension: 0,
+                                tension: 0.4,
                                 stepped: false
                             }, point: {
                                 radius: 0,
@@ -231,6 +255,8 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
 
 
 function scopeColor(color: string): string {
+    return color;
+    
     switch (color) {
         case "red": return 'rgb(255, 120, 132)';
         case "blue": return 'rgb(132, 120, 255)';

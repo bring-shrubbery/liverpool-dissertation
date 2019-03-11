@@ -3,10 +3,6 @@
         "touchInput": {
             "title": "Touch Input",
             "description": "Gets touch input from the scope.",
-            "x": "200",
-            "y": "400",
-            "width": "150",
-            "height": "100",
             "inputs": [],
             "outputs": [
                 {
@@ -22,28 +18,16 @@
                 {
                     "title": "Sensitivity",
                     "value": "0.01",
-                    "type": "number"
+                    "type": "number_uncontrolled"
                 }, {
-                    "title": "Attached Scope",
-                    "value": "scope2",
+                    "title": "Scope",
+                    "value": "",
                     "type": "scopeReference"
-                }, {
-                    "title": "Offset X",
-                    "value": "true",
-                    "type": "boolean"
-                }, {
-                    "title": "Offset Y",
-                    "value": "true",
-                    "type": "boolean"
                 }
             ]
         }, "scalar": {
             "title": "Scalar",
             "description": "Single scalar output",
-            "x": "150",
-            "y": "600",
-            "width": "150",
-            "height": "100",
             "inputs": [],
             "outputs": [{
                 "title": "number",
@@ -53,14 +37,12 @@
             "default_settings": [{
                 "title": "number",
                 "value": "1",
-                "type": "number"
+                "type": "number",
+                "isInput": false
             }]
         }, "signalGenerator": {
             "title": "Signal Generator",
             "description": "Generates a basic signal",
-            "x": "380",
-            "y": "250",
-            "width": "150",
             "inputs": [],
             "outputs": [
                 {
@@ -80,56 +62,104 @@
                     "title": "frequency",
                     "value": "20",
                     "type": "number",
-                    "input": false,
-                    "output": false
+                    "isInput": false
                 }, {
                     "title": "amplitude",
                     "value": "1",
                     "type": "number",
-                    "input": false,
-                    "output": false
+                    "isInput": false
                 }, {
                     "title": "phase",
                     "value": "0",
                     "type": "number",
-                    "input": false,
-                    "output": false
+                    "isInput": false
                 }, {
                     "title": "offset",
                     "value": "0",
                     "type": "number",
-                    "input": false,
-                    "output": false
+                    "isInput": false
+                }, {
+                    "title": "Signal Type",
+                    "value": "sin",
+                    "type": "signal_type"
                 }
             ]
         }
     }, "processors": {
-        "am": {
-            "title": "AM Modulation",
+        "multiply": {
+            "title": "Multiply",
             "description": "Modulates two signals using AM modulation",
-            "x": "600",
-            "y": "400",
-            "width": "150",
-            "height": "100",
             "inputs": [
                 {
-                    "title": "signal1",
+                    "title": "input1",
                     "type": "signal"
                 }, {
-                    "title": "signal2",
+                    "title": "input2",
                     "type": "signal"
                 }
             ],
             "outputs": [
                 {
-                    "title": "signal",
+                    "title": "output",
                     "type": "signal"
                 }
             ],
             "generators": [
                 {
-                    "title": "signal",
-                    "value": "[signal1]*[signal2]",
+                    "title": "output",
+                    "value": "[input1]*[input2]",
+                    "type": "signal"
+                }
+            ],
+            "default_settings": []
+        }, "add": {
+            "title": "Add",
+            "description": "Modulates two signals using AM modulation",
+            "inputs": [
+                {
+                    "title": "input1",
+                    "type": "signal"
+                }, {
+                    "title": "input2",
+                    "type": "signal"
+                }
+            ],
+            "outputs": [
+                {
+                    "title": "output",
+                    "type": "signal"
+                }
+            ],
+            "generators": [
+                {
+                    "title": "output",
+                    "value": "[input1]+[input2]",
+                    "type": "signal"
+                }
+            ],
+            "default_settings": []
+        }, "subtract": {
+            "title": "Subtract",
+            "description": "Modulates two signals using AM modulation",
+            "inputs": [
+                {
+                    "title": "input1",
+                    "type": "signal"
+                }, {
+                    "title": "input2",
+                    "type": "signal"
+                }
+            ],
+            "outputs": [
+                {
+                    "title": "output",
+                    "type": "signal"
+                }
+            ],
+            "generators": [
+                {
+                    "title": "output",
+                    "value": "[input1]-[input2]",
                     "type": "signal"
                 }
             ],
@@ -139,9 +169,6 @@
         "scope": {
             "title": "Scope",
             "description": "Displays a scope with the provided input signal.",
-            "x": "700",
-            "y": "200",
-            "width": "150",
             "inputs": [
                 {
                     "title": "signal",
@@ -161,6 +188,86 @@
                 "title": "Title",
                 "value": "Carrier Signal",
                 "type": "text"
+            }]
+        }
+    }, "ui": {
+        "uiNumber": {
+            "title": "UI Number",
+            "description": "Controller that appears on the renderer which allows to enter a number.",
+            "inputs": [],
+            "outputs": [
+                {
+                    "title": "output",
+                    "type": "number"
+                }
+            ],
+            "default_settings": [{
+                "title": "Category",
+                "value": "",
+                "type": "text"
+            }, {
+                "title": "Label",
+                "value": "",
+                "type": "text"
+            }, {
+                "title": "Order",
+                "value": "0",
+                "type": "number_uncontrolled"
+            }, {
+                "title": "Default",
+                "value": "0",
+                "type": "number_uncontrolled"
+            }, {
+                "title": "Min",
+                "value": "0",
+                "type": "number_uncontrolled"
+            }, {
+                "title": "Max",
+                "value": "0",
+                "type": "number_uncontrolled"
+            }, {
+                "title": "Step",
+                "value": "1",
+                "type": "number_uncontrolled"
+            }]
+        }, "uiSlider": {
+            "title": "UI Slider",
+            "description": "Controller that appears on the renderer which grants control using slider.",
+            "inputs": [],
+            "outputs": [
+                {
+                    "title": "output",
+                    "type": "number"
+                }
+            ],
+            "default_settings": [{
+                "title": "Category",
+                "value": "",
+                "type": "text"
+            }, {
+                "title": "Label",
+                "value": "",
+                "type": "text"
+            }, {
+                "title": "Order",
+                "value": "0",
+                "type": "number_uncontrolled"
+            }, {
+                "title": "Default",
+                "value": "0",
+                "type": "number_uncontrolled"
+            }, {
+                "title": "Min",
+                "value": "0",
+                "type": "number_uncontrolled"
+            }, {
+                "title": "Max",
+                "value": "0",
+                "type": "number_uncontrolled"
+            }, {
+                "title": "Step",
+                "value": "1",
+                "type": "number_uncontrolled"
             }]
         }
     }

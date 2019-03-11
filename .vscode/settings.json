@@ -1,5 +1,10 @@
 {
     "eslint.enable": false,
     "files.autoSave": "onWindowChange",
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "editor.cursorStyle": "line",
+    "editor.fontSize": 11,
+    "editor.tokenColorCustomizations": {
+        "comments": "#666"
+    }
 }

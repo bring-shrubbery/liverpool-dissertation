@@ -16,6 +16,7 @@ export default class Toolbar extends Component {
 
         this.saveProject = this.saveProject.bind(this);
         this.renderProject = this.renderProject.bind(this);
+        this.exportJson = this.exportJson.bind(this);
     }
 
     saveProject () {
@@ -61,8 +62,13 @@ export default class Toolbar extends Component {
         }).catch(function(err) {
             alert("Couldn't save project: " + err.message);
         });
+    }
 
-        
+    exportJson() {
+        const json = JSON.stringify(this.props.projectData);
+        const blob = new Blob([json], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        window.location.assign(url);
     }
 
     render () {
@@ -71,6 +77,7 @@ export default class Toolbar extends Component {
                 <div className={'menu-button'}><a href={'/'}>home</a></div>
                 <div className={'menu-button'} onClick={this.saveProject}>save</div>
                 <div className={'menu-button'} onClick={this.renderProject}>render</div>
+                <div className={'menu-button'} onClick={this.exportJson}>json</div>                
             </div>
         )
     }

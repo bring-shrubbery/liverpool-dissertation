@@ -85,7 +85,7 @@
 
     #library-view-category-selector {
         display: grid;
-        grid-template-columns: auto auto auto;
+        grid-template-columns: auto auto auto auto;
         text-align: center;
         position: absolute;
         bottom: 0;
@@ -107,6 +107,7 @@
 
         div.selected {
             border-top: 2px solid #AAAAAA;
+            padding-top: 3px;
         }
     }
 }

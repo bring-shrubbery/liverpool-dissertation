@@ -2,21 +2,35 @@ import { tokenizeGenerator, GeneratorSegment } from './generatorTokenizer';
 import { tokenToJs } from './tokenToJs';
 
 // Get all nodes that are not scopes, and save scopes into their own collection
-export function getUncalculatedNodes (allNodes: NodeCollection) : {uncalculatedNodes: NodeCollection, allScopes: NodeCollection} {
+export function getUncalculatedNodes (allNodes: NodeCollection) : {uncalculatedNodes: NodeCollection, allScopes: NodeCollection, uiNodes: NodeCollection} {
     let uncalculated: NodeCollection = {};
     let scopes: NodeCollection = {};
+    let uiNodes: NodeCollection = {};
 
     for(let i in allNodes) {
-        if(String(i).substr(0, 5) === "scope") {
+        // Check if it is a UI node
+        const isThirdLetterUpperCase = String(i).substr(2, 1).toUpperCase() === String(i).substr(2, 1);
+        const isUI = String(i).substr(0, 2) === "ui";
+        const isActualUI = isUI && isThirdLetterUpperCase;
+
+        // Check if it is a scope
+        const isScope = String(i).substr(0, 5) === "scope";
+
+        // Do separation
+        if(isScope) {
             scopes[i] = allNodes[i];
+        } else if(isActualUI) {
+            uiNodes[i] = allNodes[i];
         } else {
             uncalculated[i] = allNodes[i];
         }
     }
 
+    // return results
     return {
         uncalculatedNodes: uncalculated,
-        allScopes: scopes
+        allScopes: scopes,
+        uiNodes: uiNodes
     };
 }
 
@@ -370,19 +384,13 @@ export function generateTouchControllers(nodes: NodeCollection): string {
 
         let sensitivity: NodeSettingsShape;
         let attachedScope: NodeSettingsShape;
-        let offsetX: NodeSettingsShape;
-        let offsetY: NodeSettingsShape;
 
         // Separate settings
         for(let s in node.settings) {
             if(node.settings[s].title === "Sensitivity") {
                 sensitivity = node.settings[s];
-            } else if(node.settings[s].title === "Attached Scope") {
+            } else if(node.settings[s].title === "Scope") {
                 attachedScope = node.settings[s];
-            } else if(node.settings[s].title === "Offset X") {
-                offsetX = node.settings[s];
-            } else if(node.settings[s].title === "Offset Y") {
-                offsetY = node.settings[s];
             } else {
                 console.error("Touch node is not correctly formatted.")
             }
@@ -396,13 +404,8 @@ export function generateTouchControllers(nodes: NodeCollection): string {
                 }
 
                 window.onmousemove = function (e) {
-                    if(${offsetX.value == "true"}) {
-                        ${i}OffsetXData += e.movementX*${parseFloat(sensitivity.value)};
-                    }
-
-                    if(${offsetY.value == "true"}) {
-                        ${i}OffsetYData += e.movementY*${parseFloat(sensitivity.value)};
-                    }
+                    ${i}OffsetXData += e.movementX*${parseFloat(sensitivity.value)};
+                    ${i}OffsetYData += e.movementY*${parseFloat(sensitivity.value)};
 
                     window.update();
                 }
@@ -420,14 +423,9 @@ export function generateTouchControllers(nodes: NodeCollection): string {
                 window.ontouchmove = function (e) {
                     let movementX = window.touchLastPositionX - e.changedTouches[0].pageX;
                     let movementY = window.touchLastPositionY - e.changedTouches[0].pageY;
-
-                    if(${offsetX.value == "true"}) {
-                        ${i}OffsetXData += movementX*${parseFloat(sensitivity.value)};
-                    }
-
-                    if(${offsetY.value == "true"}) {
-                        ${i}OffsetYData += movementY*${parseFloat(sensitivity.value)};
-                    }
+                    
+                    ${i}OffsetXData += movementX*${parseFloat(sensitivity.value)};
+                    ${i}OffsetYData += movementY*${parseFloat(sensitivity.value)};
 
                     window.update();
 

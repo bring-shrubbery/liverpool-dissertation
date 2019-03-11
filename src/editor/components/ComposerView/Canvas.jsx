@@ -95,9 +95,14 @@ export default class Canvas extends Component {
             const x2 = pos.endPosition.x * 2 - 134;
             const y2 = pos.endPosition.y * 2 - 93;
 
+            let bezierOffset = Math.abs(x1 - x2) / 1.2;
+
+            if(bezierOffset < 75) bezierOffset = 75;
+            if(bezierOffset > 150) bezierOffset = 150;
+
             ctx.beginPath();
             ctx.moveTo(x1, y1);
-            ctx.bezierCurveTo(x1 - 150, y1, x2 + 150, y2, x2, y2);
+            ctx.bezierCurveTo(x1 - bezierOffset, y1, x2 + bezierOffset, y2, x2, y2);
             ctx.lineWidth = 5;
             ctx.strokeStyle = "#222";
             ctx.stroke();

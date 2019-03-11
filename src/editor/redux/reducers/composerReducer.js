@@ -23,8 +23,10 @@ export default function reducer (state = defaultState, action) {
                     for(const second_pass_id in existingNodes) {
                         const oldId = second_pass_id.substr(originalId.length, second_pass_id.length);
                         const oldNumericId = parseInt(oldId, 10);
+                        
 
                         if(oldNumericId === id) id++;
+
                     }
 
                     newId = originalId + id;
@@ -32,9 +34,17 @@ export default function reducer (state = defaultState, action) {
                 }
             }
 
+            let newNode = {...action.payload.nodeData};
+            
             // Add new node
             existingNodes[newId] = {
-                ...action.payload.nodeData, 
+                title: newNode.title,
+                clickedDown: false,
+                selected: false,
+                settings: newNode.default_settings ? [...newNode.default_settings].map(obj => {return {...obj}}) : [],
+                generators: newNode.generators ? [...newNode.generators].map(obj => {return {...obj}}) : [],
+                inputs: newNode.inputs ? [...newNode.inputs].map(obj => {return {...obj}}) : [],
+                outputs: newNode.outputs ? [...newNode.outputs].map(obj => {return {...obj}}) : [],
                 x: action.payload.x, 
                 y: action.payload.y,
                 width: 150,
@@ -49,17 +59,49 @@ export default function reducer (state = defaultState, action) {
 
         case "COMPOSER_DELETE_SELECTED_NODES": {
             if(state.composerCoordinates.focused) {
+                // Get all existing nodes and connections
                 let existingNodes = {...state.allNodes};
+                let existingConnections = [...state.allConnections];
+
+                // Init removed nodes tracker
+                let removedNodes = [];
+
+                // Find and remove selected nodes
                 for(let node in existingNodes) {
                     const currentNode = existingNodes[node];
                     if(currentNode.selected) {
+                        removedNodes.push(node);
                         delete existingNodes[node];
+                    }
+                }
+
+                // Loop through removed nodes
+                for(let n in removedNodes) {
+                    console.log(removedNodes[n]);
+
+                    // Find and remove attached connections
+                    for(let c = 0; c < existingConnections.length; c++) {
+                        const currentConnection = existingConnections[c];
+                    
+                        // If connection start is connected to the node, remove the connection and continue to the next node.
+                        if(currentConnection.connectorStart.nodeId === removedNodes[n]) {
+                            existingConnections.splice(c, 1);
+                            c--;
+                            continue;
+                        }
+
+                        // If connection end is connected to the node, remove the connection.
+                        if(currentConnection.connectorEnd.nodeId === removedNodes[n]) {
+                            existingConnections.splice(c, 1);
+                            c--;
+                        }
                     }
                 }
 
                 return {
                     ...state,
-                    allNodes: existingNodes
+                    allNodes: existingNodes,
+                    allConnections: existingConnections
                 }
             } else {
                 return {...state}
@@ -183,6 +225,8 @@ export default function reducer (state = defaultState, action) {
             } else {
                 console.log("Haven't clicked down yet...");
             }
+
+            break;
         }
 
         case "COMPOSER_NODE_POSITION_UPDATE": {
@@ -371,6 +415,227 @@ export default function reducer (state = defaultState, action) {
             return {
                 ...state,
                 allConnections: allConnections
+            }
+        }
+
+        case "SETTINGS_UPDATE_TITLE" : {
+            let newNodes = {...state.allNodes};
+            const nodeKey = action.payload.nodeKey;
+            const newValue = action.payload.newValue;
+
+            if(newNodes[nodeKey] != 'undefined') {
+                // Update title
+                newNodes[nodeKey].title = newValue;
+
+                return {
+                    ...state,
+                    allNodes: newNodes
+                }
+            } else {
+                return {...state}
+            }
+        }
+        
+        case "SETTINGS_UPDATE_SETTING": {
+            let newNodes = {...state.allNodes};
+            const nodeKey = action.payload.nodeKey;
+            const settingId = action.payload.settingId;
+            const newValue = action.payload.newValue;
+
+            if(newNodes[String(nodeKey)]) {
+                // Update setting
+                newNodes[String(nodeKey)].settings[Number(settingId)].value = newValue;
+
+                return {
+                    ...state,
+                    allNodes: newNodes
+                }
+            } else {
+                return {
+                    ...state
+                }
+            }
+        }
+
+        case "SETTINGS_SETTING_TO_INPUT": {
+            // Setup initial data
+            const nodeKey = String(action.payload.nodeKey);
+            const settingId = Number(action.payload.settingId);
+            const newValue = Boolean(action.payload.newValue);
+
+            console.log(nodeKey, state.allNodes)
+
+            // Get selected node data
+            let newNodes = Object.assign({}, state.allNodes);
+            let newConnections = [...state.allConnections];
+
+            let selectedNode = newNodes[nodeKey];
+            let currentSettings = selectedNode.settings;
+            const settingTitle = currentSettings[settingId].title;
+            
+            if(newValue) {
+                // If adding setting to inputs:
+                currentSettings[settingId].isInput = true;
+                // Add to the inputs
+                selectedNode.inputs.push({
+                    title: settingTitle,
+                    default_value: currentSettings[settingId].value,
+                    type: currentSettings[settingId].type
+                })
+            } else {
+                // If removing setting from inputs
+                currentSettings[settingId].isInput = false;
+
+                // Remove any connected connections
+                for(let c = 0; c < newConnections.length; c++) {
+                    if(newConnections[c].connectorEnd.nodeId === nodeKey) {
+                        if(newConnections[c].connectorEnd.settingId === settingTitle) {
+                            newConnections.splice(c, 1);
+                            break;
+                        }
+                    }
+                }
+
+                // Remove from inputs
+                for(let i = 0; i < selectedNode.inputs.length; i++) {
+                    if(selectedNode.inputs[i].title === settingTitle) {
+                        selectedNode.inputs.splice(i, 1);
+                        break;
+                    }
+                }   
+            }
+
+            selectedNode.settings = currentSettings;
+
+            return {
+                ...state,
+                allNodes: {
+                    ...newNodes,
+                    [nodeKey]: selectedNode
+                },
+                allConnections: newConnections
+            }
+        }
+
+        case "SETTINGS_MATH_INPUT_NUMBER_UPDATE" : {
+            // Setup initial data
+            const nodeKey = String(action.payload.nodeKey);
+            const newValue = parseInt(action.payload.newValue);
+            const mathType = String(action.payload.mathType);
+
+            const newNodes = {...state.allNodes};
+
+            let selectedNode = newNodes[nodeKey];
+
+            let newInputs = [];
+            for(let i = 1; i <= parseInt(newValue); i++) {
+                newInputs.push({
+                    title: `input${i}`,
+                    type: "signal"
+                })
+            }
+
+            selectedNode.inputs = newInputs;
+
+            const saveGens = (symbol) => {
+                let newGenValue = "";
+                newInputs.forEach((val, i, arr) => {
+                    if(i < arr.length - 1) {
+                        newGenValue += `[${val.title}]${symbol}`
+                    } else {
+                        newGenValue += `[${val.title}]`
+                    }
+                })
+
+                let newGenerators = [{
+                    title: "output",
+                    value: newGenValue,
+                    type: "signal"
+                }];
+
+                selectedNode.generators = newGenerators;
+            }
+
+            switch(mathType) {
+                case "add": {
+                    saveGens("+");
+                    break;
+                }
+
+                case "multiply": {
+                    saveGens("*");
+                    break;
+                }
+
+                case "subtract": {
+                    saveGens("-");
+                    break
+                }
+
+                default: {
+                    return {...state}
+                }
+            }
+
+            return {
+                ...state,
+                allNodes: newNodes
+            }
+        }
+
+        case "SETTINGS_SIGNAL_GENERATOR_TYPE_SET": {
+            // Setup initial data
+            const nodeKey = String(action.payload.nodeKey);
+            const settingId = parseInt(action.payload.settingId);
+            const mathType = String(action.payload.mathType);
+
+            const newNodes = {...state.allNodes};
+
+            switch(mathType) {
+                case "sin": {
+                    newNodes[nodeKey].settings[settingId].value = "sin";
+                    newNodes[nodeKey].generators = [
+                        {
+                            "title":"signal",
+                            "value": "[amplitude]*sin(2*[PI]*[frequency]*[time]+[phase])+[offset]",
+                            "type": "signal"
+                        }
+                    ];
+                    break;
+                }
+
+                case "cos": {
+                    newNodes[nodeKey].settings[settingId].value = "cos";
+                    newNodes[nodeKey].generators = [
+                        {
+                            "title":"signal",
+                            "value": "[amplitude]*cos(2*[PI]*[frequency]*[time]+[phase])+[offset]",
+                            "type": "signal"
+                        }
+                    ];
+                    break;
+                }
+
+                case "tan": {
+                    newNodes[nodeKey].settings[settingId].value = "tan";
+                    newNodes[nodeKey].generators = [
+                        {
+                            "title":"signal",
+                            "value": "[amplitude]*tan(2*[PI]*[frequency]*[time]+[phase])+[offset]",
+                            "type": "signal"
+                        }
+                    ];
+                    break;
+                }
+
+                default: {
+                    return {...state}
+                }
+            }
+
+            return {
+                ...state,
+                allNodes: newNodes
             }
         }
 

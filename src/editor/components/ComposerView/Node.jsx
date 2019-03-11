@@ -60,6 +60,11 @@ export default class Node extends Component {
                     y: this.state.y
                 }
 
+                let offsetX = mousePosition.x - currentNodePosition.x;
+                let offsetY = mousePosition.y - currentNodePosition.y;
+
+                if(Math.abs(offsetX) < 5 && Math.abs(offsetY) < 5) return;
+
                 if(!this.state.justMoved) {
                     // If this is initial call
                     this.setState({
@@ -155,7 +160,6 @@ export default class Node extends Component {
                         x: touchPosition.x - this.state.mouseClickPositionX,
                         y: touchPosition.y - this.state.mouseClickPositionY
                     });
-                    
                 }
             }
         }
@@ -228,25 +232,36 @@ export default class Node extends Component {
                     }
                 }
 
+                const endConnectorFunction = e => {
+                    e.stopPropagation();
+
+                    this.props.dispatch(endNewConnector(this.props.functionId, label.title));
+
+                    window.onmousemove = null;
+                    window.onmouseup = null;
+                };
+
                 return (<li className="composer-node-input-labels" key={label.title}>
                     {label.title}
                     <span onMouseDown={(e) => {
                         e.stopPropagation();
 
                         e.target.onmouseup = (e) => {
+                            e.stopPropagation();
                             // Remove the connection if clicked on it.
                             this.props.dispatch(disconnectNode(this.props.functionId , label.title));
 
-                            e.target.onmouseup = e => {
-                                e.stopPropagation();
+                            e.target.onmouseup = endConnectorFunction;
+                        }
 
-                                this.props.dispatch(endNewConnector(this.props.functionId, label.title));
+                        window.onmouseup = ev => {
+                            e.target.onmouseup = endConnectorFunction;
 
-                                window.onmousemove = null;
-                                window.onmouseup = null;
-                            };
+                            window.onmousemove = null;
+                            window.onmouseup = null;
                         }
                     }}
+                    onMouseUp={endConnectorFunction}
                     onTouchStart={e => {
                         e.stopPropagation();
 
@@ -304,6 +319,15 @@ export default class Node extends Component {
                             e.clientY - canvasPosition.y + 50
                         ));
 
+                        e.target.onmouseup = e => {
+                            e.stopPropagation();
+
+                            this.props.dispatch(cancelNewConnector(this.props.functionId, label.title));
+
+                            window.onmousemove = null;
+                            window.onmouseup = null;
+                        }
+
                         window.onmousemove = e => {
                             e.stopPropagation();
 
@@ -322,20 +346,10 @@ export default class Node extends Component {
                         };
 
                         window.onmouseup = ev => {
-                            ev.stopPropagation();
-                            // this.props.dispatch(cancelNewConnector(this.props.functionId, label.title));
-
-                            window.onmousemove = null;
-                            window.onmouseup = null;
-                        }
-
-                        e.target.onmouseup = e => {
-                            e.stopPropagation();
                             this.props.dispatch(cancelNewConnector(this.props.functionId, label.title));
 
                             window.onmousemove = null;
                             window.onmouseup = null;
-                            e.target.onmouseup = null;
                         }
                     }}
                     onTouchStart = {e => {
@@ -353,6 +367,15 @@ export default class Node extends Component {
                             e.touches[0].clientX - canvasPosition.x - 5, 
                             e.touches[0].clientY - canvasPosition.y + 50
                         ));
+
+                        e.target.ontouchend = e => {
+                            e.stopPropagation();
+
+                            this.props.dispatch(cancelNewConnector(this.props.functionId, label.title));
+
+                            window.ontouchmove = null;
+                            window.ontouchend = null;
+                        }
 
                         window.ontouchmove = e => {
                             e.stopPropagation();
@@ -372,22 +395,10 @@ export default class Node extends Component {
                         };
 
                         window.ontouchend = e => {
-                            e.stopPropagation();
-
-                            // this.props.dispatch(cancelNewConnector(this.props.functionId, label.title));
-
-                            window.ontouchmove = null;
-                            window.ontouchend = null;
-                        }
-
-                        e.target.ontouchend = e => {
-                            e.stopPropagation();
-                            
                             this.props.dispatch(cancelNewConnector(this.props.functionId, label.title));
 
                             window.ontouchmove = null;
                             window.ontouchend = null;
-                            e.target.ontouchend = null;
                         }
                     }}
                     className={
@@ -411,18 +422,6 @@ export default class Node extends Component {
                     }}
                     onMouseDown={this.nodeMouseDown}
                     onTouchStart={this.nodeTouchDown}
-                    onMouseUp={e => {
-                        if(!this.state.clickedDown) {
-                            e.stopPropagation();
-                            this.props.dispatch(cancelNewConnector())
-                        }
-                    }}
-                    onTouchEnd = {e => {
-                        if(!this.state.clickedDown) {
-                            e.stopPropagation();
-                            this.props.dispatch(cancelNewConnector());
-                        }
-                    }}
                     >
                 <h2>{this.props.nodeData.title}</h2>
                 <div className={'composer-node-input-output-container'}>

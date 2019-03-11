@@ -6,21 +6,6 @@ import { connect } from 'react-redux';
 // Redux Actions
 import { searchLibrary, selectCategory } from '../../redux/actions/libraryActions.js';
 
-// Item that appears in library view, aka node
-function LibraryItem (props) {
-    return (
-        <li className={'library-list-node'} 
-            id={props.functionId} 
-            draggable={'true'} 
-            onDragStart={e => {
-                e.dataTransfer.setData("id", props.functionId);
-            }}>
-            <h1>{props.title}</h1>
-            <p>{props.description}</p>
-        </li>
-    )
-}
-
 // Complete Library view
 // decoratorsBeforeExport: true
 @connect((store) => {
@@ -93,8 +78,26 @@ export default class LibraryView extends Component {
                     <div className={this.props.category === "output" ? 'selected' : ''}
                         id="output"
                         onClick={this.updateCategory}>output</div>
+                    <div className={this.props.category === "ui" ? 'selected' : ''}
+                        id="ui"
+                        onClick={this.updateCategory}>UI</div>
                 </div>
             </div>
         )
     }
+}
+
+// Item that appears in library view, aka node
+function LibraryItem (props) {
+    return (
+        <li className={'library-list-node'} 
+            id={props.functionId} 
+            draggable={'true'} 
+            onDragStart={e => {
+                e.dataTransfer.setData("id", props.functionId);
+            }}>
+            <h1>{props.title}</h1>
+            <p>{props.description}</p>
+        </li>
+    )
 }

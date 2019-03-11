@@ -18,6 +18,10 @@ export default class CollapseView extends Component {
         });
     }
 
+    componentDidMount() {
+        this.toggleSidebar();
+    }
+
     render () {
         const styles = this.state.opened ? {
             width: '250px'
