@@ -10,19 +10,19 @@ import { connect } from 'react-redux';
         allNodes: store.composer.allNodes
     }
 })
-export default class SettingsView extends Component {    
+export default class SettingsView extends Component {
     render () {
         let {selectedNode, selectedNodeKey} = findSelectedNode(this.props.allNodes);
         
         if(selectedNode) {
             return (
                 <div id={'settings-view'}>
-                    <input id={'settings-node-title'} 
-                            type={'text'} 
-                            onChange={e => this.props.dispatch(updateTitle(selectedNodeKey, e.target.value))} 
+                    <input id={'settings-node-title'}
+                            type={'text'}
+                            onChange={e => this.props.dispatch(updateTitle(selectedNodeKey, e.target.value))}
                             value={selectedNode.title}/>
-                    <Settings settingsObject={selectedNode.settings} 
-                                nodeKey={selectedNodeKey} 
+                    <Settings settingsObject={selectedNode.settings}
+                                nodeKey={selectedNodeKey}
                                 node={selectedNode}
                                 dispatch={(action) => this.props.dispatch(action)}
                                 force={() => this.forceUpdate()}
@@ -36,7 +36,6 @@ export default class SettingsView extends Component {
                 </div>
             )
         }
-        
     }
 }
 

@@ -1,5 +1,5 @@
 import {
-    getUncalculatedNodes,
+    separateNodes,
     generateConnectionDictionary,
     objectSize,
     wasCalculated,
@@ -11,7 +11,9 @@ import {
     getOtherSideOfConnector
 } from './scriptGeneratorFunctions';
 
-const SAMPLE_RATE = 500; // Samples per second
+const SAMPLE_RATE = 512; // Samples per second
+const DURATION = 2; // Seconds, ideally should be dividable by 2
+const OFFSET = 0; // Which point should be the centre of the scope
 
 export function scriptGenerator(allNodes: NodeCollection, allConnections: Connector[]) {
     // Executable to store generated javascript code. Any initialisation code should be here.
@@ -19,7 +21,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
     let executable = "var graphs = {};\n";
 
     // Setup time
-    executable += initTime(-1, 1, 1/SAMPLE_RATE);
+    executable += initTime(OFFSET - DURATION / 2, OFFSET + DURATION / 2, 1 / SAMPLE_RATE);
 
     // Calculated nodes have following shape: "nodeId:outputId"
     let calculatedNodes: string[] = [];
@@ -34,7 +36,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
     };
 
     // Separates uncalculated nodes from scopes and UI at the start.
-    let { uncalculatedNodes, allScopes, uiNodes } = getUncalculatedNodes(allNodes);
+    let { uncalculatedNodes, allScopes, uiNodes, fftNodes } = separateNodes(allNodes);
 
     // Separate touch nodes form regular nodes
     let touchNodesSeparated = getTouchInputs(uncalculatedNodes);
@@ -153,93 +155,184 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
 
     executable += "function update() {\n";
 
+    // Loop through time scopes
     for (let s in allScopes) {
         const currentScope = allScopes[s];
-
-        // const outputGenerator = currentScope.generators[0];
-
-        // const outputTokens = tokenizeGenerator(outputGenerator.value, s);
-
         const { otherNodeId, otherSettingId } = getOtherSideOfConnector(allConnections, null, { nodeId: s, settingId: "signal" });
 
         executable += `
-            if(graphs.${s}) {
-                let newData = [];
-                for(let i = 0; i < t.length; i++) {newData.push(${otherNodeId}${otherSettingId}(t[i]));}
-                graphs.${s}.data.datasets[0].data = newData;
-                graphs.${s}.update();
-            } else {
-                let canvasNode = document.getElementById("${s}");
+        if(graphs.${s}) {
+            let newData = [];
+            for(let i = 0; i < t.length; i++) {newData.push(${otherNodeId}${otherSettingId}(t[i]));}
+            graphs.${s}.data.datasets[0].data = newData;
+            graphs.${s}.update();
+        } else {
+            let canvasNode = document.getElementById("${s}");
 
-                var viewSize = {
-                    x: canvasNode.parentNode.offsetWidth,
-                    y: canvasNode.parentNode.offsetHeight
-                }
-
-                var ctx = canvasNode.getContext("2d");
-
-                var w = viewSize.x;
-                var h = viewSize.y / ${objectSize(allScopes)};
-
-                canvasNode.width = w;
-                canvasNode.height = h;
-
-                let data = [];
-
-                for(let i = 0; i < t.length; i++) {
-                    data.push(${otherNodeId}${otherSettingId}(t[i]));
-                }
-                var myChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {labels: t.map(ti => ti.toFixed(2)),
-                        datasets: [
-                            {
-                                label: "signal",
-                                backgroundColor: 'rgba(0, 0, 0, 0)',
-                                borderColor: '${scopeColor(currentScope.settings[1].value)}',
-                                data: data
-                            }
-                        ]
-                    }, options: {
-                        elements: {
-                            line: {
-                                tension: 0.4,
-                                stepped: false
-                            }, point: {
-                                radius: 0,
-                                hitRadius: 0,
-                                hoverRadius: 0
-                            }
-                        }, animation: {
-                            duration: 0
-                        }, tooltips: {
-                            enabled: false
-                        }, legend: {
-                            display: false
-                        }${currentScope.settings[0].value == "true" ? '' : `, scales: {
-                            xAxes: [{
-                                ticks: {
-                                    max: 1,
-                                    min: -1,
-                                    stepSize: 0.01
-                                }
-                            }], yAxes: [{
-                                ticks: {
-                                    max: 2,
-                                    min: 0,
-                                    stepSize: 0.5
-                                }
-                            }]
-                        }`}${generateTitle(currentScope.settings[2])}
-                    }
-                });
-    
-                graphs.${s} = myChart;
+            var viewSize = {
+                x: canvasNode.parentNode.offsetWidth,
+                y: canvasNode.parentNode.offsetHeight
             }
-        `;
+            
+            var w = viewSize.x;
+            var h = viewSize.y;
+            
+            canvasNode.width = w;
+            canvasNode.height = h;
+            
+            var ctx = canvasNode.getContext("2d");
+
+            let data = [];
+
+            for(let i = 0; i < t.length; i++) {
+                data.push(${otherNodeId}${otherSettingId}(t[i]));
+            }
+
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {labels: t.map(ti => ti.toFixed(2)),
+                    datasets: [
+                        {
+                            label: "signal",
+                            backgroundColor: 'rgba(0, 0, 0, 0)',
+                            borderColor: '${currentScope.settings[1].value}',
+                            data: data
+                        }
+                    ]
+                }, options: {
+                    elements: {
+                        line: {
+                            tension: 0.4,
+                            stepped: false
+                        }, point: {
+                            radius: 0,
+                            hitRadius: 0,
+                            hoverRadius: 0
+                        }
+                    }, animation: {
+                        duration: 0
+                    }, tooltips: {
+                        enabled: false
+                    }, legend: {
+                        display: false
+                    }${currentScope.settings[0].value == "true" ? '' : `, scales: {
+                        xAxes: [{
+                            ticks: {
+                                max: 1,
+                                min: -1,
+                                stepSize: 0.01
+                            }
+                        }], yAxes: [{
+                            ticks: {
+                                max: 2,
+                                min: 0,
+                                stepSize: 0.5
+                            }
+                        }]
+                    }`}, title: {
+                        display: true,
+                        text: '${currentScope.title}',
+                        position: 'left'
+                    }
+                }
+            });
+
+            graphs.${s} = myChart;
+        }`;
 
         exeArray.push(executable);
         executable = "";
+    }
+
+    // Loop through fft scopes
+    for(let f in fftNodes) {
+        const currentScope = fftNodes[f];
+        const { otherNodeId, otherSettingId } = getOtherSideOfConnector(allConnections, null, { nodeId: f, settingId: "signal" });
+
+        executable += `
+        if(graphs.${f}) {
+            let data = [];
+            for(let i = 0; i < t.length; i++) {data.push(${otherNodeId}${otherSettingId}(t[i]));}
+
+            let f = new FFT(data.length);
+            let complexOutput = f.createComplexArray();
+            f.realTransform(complexOutput, data);
+            let realOutput = new Array(data.length);
+            realOutput.fill(0);
+            f.fromComplexArray(complexOutput, realOutput);
+
+            realOutput = realOutput.filter((val, i) => i%2 == 0 || i == 0);
+
+            realOutput = realOutput.splice(0, ${currentScope.settings[3].value});
+            
+            realOutput = realOutput.map(val => val * 2 / data.length);
+
+            graphs.${f}.data.datasets[0].data = realOutput;
+            graphs.${f}.update();
+        } else {
+            let canvasNode = document.getElementById("${f}");
+
+            var viewSize = {
+                x: canvasNode.parentNode.offsetWidth,
+                y: canvasNode.parentNode.offsetHeight
+            }
+            
+            var w = viewSize.x;
+            var h = viewSize.y;
+            
+            canvasNode.width = w;
+            canvasNode.height = h;
+            
+            var ctx = canvasNode.getContext("2d");
+
+            let data = [];
+
+            for(let i = 0; i < t.length; i++) {
+                data.push(${otherNodeId}${otherSettingId}(t[i]));
+            }
+
+            let f = new FFT(data.length);
+            let complexOutput = f.createComplexArray();
+            f.realTransform(complexOutput, data);
+            let realOutput = new Array(data.length);
+            realOutput.fill(0);
+            f.fromComplexArray(complexOutput, realOutput);
+
+            realOutput = realOutput.filter((val, i) => i%2 == 0 || i == 0);
+
+            realOutput = realOutput.splice(0, ${currentScope.settings[3].value});
+
+            realOutput = realOutput.map(val => val * 2 / data.length);
+
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: realOutput.splice(0, ${currentScope.settings[3].value}).map((val, i) => i),
+                    datasets: [
+                        {
+                            label: "signal",
+                            backgroundColor: 'rgba(245, 23, 54, 0.4)',
+                            borderColor: 'rgb(0, 0, 0)',
+                            data: realOutput
+                        }
+                    ]
+                }, options: {
+                    animation: {
+                        duration: 0
+                    }, tooltips: {
+                        enabled: true
+                    }, legend: {
+                        display: ${currentScope.inputs.length > 1}
+                    }, title: {
+                        display: true,
+                        text: '${currentScope.title}',
+                        position: 'left'
+                    }
+                }
+            });
+
+            graphs.${f} = myChart;
+        }`;
     }
 
     executable += "};\n"
@@ -248,32 +341,5 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
     exeArray.push(executable);
     executable = "";
 
-    // return UglifyJS.minify(executable);
-
     return exeArray;
-}
-
-
-function scopeColor(color: string): string {
-    return color;
-    
-    switch (color) {
-        case "red": return 'rgb(255, 120, 132)';
-        case "blue": return 'rgb(132, 120, 255)';
-        case "green": return 'rgb(50, 210, 60)';
-        default: return 'rgb(255, 120, 132)';
-    }
-}
-
-function generateTitle(setting: NodeSettingsShape): string {
-    switch (setting.title) {
-        case "": return "";
-        default: {
-            return (`, title: {
-                display: true,
-                text: '${setting.value}',
-                position: 'left'
-            }`)
-        }
-    }
 }

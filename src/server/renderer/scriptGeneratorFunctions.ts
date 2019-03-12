@@ -2,10 +2,15 @@ import { tokenizeGenerator, GeneratorSegment } from './generatorTokenizer';
 import { tokenToJs } from './tokenToJs';
 
 // Get all nodes that are not scopes, and save scopes into their own collection
-export function getUncalculatedNodes (allNodes: NodeCollection) : {uncalculatedNodes: NodeCollection, allScopes: NodeCollection, uiNodes: NodeCollection} {
+export function separateNodes (allNodes: NodeCollection): {
+        uncalculatedNodes: NodeCollection, 
+        allScopes: NodeCollection,
+        uiNodes: NodeCollection,
+        fftNodes: NodeCollection} {
     let uncalculated: NodeCollection = {};
     let scopes: NodeCollection = {};
     let uiNodes: NodeCollection = {};
+    let fftNodes: NodeCollection = {};
 
     for(let i in allNodes) {
         // Check if it is a UI node
@@ -16,11 +21,16 @@ export function getUncalculatedNodes (allNodes: NodeCollection) : {uncalculatedN
         // Check if it is a scope
         const isScope = String(i).substr(0, 5) === "scope";
 
+        // Check if it is an fft scope
+        const isFFT = String(i).substr(0, 3) === "fft";
+
         // Do separation
         if(isScope) {
             scopes[i] = allNodes[i];
         } else if(isActualUI) {
             uiNodes[i] = allNodes[i];
+        } else if(isFFT) {
+            fftNodes[i] = allNodes[i];
         } else {
             uncalculated[i] = allNodes[i];
         }
@@ -30,7 +40,8 @@ export function getUncalculatedNodes (allNodes: NodeCollection) : {uncalculatedN
     return {
         uncalculatedNodes: uncalculated,
         allScopes: scopes,
-        uiNodes: uiNodes
+        uiNodes: uiNodes,
+        fftNodes: fftNodes
     };
 }
 

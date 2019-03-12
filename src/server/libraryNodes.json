@@ -188,6 +188,37 @@
                 "title": "Title",
                 "value": "Carrier Signal",
                 "type": "text"
+            }, {
+                "title": "# of Signals",
+                "value": "1",
+                "type": "number_of_signals"
+            }]
+        }, "fft": {
+            "title": "FFT Scope",
+            "description": "Displays frequency domain representation of the signal.",
+            "inputs": [
+                {
+                    "title": "signal",
+                    "type": "signal"
+                }
+            ],
+            "outputs": [],
+            "default_settings": [{
+                "title": "AutoScale",
+                "value": "true",
+                "type": "boolean"
+            }, {
+                "title": "Color",
+                "value": "blue",
+                "type": "color"
+            }, {
+                "title": "Title",
+                "value": "Carrier Signal",
+                "type": "text"
+            }, {
+                "title": "Max Freq (Hz)",
+                "value": "100",
+                "type": "number_uncontrolled"
             }]
         }
     }, "ui": {

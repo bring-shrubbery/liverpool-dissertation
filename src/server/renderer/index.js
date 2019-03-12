@@ -25,8 +25,9 @@ function renderHtml (requestJson) {
     // console.timeEnd("Script Parser");
 
     let scripts = `<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>\n`;
-    scripts += `<script>${scriptArray[0]}</script>`;
-    scripts += `<script>${composedScriptString}</script>`;
+    scripts += `<script src="/fft.js"></script>\n`;
+    scripts += `<script>${scriptArray[0]}</script>\n`;
+    scripts += `<script>${composedScriptString}</script>\n`;
     
     // Combine former results
     const scriptedHtml = jsxString.slice(0, jsxString.length - 6) + scripts + "</div>";

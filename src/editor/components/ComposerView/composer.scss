@@ -13,11 +13,8 @@ canvas {
 #composer-view {
     width: auto;
     height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
     position: relative;
-
-    
 
     #composer-view-background {
         position: absolute;

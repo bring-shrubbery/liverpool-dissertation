@@ -1,14 +1,21 @@
 import React from 'react';
 
-const styles = (settingsCount, scopeCount) => `
-    #signals-embedding-container {
+const styles = (settingsCount, scopeCount) => {
+    const isOnlyScopes = (settingsCount === 0 && scopeCount > 0);
+    const isOnlySettings = (settingsCount > 0 && scopeCount === 0);
+    const isSettingsAndScopes = (settingsCount > 0 && scopeCount > 0);
+    
+    const isDividableByTwo = scopeCount%2 == 0;
+
+    return `#signals-embedding-container {
         margin: 0;
         padding: 0;
         width: 100%;
         height: 100%;
-        ${(settingsCount > 0 && scopeCount > 0) ?
+        ${isSettingsAndScopes ?
             `display: grid;
-            grid-template-columns: 300px auto;` 
+            grid-template-columns: 300px calc(100% - 300px);
+            grid-template-rows: 100%;` 
             : ''
         }
 
@@ -21,17 +28,28 @@ const styles = (settingsCount, scopeCount) => `
         height: 100%;
     }
 
+    .canvas-container {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
     #signals-views {
         margin: 0;
         padding: 0;
         width: 100%;
         height: 100%;
         display: grid;
-        grid-tempate-columns: auto;
-        ${(settingsCount > 0 && scopeCount > 0) ? `grid-column: 2 / 3;` : ''}
+        ${!isDividableByTwo ? `grid-template-rows: repeat(${scopeCount}, ${parseFloat(100/scopeCount).toFixed(2)}%);
+        grid-template-columns: auto;`
+        : `grid-template-rows: repeat(${scopeCount/2}, 1fr);
+        grid-template-columns: 50% 50%;`}
+        ${isSettingsAndScopes ? `grid-column: 2 / 3;` : ''}
     }
 
-    ${(settingsCount > 0 && scopeCount > 0) ? `#signals-settings {
+    ${isSettingsAndScopes ? `#signals-settings {
         margin: 0;
         padding: 10px;
         width: calc(100% - 20px);
@@ -87,7 +105,7 @@ const styles = (settingsCount, scopeCount) => `
         font-size: 16pt;
         text-align: center;
     }`:''}
-`;
+`};
 
 export function jsxDom (nodes) {
     let canvasNodes = [];
@@ -96,7 +114,7 @@ export function jsxDom (nodes) {
     for(let key in nodes) {
         let currentNode = nodes[key];
 
-        if(String(key).substr(0, 5) === "scope") {
+        if(String(key).substr(0, 5) === "scope" || String(key).substr(0, 3) === "fft") {
             currentNode.id = key;
             canvasNodes.push(currentNode);
         }
@@ -173,10 +191,10 @@ export function jsxDom (nodes) {
 
     // Generate Dynamic Stuff
     const canvasJsx = canvasNodes.length > 0 ? canvasNodes.map(node => {
-        return (<canvas className="signals-canvas" 
+        return (<div className={'canvas-container'}><canvas className="signals-canvas" 
                         id={`${node.id}`} 
                         key={node.id}
-        ></canvas>)
+        ></canvas></div>)
     }) : null;
 
     let lastCategory = "";
@@ -253,7 +271,7 @@ export function jsxDom (nodes) {
     // Generate Final JSX
     const SignalViews = canvasJsx ?
         (
-            <div id="signals-views" style={{gridTemplateRows: `repeat(${canvasNodes.length}, 1fr)`}}>
+            <div id="signals-views">
                 {canvasJsx}
             </div>
         ) : null;

@@ -4,6 +4,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const editorConfig = require('./webpack.config.frontend.react.js');
 const projectsConfig = require('./webpack.config.frontend.preact.js');
+const fft = require('./webpack.config.fft.js');
 
 module.exports = [
     {
@@ -58,5 +59,6 @@ module.exports = [
         ]
     },
     editorConfig,
-    projectsConfig
+    projectsConfig,
+    fft
 ]
