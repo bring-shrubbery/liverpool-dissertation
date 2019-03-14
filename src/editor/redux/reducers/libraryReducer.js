@@ -21,8 +21,6 @@ export default function reducer (state = defaultState, action) {
                 }
             }
 
-            console.log(newSearchTerm);
-
             return {
                 ...state,
                 librarySearchTerm: newSearchTerm,

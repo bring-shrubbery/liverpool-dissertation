@@ -1,31 +1,18 @@
-# signals.js
+# signals-vizualisation.js
 
-One Paragraph of project description goes here
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-### Prerequisites
+## Prerequisites
 
-All you need to run this project is node.js and npm (which comes with node installation).
-This project was developed on v10.11.0 and haven't been tested on other versions.
 
-### Installing
 
-To run it you will need to install dependencies which can be easily done by going to root folder of the repository and executing this command:
+## Installing
 
-`node install`
 
-### Running development and production versions
+## Running development and production versions
 
-To run server execute npm script from terminal:
-* *Development server:*
-    * Interface: `npm run start-app`
-    * Library: `npm run start-library`
-* *Production bundle:*
-    * Interface: `npm run build-app`
-    * Library: `npm run build-library`
 
 ## Running the tests
 

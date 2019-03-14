@@ -10,7 +10,7 @@ const editorConfig = {
         editor: './src/editor/index.js'
     },
     output: {
-        path: path.resolve(__dirname, 'build/public/'),
+        path: path.resolve(__dirname, '../../../build/public/'),
         filename: './static/signals-[name]-bundle.js'
     },
     devtool: 'inline-source-map',
@@ -30,6 +30,21 @@ const editorConfig = {
                 "style-loader", // creates style nodes from JS strings
                 "css-loader", // translates CSS into CommonJS
                 "sass-loader" // compiles Sass to CSS, using Node Sass by default
+            ]
+        }, {
+            enforce: "pre",
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: [
+                {
+                    loader: 'babel-loader'
+                },
+                {
+                    loader: 'eslint-loader',
+                    options: {
+                        configFile: path.resolve(__dirname, "../../eslint/eslint_react.json")
+                    }
+                }
             ]
         }]
     },

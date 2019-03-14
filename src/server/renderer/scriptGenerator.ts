@@ -261,7 +261,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
             realOutput.fill(0);
             f.fromComplexArray(complexOutput, realOutput);
 
-            realOutput = realOutput.filter((val, i) => i%2 == 0 || i == 0);
+            // realOutput = realOutput.filter((val, i) => i%2 == 0 || i == 0);
 
             realOutput = realOutput.splice(0, ${currentScope.settings[3].value});
             
@@ -298,7 +298,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
             realOutput.fill(0);
             f.fromComplexArray(complexOutput, realOutput);
 
-            realOutput = realOutput.filter((val, i) => i%2 == 0 || i == 0);
+            // realOutput = realOutput.filter((val, i) => i%2 == 0 || i == 0);
 
             realOutput = realOutput.splice(0, ${currentScope.settings[3].value});
 
@@ -307,7 +307,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
             var myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: realOutput.splice(0, ${currentScope.settings[3].value}).map((val, i) => i),
+                    labels: realOutput.map((val, i) => i),
                     datasets: [
                         {
                             label: "signal",

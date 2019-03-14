@@ -1,21 +1,16 @@
 let path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const CleanWebpackPlugin = require('clean-webpack-plugin');
-// const WebpackShellPlugin = require('webpack-shell-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const projectsConfig = {
-    mode: 'development',
+    mode: 'production',
     target: 'web',
     entry: {
         projects: './src/projectManager/index.js'
     },
     output: {
-        path: path.resolve(__dirname, 'build/public/'),
+        path: path.resolve(__dirname, '../../../build/public/'),
         filename: './static/signals-[name]-bundle.js'
-    },
-    devtool: 'inline-source-map',
-    devServer: {
-        contentBase: './build'
     },
     module: {
         rules: [{
@@ -46,6 +41,9 @@ const projectsConfig = {
             "react": "preact-compat",
             "react-dom": "preact-compat"
         }
+    },
+    optimization: {
+        minimizer: [new UglifyJsPlugin()],
     }
 }
 

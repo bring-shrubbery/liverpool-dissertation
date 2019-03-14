@@ -300,6 +300,23 @@
                 "value": "1",
                 "type": "number_uncontrolled"
             }]
+        }, "uiLabel": {
+            "title": "UI Label",
+            "description": "Displays a provided number into the console.",
+            "inputs": [{
+                "title": "input",
+                "type": "number"
+            }],
+            "outputs": [],
+            "default_settings": [{
+                "title": "Category",
+                "value": "",
+                "type": "text"
+            }, {
+                "title": "Label",
+                "value": "",
+                "type": "text"
+            }]
         }
     }
 }

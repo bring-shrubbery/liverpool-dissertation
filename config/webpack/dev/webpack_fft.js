@@ -4,10 +4,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const WebpackShellPlugin = require('webpack-shell-plugin');
 
 const editorConfig = {
-    mode: 'production',
+    mode: 'development',
     entry: './src/fft/fft.js',
     output: {
-        path: path.resolve(__dirname, 'build/public/'),
+        path: path.resolve(__dirname, '../../../build/public/'),
         filename: './static/fft.js',
         library: 'FFT',
         libraryTarget: 'var',

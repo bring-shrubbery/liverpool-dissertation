@@ -1,8 +1,8 @@
 import React from 'react';
 
 const styles = (settingsCount, scopeCount) => {
-    const isOnlyScopes = (settingsCount === 0 && scopeCount > 0);
-    const isOnlySettings = (settingsCount > 0 && scopeCount === 0);
+    // const isOnlyScopes = (settingsCount === 0 && scopeCount > 0);
+    // const isOnlySettings = (settingsCount > 0 && scopeCount === 0);
     const isSettingsAndScopes = (settingsCount > 0 && scopeCount > 0);
     
     const isDividableByTwo = scopeCount%2 == 0;
@@ -191,10 +191,11 @@ export function jsxDom (nodes) {
 
     // Generate Dynamic Stuff
     const canvasJsx = canvasNodes.length > 0 ? canvasNodes.map(node => {
-        return (<div className={'canvas-container'}><canvas className="signals-canvas" 
-                        id={`${node.id}`} 
-                        key={node.id}
-        ></canvas></div>)
+        return (<div className={'canvas-container'} key={node.id}>
+            <canvas className="signals-canvas" 
+                            id={`${node.id}`}
+            ></canvas>
+        </div>)
     }) : null;
 
     let lastCategory = "";
@@ -251,9 +252,11 @@ export function jsxDom (nodes) {
         if(shouldSaveCategory) {
             return (
                 <React.Fragment key={node.id + currentCategory}>
-                    <li key={currentCategory} className={'signals-settings-list-label'}>{currentCategory}</li>
-                    <li className={'signals-settings-list-item ' + (isSlider ? "signals-settings-slider" : "")} id={node.id} key={node.id}>
-                        <h6 className={'signals-settings-list-item-label'} id={node.id + "Label"}>{node.settings[1].value}</h6>
+                    <li className={'signals-settings-list-label'}>{currentCategory}</li>
+                    <li className={'signals-settings-list-item ' + (isSlider ? "signals-settings-slider" : "")} 
+                        id={node.id}>
+                        <h6 className={'signals-settings-list-item-label'} 
+                            id={node.id + "Label"}>{node.settings[1].value}</h6>
                         {inputElement}
                         {isSlider ? <div id={node.id+"Indicator"}>{node.settings[3].value}</div> : null}
                     </li>

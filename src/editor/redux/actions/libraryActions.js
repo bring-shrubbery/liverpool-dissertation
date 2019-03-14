@@ -16,7 +16,7 @@ export function searchLibrary(searchTerm) {
 export function selectCategory(category) {
 
     if(category !== "input" && category !== "processors" && category !== "output" && category !== "ui") {
-        console.error("Invalid library category input. Can be 'ui', 'input', 'processors' or 'output', instead it's ", category);
+        console.error("Invalid library category input: ", category);
         return {
             type: "SELECT_CATEGORY_INVALID",
             payload: category

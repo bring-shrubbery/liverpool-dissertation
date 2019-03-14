@@ -1,4 +1,4 @@
-import { renderToString, renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 import { scriptGenerator } from './scriptGenerator.ts';
 import { jsxDom } from './viewerDom';

@@ -77,8 +77,6 @@ export default function reducer (state = defaultState, action) {
 
                 // Loop through removed nodes
                 for(let n in removedNodes) {
-                    console.log(removedNodes[n]);
-
                     // Find and remove attached connections
                     for(let c = 0; c < existingConnections.length; c++) {
                         const currentConnection = existingConnections[c];
@@ -223,7 +221,7 @@ export default function reducer (state = defaultState, action) {
                     }
                 }
             } else {
-                console.log("Haven't clicked down yet...");
+                console.error("Haven't clicked down yet...");
             }
 
             break;
@@ -288,8 +286,6 @@ export default function reducer (state = defaultState, action) {
         }
 
         case "COMPOSER_CONNECTOR_DISCONNECT": {
-            // console.log(state.allConnections)
-
             let allConnections = [...state.allConnections];
 
             for(let c in allConnections) {
@@ -462,8 +458,6 @@ export default function reducer (state = defaultState, action) {
             const nodeKey = String(action.payload.nodeKey);
             const settingId = Number(action.payload.settingId);
             const newValue = Boolean(action.payload.newValue);
-
-            console.log(nodeKey, state.allNodes)
 
             // Get selected node data
             let newNodes = Object.assign({}, state.allNodes);

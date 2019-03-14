@@ -15,10 +15,12 @@ import {
 } from './renderer'
 // import testModel from './testModel.json'
 
-// Pre-made projects and library nodes
+// Library nodes
 import libraryNodes from './libraryNodes.json'
-import modulation from './projects/modulation.json'
-import fourierSeries from './projects/fourierSeries.json'
+
+// Project presets
+import modulation from './project_presets/modulation.json'
+import fourierSeries from './project_presets/fourierSeries.json'
 
 const dateNow = () => String(Date().toString()).substr(0, 24) + " | ";
 
