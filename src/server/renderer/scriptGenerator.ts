@@ -307,7 +307,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
             var myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: realOutput.map((val, i) => i),
+                    labels: realOutput.map((val, i) => parseFloat(i/2).toFixed(1)),
                     datasets: [
                         {
                             label: "signal",
