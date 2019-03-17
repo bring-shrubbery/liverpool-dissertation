@@ -1,5 +1,6 @@
 let path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const babel_config = require('../../babel/babel_config.json');
 
 const editorConfig = {
     mode: 'production',
@@ -13,10 +14,13 @@ const editorConfig = {
     },
     module: {
         rules: [{
-            test: /(\.jsx?)$/,
+            test: /\.jsx?$/,
             exclude: /node_modules/,
             use: {
-                loader: "babel-loader"
+                loader: "babel-loader",
+                options: {
+                    ...babel_config
+                }
             }
         }]
     },

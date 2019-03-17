@@ -1,7 +1,6 @@
 let path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const CleanWebpackPlugin = require('clean-webpack-plugin');
-// const WebpackShellPlugin = require('webpack-shell-plugin');
+const babel_config = require('../../babel/babel_config.json');
 
 const projectsConfig = {
     mode: 'development',
@@ -19,10 +18,13 @@ const projectsConfig = {
     },
     module: {
         rules: [{
-            test: /(\.jsx?)$/,
+            test: /\.jsx?$/,
             exclude: /node_modules/,
             use: {
-                loader: "babel-loader" // transpiles to a widely supported version of js
+                loader: "babel-loader",
+                options: {
+                    ...babel_config
+                }
             }
         }, {
             test: /\.scss$/,
@@ -34,17 +36,12 @@ const projectsConfig = {
         }, {
             test: /\.js$/,
             exclude: /node_modules/,
-            use: [
-                {
-                    loader: 'babel-loader'
-                },
-                {
-                    loader: 'eslint-loader',
-                    options: {
-                        configFile: path.resolve(__dirname, "../../eslint/eslint_react.json")
-                    }
+            use: [{
+                loader: 'eslint-loader',
+                options: {
+                    configFile: path.resolve(__dirname, "../../eslint/eslint_react.json")
                 }
-            ]
+            }]
         }]
     },
     plugins: [
@@ -55,11 +52,16 @@ const projectsConfig = {
             inject: false // injecting happens on the server
         })
     ],
-    resolve: {
-        alias: {
-            "react": "preact-compat",
-            "react-dom": "preact-compat"
-        }
+    // resolve: {
+    //     alias: {
+    //         "react": "preact-compat",
+    //         "react-dom": "preact-compat"
+    //     }
+    // },
+    stats: {
+        all: false,
+        warnings: true,
+        errors: true
     }
 }
 

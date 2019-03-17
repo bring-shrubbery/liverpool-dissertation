@@ -4,6 +4,7 @@ import fs from 'fs'
 
 // Server Setup
 import express from 'express'
+import morgan from 'morgan'
 const app = express()
 
 // Middleware
@@ -22,13 +23,26 @@ import libraryNodes from './libraryNodes.json'
 import modulation from './project_presets/modulation.json'
 import fourierSeries from './project_presets/fourierSeries.json'
 
-const dateNow = () => String(Date().toString()).substr(0, 24) + " | ";
-
 let database = {
     projectsInfo: [{
         projectId: "1",
         title: "AM/FM Modulation",
         description: "Shows one signal modulated over other (carrier) signal using AM and FM modulation.",
+        owner: "admin"
+    }, {
+        projectId: "2",
+        title: "Fourier Series",
+        description: "Attempt at creating fourier series using this tool.",
+        owner: "admin"
+    }, {
+        projectId: "2",
+        title: "Fourier Series",
+        description: "Attempt at creating fourier series using this tool.",
+        owner: "admin"
+    }, {
+        projectId: "2",
+        title: "Fourier Series",
+        description: "Attempt at creating fourier series using this tool.",
         owner: "admin"
     }, {
         projectId: "2",
@@ -103,12 +117,13 @@ const projectModelTemplate = {
 // Static files
 app.use(express.static(__dirname + '/public/static'))
 
+// Logging
+app.use(morgan('tiny'));
+
 // --- ROUTES ---
 app.get('/editor/:username/:id', (req, res) => {
     const projectId = req.params.id;
     const username = req.params.username;
-
-    console.log(`${dateNow()}GET /editor/${username}/${projectId}`);
 
     if (!database.users[username]) res.status(420).send("User with username " + username + " doesn't exist");
 
@@ -155,7 +170,6 @@ app.get('/editor/:username/:id', (req, res) => {
 app.get('/render/:username/:id', (req, res) => {
     const projectId = req.params.id;
     const username = req.params.username;
-    console.log(`${dateNow()}GET /render/${username}/${projectId}`);
 
     if (!database.users[username]) res.status(420).send("User with username " + username + " doesn't exist");
 
@@ -209,8 +223,6 @@ app.post("/save/:username/:id", function (req, res) {
     // Save existing project
     const username = req.params.username;
     const projectId = req.params.id;
-
-    console.log(`${dateNow()}POST /save/${username}/${projectId}`);
 
     const projectJson = req.body;
 

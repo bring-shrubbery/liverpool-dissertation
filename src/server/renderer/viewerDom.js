@@ -263,7 +263,9 @@ export function jsxDom (nodes) {
                 </React.Fragment>
             )
         } else {
-            return (<li className={'signals-settings-list-item ' + (isSlider ? "signals-settings-slider" : "")} id={node.id} key={node.id}>
+            return (<li className={'signals-settings-list-item ' + (isSlider ? "signals-settings-slider" : "")}
+                        id={node.id} 
+                        key={node.id}>
                 <h6 className={'signals-settings-list-item-label'} id={node.id + "Label"}>{node.settings[1].value}</h6>
                 {inputElement}
                 {isSlider ? <div id={node.id+"Indicator"}>{node.settings[3].value}</div> : null}

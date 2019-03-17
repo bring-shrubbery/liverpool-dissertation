@@ -1,6 +1,7 @@
 let path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const babel_config = require('../../babel/babel_config.json');
 
 const editorConfig = {
     mode: 'production',
@@ -17,7 +18,10 @@ const editorConfig = {
             test: /(\.jsx?)$/,
             exclude: /node_modules/,
             use: {
-                loader: "babel-loader" // transpiles to a widely supported version of js
+                loader: "babel-loader",
+                options: {
+                    ...babel_config
+                }
             }
         }, {
             test: /\.scss$/,

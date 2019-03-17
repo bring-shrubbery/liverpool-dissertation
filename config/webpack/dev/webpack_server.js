@@ -1,6 +1,7 @@
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const babel_config = require('../../babel/babel_config.json');
 
 module.exports = {
     mode: 'development',
@@ -27,13 +28,21 @@ module.exports = {
     module: {
         rules: [{
             test: /\.tsx?$/,
-            use: 'ts-loader',
-            exclude: /node_modules/
+            exclude: /node_modules/,
+            use: {
+                loader: 'ts-loader',
+                options: {
+                    configFile: path.resolve(__dirname, '../../typescript/dev.tsconfig.json')
+                }
+            }
         }, {
             test: /(\.jsx?)$/,
             exclude: /node_modules/,
             use: {
-                loader: "babel-loader"
+                loader: "babel-loader",
+                options: {
+                    ...babel_config
+                }
             }
         }, {
             test: /\.s?css$/,
@@ -50,20 +59,20 @@ module.exports = {
         }, {
             test: /\.js$/,
             exclude: /node_modules/,
-            use: [
-                {
-                    loader: 'babel-loader'
-                },
-                {
-                    loader: 'eslint-loader',
-                    options: {
-                        configFile: path.resolve(__dirname, "../../eslint/eslint_server.json")
-                    }
+            use: [{
+                loader: 'eslint-loader',
+                options: {
+                    configFile: path.resolve(__dirname, "../../eslint/eslint_server.json")
                 }
-            ]
+            }]
         }]
     },
     plugins: [
-        new CleanWebpackPlugin("build")
-    ]
+        new CleanWebpackPlugin("build", { verbose: false })
+    ],
+    stats: {
+        all: false,
+        warnings: true,
+        errors: true
+    }
 }

@@ -2,6 +2,7 @@ const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const babel_config = require('../../babel/babel_config.json');
 
 module.exports = {
     mode: 'production',
@@ -27,13 +28,21 @@ module.exports = {
     module: {
         rules: [{
             test: /\.tsx?$/,
-            use: 'ts-loader',
-            exclude: /node_modules/
+            exclude: /node_modules/,
+            use: {
+                loader: 'ts-loader',
+                options: {
+                    configFile: path.resolve(__dirname, '../../typescript/prod.tsconfig.json')
+                }
+            }
         }, {
             test: /(\.jsx?)$/,
             exclude: /node_modules/,
             use: {
-                loader: "babel-loader"
+                loader: "babel-loader",
+                options: {
+                    ...babel_config
+                }
             }
         }, {
             test: /\.s?css$/,
@@ -50,7 +59,7 @@ module.exports = {
         }]
     },
     plugins: [
-        new CleanWebpackPlugin("build")
+        new CleanWebpackPlugin("build", { verbose: false })
     ],
     optimization: {
         minimizer: [new UglifyJsPlugin()],

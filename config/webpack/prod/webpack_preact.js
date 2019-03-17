@@ -1,6 +1,7 @@
 let path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const babel_config = require('../../babel/babel_config.json');
 
 const projectsConfig = {
     mode: 'production',
@@ -17,7 +18,10 @@ const projectsConfig = {
             test: /(\.jsx?)$/,
             exclude: /node_modules/,
             use: {
-                loader: "babel-loader" // transpiles to a widely supported version of js
+                loader: "babel-loader",
+                options: {
+                    ...babel_config
+                }
             }
         }, {
             test: /\.scss$/,
@@ -36,12 +40,12 @@ const projectsConfig = {
             inject: false // injecting happens on the server
         })
     ],
-    resolve: {
-        alias: {
-            "react": "preact-compat",
-            "react-dom": "preact-compat"
-        }
-    },
+    // resolve: {
+    //     alias: {
+    //         "react": "preact-compat",
+    //         "react-dom": "preact-compat"
+    //     }
+    // },
     optimization: {
         minimizer: [new UglifyJsPlugin()],
     }
