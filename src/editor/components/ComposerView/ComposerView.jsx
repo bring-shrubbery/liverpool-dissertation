@@ -32,13 +32,7 @@ export default class ComposerView extends Component {
         this.handleBackgroundClick = this.handleBackgroundClick.bind(this);
         this.getConnectorPositions = this.getConnectorPositions.bind(this);
 
-        // Refs
-        this.canvasRef = React.createRef();
         this.bgRef = React.createRef();
-
-        this.state = {
-            ctx: null
-        }
     }
 
     addNode (e) {

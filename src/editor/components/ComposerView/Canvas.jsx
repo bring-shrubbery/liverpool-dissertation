@@ -13,6 +13,10 @@ export default class Canvas extends Component {
         document.updateCanvas = () => this.forceUpdate();
     }
 
+    componentDidMount() {
+        this.forceUpdate();
+    }
+
     componentDidUpdate() {
         var c = document.getElementById("main-canvas");
         var ctx = c.getContext("2d");
