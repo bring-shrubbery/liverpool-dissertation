@@ -1,4 +1,4 @@
-# signals-vizualisation.js
+# Educational Signals Vizualisation Toolbox
 
 ## Description
 
@@ -7,7 +7,7 @@ Visualisation of the mathematical concepts is not an easy task. Although many vi
 ## Prerequisites
 
 To run this project you will need **Node.js** on your machine.
-You can get it from [this](https://nodejs.org/en/) website.
+You can get it from [here](https://nodejs.org/en/).
 
 ## Installation
 
