@@ -1,4 +1,4 @@
-# Educational Signal Vizualisation Toolbox
+# Educational Signal Visualisation Toolbox
 
 ## Description
 
