@@ -4,6 +4,9 @@
     width: 100%;
     height: 100%;
 
+    display: grid;
+    grid-template-rows: min-content min-content;
+
     @media (min-width: 480px) {
         .project-list {
             grid-template-columns: 1fr;
@@ -50,7 +53,7 @@
 
         padding: 50px;
 
-        .project-info {
+        .project-item {
             margin: 0;
             padding: 0;
             width: 100%;
@@ -59,9 +62,21 @@
             background-color: #F4F4F4;
             color: black;
             overflow: hidden;
-
+            border-radius: 10px;
             border-radius: 10px;
 
+            box-shadow: 1px 1px 4px 0px rgba(0,0,0,0.25);
+
+            transition: box-shadow 0.5s;
+        }
+
+        .project-info:hover {
+            box-shadow: 2px 2px 16px 0px rgba(0,0,0,0.25);
+
+            transition: box-shadow 0.5s;
+        }
+
+        .project-info {
             #data-container {
                 margin: 0;
                 padding: 0;
@@ -82,10 +97,10 @@
                 }
 
                 #title {
-                    font-weight: bold;
-                    font-size: 18pt;
+                    font-weight: 600;
+                    font-size: 16pt;
 
-                    padding: 5px;
+                    padding: 10px;
 
                     text-align: center;
                 }
@@ -128,17 +143,6 @@
         }
 
         .project-new {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-
-            background-color: #F4F4F4;
-            color: black;
-            overflow: hidden;
-
-            border-radius: 10px;
-
             position: relative;
         
             #new-project-new-button {
@@ -182,15 +186,6 @@
             #new-project-new-button.hidden {
                 right: 100%;
                 transition: right 0.5s;
-            }
-
-            #new-project-new-button:hover > div {
-                background-color: #DDD;
-            }
-
-            #new-project-new-button:hover {
-                cursor: pointer;
-                background-color: #F6F6F6;
             }
 
             #new-project-details {
@@ -275,6 +270,55 @@
             #new-project-details.hidden {
                 left: 100%;
                 transition: left 0.5s;
+            }
+        }
+
+        .project-new:hover {
+            #new-project-new-button:hover > div {
+                background-color: #DDD;
+            }
+
+            #new-project-new-button:hover {
+                cursor: pointer;
+                background-color: #F6F6F6;
+            }
+
+            box-shadow: 2px 2px 16px 0px rgba(0,0,0,0.25);
+
+            transition: box-shadow 0.5s;
+        }
+    }
+
+    .projects-user-data {
+        grid-row: 1 / 2;
+
+        width: 100%;
+        height: 100%;
+
+        margin: 0;
+        padding: 0;
+
+        background: #EEE;
+
+        box-shadow: 1px 1px 4px 0px rgba(0,0,0,0.25);
+
+        .projects-user-data-1 {
+            margin: 30px 50px;
+
+            display: flex;
+
+            .projects-user-avatar-main {
+                width: 80px;
+                height: 80px;
+
+                background: white;
+                border-radius: 50%;
+            }
+
+            .projects-user-name-main {
+                margin: 22px;
+
+                font-weight: 400;
             }
         }
     }

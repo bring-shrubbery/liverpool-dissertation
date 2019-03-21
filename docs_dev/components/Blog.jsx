@@ -1,15 +1,12 @@
 import React, { Component } from 'react'
-import { Container, Row, Col } from 'reactstrap';
+import { Container } from 'reactstrap';
 import marked from 'marked';
-import { Nav, NavItem, NavLink } from 'reactstrap';
+import { Nav, NavItem} from 'reactstrap';
 
 import NavigationBar from './NavigationBar.jsx';
 import './blog.scss';
 
 import blogData from  '../data/blogposts.json';
-
-import index_html from '../html_examples/convolution_example/index.html';
-
 
 export default class Blog extends Component {
     constructor(props) {

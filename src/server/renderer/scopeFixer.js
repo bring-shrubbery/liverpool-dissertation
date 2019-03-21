@@ -50,7 +50,7 @@
 //           - If opening bracket WAS hit, continue scanning, since it means that the + or - sign is in another scope
 //           - If opening bracket WAS NOT hit, stop scanning and reset left border flag
 
-export function fixScopes(gen) {
+export function fixScopes (gen) {
     let g = String(gen);
 
     // Variable are taken outside of for loop, to increase performance.

@@ -1,6 +1,6 @@
 let path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const babel_config = require('../../babel/babel_config.json');
+const babel_config = require('../../../babel.config');
 
 const editorConfig = {
     mode: 'production',

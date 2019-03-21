@@ -1,5 +1,5 @@
 const path = require('path');
-const babel_config = require('../../babel/babel_config.json');
+const babel_config = require('../../../babel.config');
 
 const editorConfig = {
     mode: 'development',

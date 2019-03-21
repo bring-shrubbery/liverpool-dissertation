@@ -1,7 +1,7 @@
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const babel_config = require('../../babel/babel_config.json');
+const babel_config = require('../../../babel.config');
 
 module.exports = {
     mode: 'development',

@@ -1,6 +1,6 @@
 let path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const babel_config = require('../../babel/babel_config.json');
+const babel_config = require('../../../babel.config');
 
 const projectsConfig = {
     mode: 'development',

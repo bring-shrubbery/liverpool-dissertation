@@ -16,7 +16,7 @@
 
 import {fixScopes} from './scopeFixer';
 
-export function tokenizeGenerator (gen: string, nodeId: string): GeneratorSegment[] {
+export const tokenizeGenerator = (gen: string, nodeId: string): GeneratorSegment[] => {
     // Get value of generator code and store in g
     let g = String(gen);
     g = String(fixScopes(g));

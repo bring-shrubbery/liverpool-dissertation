@@ -79,7 +79,7 @@
                     "type": "number",
                     "isInput": false
                 }, {
-                    "title": "Signal Type",
+                    "title": "type",
                     "value": "sin",
                     "type": "signal_type"
                 }
@@ -177,21 +177,17 @@
             ],
             "outputs": [],
             "default_settings": [{
-                "title": "AutoScale",
-                "value": "true",
-                "type": "boolean"
+                "title": "# of Signals",
+                "value": "1",
+                "type": "number_of_signals"
             }, {
                 "title": "Color",
                 "value": "blue",
                 "type": "color"
             }, {
-                "title": "Title",
-                "value": "Carrier Signal",
-                "type": "text"
-            }, {
-                "title": "# of Signals",
-                "value": "1",
-                "type": "number_of_signals"
+                "title": "AutoScale",
+                "value": "true",
+                "type": "boolean"
             }]
         }, "fft": {
             "title": "FFT Scope",
@@ -212,11 +208,7 @@
                 "value": "blue",
                 "type": "color"
             }, {
-                "title": "Title",
-                "value": "Carrier Signal",
-                "type": "text"
-            }, {
-                "title": "Max Freq (Hz)",
+                "title": "Range (Hz)",
                 "value": "100",
                 "type": "number_uncontrolled"
             }]

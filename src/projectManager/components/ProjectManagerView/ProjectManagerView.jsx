@@ -29,7 +29,7 @@ export default class ProjectManagerView extends Component {
     renderProjects() {
         if(this.state.existingProjects.length > 0) {
             let projectsDivs = this.state.existingProjects.map(project => {
-                return (<div key={project.projectId} className={'project-info'}>
+                return (<div key={project.projectId} className={'project-item project-info'}>
                     <div id={'data-container'}>
                         <div id={'title'}>{project.title}</div>
                         <div id={'description'}>{project.description}</div>
@@ -74,6 +74,12 @@ export default class ProjectManagerView extends Component {
 
         return (
             <div id={'project-manager'}>
+                <div className={'projects-user-data'}>
+                    <div className={'projects-user-data-1'}>
+                        <div className={'projects-user-avatar-main'}></div>
+                        <h1 className={'projects-user-name-main'}>admin</h1>
+                    </div>
+                </div>
                 <div className={'project-list'}>
                     {this.renderProjects()}
                 </div>
@@ -155,7 +161,7 @@ class NewProject extends Component {
     render () {
 
         return (
-            <div key={'new-project'} className={'project-new'}>
+            <div key={'new-project'} className={'project-item project-new'}>
                 <NewProjectDiv  isHidden={this.state.isFilling || this.state.isSubmitting || this.state.isFailed} 
                                 onClick={this.moveToFilling}/>
                 <NewProjectForm onSubmit={this.submitNewProject} 

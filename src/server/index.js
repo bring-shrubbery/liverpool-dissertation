@@ -34,21 +34,6 @@ let database = {
         title: "Fourier Series",
         description: "Attempt at creating fourier series using this tool.",
         owner: "admin"
-    }, {
-        projectId: "2",
-        title: "Fourier Series",
-        description: "Attempt at creating fourier series using this tool.",
-        owner: "admin"
-    }, {
-        projectId: "2",
-        title: "Fourier Series",
-        description: "Attempt at creating fourier series using this tool.",
-        owner: "admin"
-    }, {
-        projectId: "2",
-        title: "Fourier Series",
-        description: "Attempt at creating fourier series using this tool.",
-        owner: "admin"
     }],
     projectModels: [{
             ...modulation
@@ -248,6 +233,8 @@ app.get("/createProject/:username/:title/:description", (req, res) => {
 
     res.status(301).send(`/editor/${username}/${pid}`);
 })
+
+
 
 // Run server
 const port = process.env.PORT || 5000;
