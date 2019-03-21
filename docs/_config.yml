@@ -17,8 +17,8 @@ sass:
 nav:
  - name: "Guides"
    link: "/signals-visualisation/usage_guide"
- - name: "Contributing"
-   link: "/signals-visualisation/contributing"
+ - name: "Tools Used"
+   link: "/signals-visualisation/tools"
  - name: "Blog"
    link: "/signals-visualisation/blog"
  - name: "About"
