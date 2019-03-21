@@ -8,8 +8,7 @@
     "build": "webpack --config ./config/webpack/webpack.config.prod.js",
     "server": "webpack --config ./config/webpack/webpack.config.dev.js && node ./build/server.js",
     "lines": "go run linecounter.go",
-    "test": "jest --no-cache",
-    "docs": "webpack --config ./docs_dev/webpack.config.js"
+    "test": "jest --no-cache"
   },
   "engines": {
     "node": "11.8.x"
@@ -22,16 +21,10 @@
   },
   "homepage": "https://github.com/vincentrodriguez/signals-app#readme",
   "dependencies": {
-    "@material-ui/core": "^3.9.2",
     "body-parser": "^1.18.3",
-    "bootstrap": "^4.3.1",
     "express": "^4.16.4",
     "isomorphic-fetch": "^2.2.1",
-    "jquery": "^3.3.1",
-    "marked": "^0.6.1",
     "morgan": "^1.9.1",
-    "preact": "^8.4.2",
-    "preact-compat": "^3.18.4",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "react-redux": "^5.1.1",
