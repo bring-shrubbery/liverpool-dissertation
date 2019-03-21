@@ -1,6 +1,4 @@
-# Contributing
-
-## Tools used
+# Tools used
 
 To understand how this project is made you'll have to be familiar with certain technologies. If you're not familiar with at least one of the tools from "Main tools" or "JS frameworks used" lists you should go on their website and learn them. All these tools are documented very well. The list should be complete, but with updates it might start to slack off, so we encourage you to contribute to the wiki to keep it up to date.
 
