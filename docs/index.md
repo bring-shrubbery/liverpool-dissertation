@@ -7,3 +7,4 @@ This wiki should give you a basic understanding of the structure of the project,
 * [Tool Usage Guide](/signals-visualisation/usage_guide)
 * [Contributing](/signals-visualisation/contributing)
 * [Blog](/signals-visualisation/blog)
+* [Blog](/signals-visualisation/about) 
