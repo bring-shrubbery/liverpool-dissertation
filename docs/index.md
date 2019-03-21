@@ -4,6 +4,6 @@ This wiki should give you a basic understanding of the structure of the project,
 
 **Table of contents:**
 
-* [Concepts and Tools](/Concepts)
-* [Tool Usage Guide](/Usage-Guide)
-* [Contributing](/Contributing)
+* [Tool Usage Guide](/signals-visualisation/usage_guide)
+* [Contributing](/signals-visualisation/contributing)
+* [Blog](/signals-visualisation/blog)
