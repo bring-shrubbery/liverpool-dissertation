@@ -15,9 +15,9 @@ sass:
     sass_dir: _sass
 
 nav:
- - name: "About"
-   link: "/about"
  - name: "Guides"
-   link: "/usage_guide"
- - name: "Concepts"
-   link: "/concepts"
+   link: "/signals-visualisation/usage_guide"
+ - name: "Blog"
+   link: "/signals-visualisation/blog"
+ - name: "About"
+   link: "/signals-visualisation/about"
