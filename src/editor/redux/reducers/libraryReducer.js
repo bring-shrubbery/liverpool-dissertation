@@ -11,13 +11,30 @@ export default function reducer (state = defaultState, action) {
             const newSearchTerm = String(action.payload);
             const searchRegex = new RegExp(newSearchTerm, "i");
             const allNodesUnderCategory = state.libraryNodes[state.librarySelectedCategory];
+            const allNodes = {
+                ...state.libraryNodes["input"],
+                ...state.libraryNodes["processors"],
+                ...state.libraryNodes["output"],
+                ...state.libraryNodes["ui"]
+            };
+
             let newCurrentNodes = {}
 
-            for(const node in allNodesUnderCategory) {
-                const currentNode = allNodesUnderCategory[node];
-
-                if(currentNode.title.search(searchRegex) != -1) {
-                    newCurrentNodes[node] = currentNode;
+            if(newSearchTerm !== "") {
+                for(const node in allNodes) {
+                    const currentNode = allNodes[node];
+    
+                    if(currentNode.title.search(searchRegex) != -1) {
+                        newCurrentNodes[node] = currentNode;
+                    }
+                }
+            } else {
+                for(const node in allNodesUnderCategory) {
+                    const currentNode = allNodesUnderCategory[node];
+    
+                    if(currentNode.title.search(searchRegex) != -1) {
+                        newCurrentNodes[node] = currentNode;
+                    }
                 }
             }
 

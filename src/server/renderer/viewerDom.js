@@ -7,7 +7,46 @@ const styles = (settingsCount, scopeCount) => {
     
     const isDividableByTwo = scopeCount%2 == 0;
 
-    return `#signals-embedding-container {
+    return `#signals-embedding-main {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+
+        display: grid;
+        grid-template-rows: 30px auto;
+    }
+
+    #signals-embedding-controls {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        background-color: #EEE;
+        border-radius: 7px;
+    }
+
+    .signals-embedding-control-button {
+        margin: 2px;
+        margin-right: 0;
+        padding: 2px 8px;
+        padding-top: 3px;
+        background-color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        color: black;
+        transition: box-shadow 0.5s;
+    }
+
+    .signals-embedding-control-button:hover {
+        cursor: pointer;
+        user-select: none;
+        box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.5);
+        transition: box-shadow 0.5s;
+    }
+    
+    #signals-embedding-container {
         margin: 0;
         padding: 0;
         width: 100%;
@@ -42,7 +81,8 @@ const styles = (settingsCount, scopeCount) => {
         width: 100%;
         height: 100%;
         display: grid;
-        ${!isDividableByTwo ? `grid-template-rows: repeat(${scopeCount}, ${parseFloat(100/scopeCount).toFixed(2)}%);
+        
+        ${!isDividableByTwo || scopeCount < 3 ? `grid-template-rows: repeat(${scopeCount}, ${parseFloat(100/scopeCount).toFixed(2)}%);
         grid-template-columns: auto;`
         : `grid-template-rows: repeat(${scopeCount/2}, 1fr);
         grid-template-columns: 50% 50%;`}
@@ -291,10 +331,17 @@ export function jsxDom (nodes) {
         ) : null;
 
     return (
-        <div id={"signals-embedding-container"}>
-            <style>{styles(newSettingsNodes.length, canvasNodes.length)}</style>
-            {SettingsJsx}
-            {SignalViews}
+        <div id={"signals-embedding-main"}>
+            <div id={"signals-embedding-controls"}>
+                <div id={"signals-back-button"} className={"signals-embedding-control-button"}>back</div>
+                <div id={"signals-recording-start"} className={"signals-embedding-control-button"}>start recording</div>
+                <div id={"signals-recording-stop"} className={"signals-embedding-control-button"}>stop recording</div>
+            </div>
+            <div id={"signals-embedding-container"}>
+                <style>{styles(newSettingsNodes.length, canvasNodes.length)}</style>
+                {SettingsJsx}
+                {SignalViews}
+            </div>
         </div>
     )
 }

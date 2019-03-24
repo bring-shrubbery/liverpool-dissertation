@@ -133,6 +133,8 @@ export default class ComposerView extends Component {
         let nodePositionObtainer = function(inArray) {
             let returnArray = [];
 
+            const spaceToUnderscore = (text) => String(text).replace(" ", "_");
+
             if(inArray.length && inArray.length > 0) {
                 for(let i in inArray) {
                     // console.log(i);
@@ -146,7 +148,7 @@ export default class ComposerView extends Component {
     
                     let parent = node.parentNode;
 
-                    currentNodePosition.connectorId = parent.innerText;
+                    currentNodePosition.connectorId = spaceToUnderscore(parent.innerText);
 
                     if(parent) {
                         while(parent.classList[0] !== "composer-node") {

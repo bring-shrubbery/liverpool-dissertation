@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import './settings.scss';
 
-import { updateTitle, updateSetting, makeSettingAnInput, mathInputNumberUpdate, signalGeneratorTypeSet } from '../../redux/actions/settingsActions';
+import { updateTitle, updateSetting, makeSettingAnInput, mathInputNumberUpdate, signalGeneratorTypeSet, scopeSignalNumberUpdate } from '../../redux/actions/settingsActions';
 
 import { connect } from 'react-redux';
 
@@ -93,11 +93,21 @@ function Settings (props) {
 }
 
 function SettingDiv (props) {
+    // SettingsDiv initialised as follows:
+    // <SettingDiv key={settingId} 
+    //                 settingId={settingId} 
+    //                 settingData={settings[settingId]}
+    //                 nodeKey={props.nodeKey}
+    //                 node={props.node}
+    //                 dispatch={props.dispatch}
+    //                 force={props.force}
+    //                 allNodes={props.allNodes}/>);
+
     switch(props.settingData.type) {
         case "number": {
             return (
                 <li className={'settings-item'}>
-                    <h5 className={'settings-item-title'}>{props.settingData.title} :</h5>
+                    <h5 className={'settings-item-title'}>{displayWithoutLowdash(props.settingData.title)} :</h5>
                     <div className={'settings-item-input settings-item-number'}>
                         {!Boolean(props.settingData.isInput) ? <input type={'number'} value={props.settingData.value} onChange={e => {
                             // Update setting
@@ -116,7 +126,7 @@ function SettingDiv (props) {
         case "number_uncontrolled": {
             return (
                 <li className={'settings-item'}>
-                    <h5 className={'settings-item-title'}>{props.settingData.title} :</h5>
+                    <h5 className={'settings-item-title'}>{displayWithoutLowdash(props.settingData.title)} :</h5>
                     <div className={'settings-item-input settings-item-number'}>
                         <input type={'number'} value={props.settingData.value} onChange={e => {
                             // Update setting
@@ -130,7 +140,7 @@ function SettingDiv (props) {
         case "boolean": {
             return (
                 <li className={'settings-item'}>
-                    <h5 className={'settings-item-title'}>{props.settingData.title} :</h5>
+                    <h5 className={'settings-item-title'}>{displayWithoutLowdash(props.settingData.title)} :</h5>
                     <div className={'settings-item-input settings-item-boolean'}>
                         <input type={'checkbox'} checked={Boolean(props.settingData.value)} onChange={e => {
                             // Update setting
@@ -144,7 +154,7 @@ function SettingDiv (props) {
         case "text": {
             return (
                 <li className={'settings-item'}>
-                    <h5 className={'settings-item-title'}>{props.settingData.title} :</h5>
+                    <h5 className={'settings-item-title'}>{displayWithoutLowdash(props.settingData.title)} :</h5>
                     <div className={'settings-item-input settings-item-text'}>
                         <input type={'text'} value={props.settingData.value} onChange={e => {
                             // Update Setting
@@ -158,7 +168,7 @@ function SettingDiv (props) {
         case "color": {
             return (
                 <li className={'settings-item'}>
-                    <h5 className={'settings-item-title'}>{props.settingData.title} :</h5>
+                    <h5 className={'settings-item-title'}>{displayWithoutLowdash(props.settingData.title)} :</h5>
                     <div className={'settings-item-input settings-item-color'}>
                         <input type={'color'} value={props.settingData.value} onChange={e => {
                             // Update Setting
@@ -172,7 +182,7 @@ function SettingDiv (props) {
         case "scopeReference": {
             return (
                 <li className={'settings-item'}>
-                    <h5 className={'settings-item-title'}>{props.settingData.title} :</h5>
+                    <h5 className={'settings-item-title'}>{displayWithoutLowdash(props.settingData.title)} :</h5>
                     <div className={'settings-item-input settings-item-array-selector'}>
                         <ScopeSelector  allNodes={props.allNodes} 
                                         value={props.settingData.value} 
@@ -187,7 +197,7 @@ function SettingDiv (props) {
         case "signal_type": {
             return (
                 <li className={'settings-item'}>
-                    <h5 className={'settings-item-title'}>{props.settingData.title} :</h5>
+                    <h5 className={'settings-item-title'}>{displayWithoutLowdash(props.settingData.title)} :</h5>
                     <div className={'settings-item-input settings-item-array-selector'}>
                         <SignalGeneratorSelector    allNodes={props.allNodes} 
                                                     value={props.settingData.value} 
@@ -199,18 +209,30 @@ function SettingDiv (props) {
             )
         }
 
-        default: {
-
+        // This one can only be in the scope settings for now
+        case "number_of_signals": {
             return (
                 <li className={'settings-item'}>
-                    <h5 className={'settings-item-title'}>{props.settingData.title}</h5>
+                    <h5 className={'settings-item-title'}>{displayWithoutLowdash(props.settingData.title)} :</h5>
+                    <div className={'settings-item-input settings-item-number'}>
+                        <input type={'number'} value={props.settingData.value} onChange={e => {
+                            // Update setting
+                            props.dispatch(scopeSignalNumberUpdate(props.nodeKey, e.target.value));
+                        }}/>
+                    </div>
+                </li>
+            )
+        }
+
+        default: {
+            return (
+                <li className={'settings-item'}>
+                    <h5 className={'settings-item-title'}>{displayWithoutLowdash(props.settingData.title)} :</h5>
                     <div className={'settings-item-input'}>
                         <div>{props.settingData.type}</div>
                     </div>
                 </li>
             )
-
-            break;
         }
     }
 }
@@ -303,7 +325,8 @@ class SignalGeneratorSelector extends Component {
         let availableSignalGenerators = [
             "sin",
             "cos",
-            "tan"
+            "tan",
+            "sqw"
         ];
 
         let scopeListElements = availableSignalGenerators.map(name => {
@@ -341,4 +364,8 @@ function findSelectedNode (allNodes) {
     }
 
     return {selectedNode: null,selectedNodeKey: null};
+}
+
+function displayWithoutLowdash(text) {
+    return String(text).replace("_", " ");
 }

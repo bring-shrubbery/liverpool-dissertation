@@ -52,6 +52,10 @@ function calculateCode(json) {
                 executableString += "Math.tan(";
                 executableString += calculateCode(token.code);
                 executableString += ")";
+            } else if(value === "sqw") {
+                executableString += "Math.sqw(";
+                executableString += calculateCode(token.code);
+                executableString += ")";
             } else {
                 // If not supported function, throw error to the console
                 console.error("Unsupported math function !!!");

@@ -56,15 +56,6 @@ module.exports = {
             use: {
                 loader: "file-loader"
             }
-        }, {
-            test: /\.js$/,
-            exclude: /node_modules/,
-            use: [{
-                loader: 'eslint-loader',
-                options: {
-                    configFile: path.resolve(__dirname, "../../eslint/eslint_server.json")
-                }
-            }]
         }]
     },
     plugins: [

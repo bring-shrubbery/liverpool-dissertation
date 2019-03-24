@@ -6,7 +6,7 @@
   "scripts": {
     "start": "echo 'No start script!'",
     "build": "webpack --config ./config/webpack/webpack.config.prod.js",
-    "server": "webpack --config ./config/webpack/webpack.config.dev.js && node ./build/server.js",
+    "server": "webpack --config ./config/webpack/webpack.config.dev.js && cp ./src/gif/gif.worker.js ./build/public/static/gif.worker.js && node ./build/server.js",
     "lines": "go run linecounter.go",
     "test": "jest --no-cache"
   },

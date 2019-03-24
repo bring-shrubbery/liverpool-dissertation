@@ -169,25 +169,27 @@
         "scope": {
             "title": "Scope",
             "description": "Displays a scope with the provided input signal.",
-            "inputs": [
-                {
-                    "title": "signal",
-                    "type": "signal"
-                }
-            ],
+            "inputs": [{
+                "title": "signal_1",
+                "type": "signal"
+            }],
             "outputs": [],
             "default_settings": [{
                 "title": "# of Signals",
                 "value": "1",
                 "type": "number_of_signals"
             }, {
-                "title": "Color",
-                "value": "blue",
-                "type": "color"
+                "title": "middle",
+                "value": "0",
+                "type": "number_uncontrolled"
             }, {
-                "title": "AutoScale",
-                "value": "true",
-                "type": "boolean"
+                "title": "range",
+                "value": "0",
+                "type": "number_uncontrolled"
+            }, {
+                "title": "1_color",
+                "value": "#FF2873",
+                "type": "color"
             }]
         }, "fft": {
             "title": "FFT Scope",
@@ -226,7 +228,7 @@
             ],
             "default_settings": [{
                 "title": "Category",
-                "value": "",
+                "value": "settings",
                 "type": "text"
             }, {
                 "title": "Label",
@@ -238,7 +240,7 @@
                 "type": "number_uncontrolled"
             }, {
                 "title": "Default",
-                "value": "0",
+                "value": "1",
                 "type": "number_uncontrolled"
             }, {
                 "title": "Min",
@@ -246,11 +248,11 @@
                 "type": "number_uncontrolled"
             }, {
                 "title": "Max",
-                "value": "0",
+                "value": "1",
                 "type": "number_uncontrolled"
             }, {
                 "title": "Step",
-                "value": "1",
+                "value": "0.1",
                 "type": "number_uncontrolled"
             }]
         }, "uiSlider": {
@@ -265,7 +267,7 @@
             ],
             "default_settings": [{
                 "title": "Category",
-                "value": "",
+                "value": "settings",
                 "type": "text"
             }, {
                 "title": "Label",
@@ -277,7 +279,7 @@
                 "type": "number_uncontrolled"
             }, {
                 "title": "Default",
-                "value": "0",
+                "value": "1",
                 "type": "number_uncontrolled"
             }, {
                 "title": "Min",
@@ -285,29 +287,30 @@
                 "type": "number_uncontrolled"
             }, {
                 "title": "Max",
-                "value": "0",
+                "value": "1",
                 "type": "number_uncontrolled"
             }, {
                 "title": "Step",
-                "value": "1",
+                "value": "0.1",
                 "type": "number_uncontrolled"
             }]
-        }, "uiLabel": {
-            "title": "UI Label",
-            "description": "Displays a provided number into the console.",
-            "inputs": [{
-                "title": "input",
-                "type": "number"
-            }],
+        }, "time": {
+            "title": "Time Control",
+            "description": "Existance of this node in the canvas will animate time according to the vector in the settings.",
+            "inputs": [],
             "outputs": [],
             "default_settings": [{
-                "title": "Category",
-                "value": "",
-                "type": "text"
+                "title": "Speed",
+                "value": "1",
+                "type": "number_uncontrolled"
             }, {
-                "title": "Label",
-                "value": "",
-                "type": "text"
+                "title": "Range",
+                "value": "2",
+                "type": "number_uncontrolled"
+            }, {
+                "title": "origin",
+                "value": "0",
+                "type": "number_uncontrolled"
             }]
         }
     }

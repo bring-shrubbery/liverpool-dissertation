@@ -20,12 +20,19 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
     let exeArray: string[] = [];
     let executable = "var graphs = {};\n";
 
-    // Setup time
-    executable += initTime(OFFSET - DURATION / 2, OFFSET + DURATION / 2, 1 / SAMPLE_RATE);
+    // Init square wave function
+    executable += `Math.__proto__.sqw = function (x) {
+        let val = x >= 0 ? ((x/(2*Math.PI))%1) : (((-x-Math.PI)/(2*Math.PI))%1);
+        if(val >= 0 && val <= 0.5) {
+            return 0.5;
+        } else {
+            return -0.5;
+        }
+    };`;
 
     // Calculated nodes have following shape: "nodeId:outputId"
     let calculatedNodes: string[] = [];
-
+    
     // Statistics object
     let statistics = {
         loopCounter: 0,
@@ -34,10 +41,37 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
         startTime: 0,
         endTime: 0
     };
-
+    
     // Separates uncalculated nodes from scopes and UI at the start.
-    let { uncalculatedNodes, allScopes, uiNodes, fftNodes } = separateNodes(allNodes);
+    let {
+        uncalculatedNodes, 
+        allScopes, 
+        uiNodes, 
+        fftNodes,
+        time
+    } = separateNodes(allNodes);
 
+    if(time["time"]) {
+        const timeNode = time["time"];
+        const timeSpeed = parseFloat(timeNode.settings[0].value);
+        const timeRange = parseFloat(timeNode.settings[1].value);
+        const timeOrigin = parseFloat(timeNode.settings[2].value);
+
+        // TODO: SOLVE SAMPLE RATE AUTOMATIC CALCULATION
+        const timeStart = timeOrigin - timeRange / 2;
+        const timeStop = timeOrigin + timeRange / 2;
+        executable += initTime(timeStart, timeStop, 1 / SAMPLE_RATE);
+        executable += "var deltaTime = 60;"
+
+        executable += `setInterval(function () {
+            t = t.map(v => v + ${timeSpeed}/deltaTime);
+            update();
+        }, deltaTime);`;
+    } else {
+        // Setup default time
+        executable += initTime(OFFSET - DURATION / 2, OFFSET + DURATION / 2, 1 / SAMPLE_RATE);
+    }
+    
     // Separate touch nodes form regular nodes
     let touchNodesSeparated = getTouchInputs(uncalculatedNodes);
 
@@ -56,7 +90,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
 
     // Connection Dictionary contains connections in key: value format, where
     // both contain nodeId and settingId as strings separated by a colon.
-    let connectionDictionary = generateConnectionDictionary(allConnections);
+    // let connectionDictionary = generateConnectionDictionary(allConnections);
 
     // General rules for algorithm writing:
     // * use as many functions as possible (in performance bounds)
@@ -155,17 +189,95 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
 
     executable += "function update() {\n";
 
+    let gifRecordingStart = `document.getElementById("signals-recording-start").onclick = function (e) {
+        e.preventDefault();
+        isRecording = true;
+        document.getElementById("signals-recording-start").style.display = "none";
+        document.getElementById("signals-recording-stop").style.display = "block";
+        `;
+
+    let gifRecordingStop = `document.getElementById("signals-recording-stop").onclick = function (e) {
+        e.preventDefault();
+        isRecording = false;
+        document.getElementById("signals-recording-start").style.display = "block";
+        document.getElementById("signals-recording-stop").style.display = "none";
+        `;
+    
     // Loop through time scopes
     for (let s in allScopes) {
         const currentScope = allScopes[s];
-        const { otherNodeId, otherSettingId } = getOtherSideOfConnector(allConnections, null, { nodeId: s, settingId: "signal" });
+
+        let dataInitialiserArray = [];
+        let dataGenerationArray = [];
+
+        for(let i = 0; i < currentScope.inputs.length; i++) {
+            const inputTitle = currentScope.inputs[i].title;
+            const { otherNodeId, otherSettingId } = getOtherSideOfConnector(allConnections, null, { nodeId: s, settingId: inputTitle});
+
+            dataInitialiserArray.push(`let ${inputTitle}data = [];\n`);
+            dataGenerationArray.push(`${inputTitle}data.push(${otherNodeId}${otherSettingId}(t[i]));\n`);
+        }
+
+        let dataInitialiserComposite = "";
+        let dataGenerationComposite = "";
+
+        for(let d in dataInitialiserArray) {
+            dataInitialiserComposite += dataInitialiserArray[d];
+        }
+
+        for(let d in dataGenerationArray) {
+            dataGenerationComposite += dataGenerationArray[d];
+        }
+
+        let dataGenerationSnippet = `${dataInitialiserComposite}
+            for(let i = 0; i < t.length; i++) {
+                ${dataGenerationComposite}
+            }`;
+
+        let datasets = [...currentScope.settings].slice(3, currentScope.settings.length).map((setting, i) => {
+            const inputTitle = currentScope.inputs[i].title;
+            return `{
+                label: '${inputTitle.replace("_", " ")}',
+                backgroundColor: 'rgba(0, 0, 0, 0)',
+                borderColor: '${setting.value}',
+                data: ${inputTitle}data
+            }`
+        });
+
+        let datasetsArraySnippet = "[";
+        for(let d = 0; d < datasets.length; d++) {
+            datasetsArraySnippet += datasets[d];
+            if(d != (datasets.length - 1)) {
+                datasetsArraySnippet += ","
+            } else {
+                datasetsArraySnippet += "]"
+            }
+        }
 
         executable += `
         if(graphs.${s}) {
-            let newData = [];
-            for(let i = 0; i < t.length; i++) {newData.push(${otherNodeId}${otherSettingId}(t[i]));}
-            graphs.${s}.data.datasets[0].data = newData;
+            ${dataGenerationSnippet}
+            graphs.${s}.data.datasets = ${datasetsArraySnippet};
             graphs.${s}.update();
+            if(typeof ${s}gif !== 'undefined') {
+                if(!lastFrameTimestamp) { 
+                    lastFrameTimestamp = new Date;
+                } else {
+                    const now = new Date;
+                    const timeSinceLastFrame = now - lastFrameTimestamp;
+                    lastFrameTimestamp = new Date;
+    
+                    var tempCanvas = document.createElement("canvas");
+                    tempCanvas.width = graphs.${s}.canvas.width/2;
+                    tempCanvas.height = graphs.${s}.canvas.height/2;
+                    var tempCtx = tempCanvas.getContext("2d");
+                    tempCtx.fillStyle = "#FFF";
+                    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+                    tempCtx.drawImage(graphs.${s}.canvas, 0, 0, graphs.${s}.canvas.width/2, graphs.${s}.canvas.height/2);
+    
+                    window.${s}gif.addFrame(tempCtx, {delay: timeSinceLastFrame});
+                }
+            }
         } else {
             let canvasNode = document.getElementById("${s}");
 
@@ -182,27 +294,16 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
             
             var ctx = canvasNode.getContext("2d");
 
-            let data = [];
-
-            for(let i = 0; i < t.length; i++) {
-                data.push(${otherNodeId}${otherSettingId}(t[i]));
-            }
+            ${dataGenerationSnippet}
 
             var myChart = new Chart(ctx, {
                 type: 'line',
                 data: {labels: t.map(ti => ti.toFixed(2)),
-                    datasets: [
-                        {
-                            label: "signal",
-                            backgroundColor: 'rgba(0, 0, 0, 0)',
-                            borderColor: '${currentScope.settings[1].value}',
-                            data: data
-                        }
-                    ]
+                    datasets: ${datasetsArraySnippet}
                 }, options: {
                     elements: {
                         line: {
-                            tension: 0.4,
+                            tension: 0,
                             stepped: false
                         }, point: {
                             radius: 0,
@@ -214,19 +315,13 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
                     }, tooltips: {
                         enabled: false
                     }, legend: {
-                        display: false
-                    }${currentScope.settings[0].value == "true" ? '' : `, scales: {
-                        xAxes: [{
+                        display: ${currentScope.inputs.length > 1 ? 'true' : 'false'}
+                    }${(currentScope.settings[1].value == "0") && (currentScope.settings[2].value == "0") ? '' : `, scales: {
+                        yAxes: [{
                             ticks: {
-                                max: 1,
-                                min: -1,
-                                stepSize: 0.01
-                            }
-                        }], yAxes: [{
-                            ticks: {
-                                max: 2,
-                                min: 0,
-                                stepSize: 0.5
+                                max: ${parseFloat(currentScope.settings[1].value) + parseFloat(currentScope.settings[2].value) / 2},
+                                min: ${parseFloat(currentScope.settings[1].value) - parseFloat(currentScope.settings[2].value) / 2},
+                                stepSize: ${parseFloat(currentScope.settings[2].value) / 10}
                             }
                         }]
                     }`}, title: {
@@ -240,9 +335,26 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
             graphs.${s} = myChart;
         }`;
 
+        gifRecordingStart += `window.${s}gif = new GIF({
+            workers: 1,
+            quality: 10,
+            workerScript: "/gif.worker.js",
+            width: graphs.${s}.canvas.width / 2,
+            height: graphs.${s}.canvas.height / 2
+        });`;
+        gifRecordingStop += `window.${s}gif.on('finished', function(blob) {
+            // location.assign(URL.createObjectURL(blob));
+            download(blob, "anim.gif", "image/gif");
+        });
+
+        window.${s}gif.render();`
+
         exeArray.push(executable);
         executable = "";
     }
+
+    executable += gifRecordingStart + "};";
+    executable += gifRecordingStop + "};";
 
     // Loop through fft scopes
     for(let f in fftNodes) {
@@ -263,7 +375,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
 
             // realOutput = realOutput.filter((val, i) => i%2 == 0 || i == 0);
 
-            realOutput = realOutput.splice(0, ${currentScope.settings[3].value});
+            realOutput = realOutput.splice(0, ${parseInt(currentScope.settings[2].value)});
             
             realOutput = realOutput.map(val => val * 2 / data.length);
 
@@ -300,7 +412,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
 
             // realOutput = realOutput.filter((val, i) => i%2 == 0 || i == 0);
 
-            realOutput = realOutput.splice(0, ${currentScope.settings[3].value});
+            realOutput = realOutput.splice(0, ${parseInt(currentScope.settings[2].value)});
 
             realOutput = realOutput.map(val => val * 2 / data.length);
 

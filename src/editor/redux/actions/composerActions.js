@@ -124,7 +124,7 @@ export function endNewConnector (endNodeId, endSettingId) {
         payload: {
             connectorEnd: {
                 nodeId: endNodeId,
-                settingId: endSettingId
+                settingId: spaceToUnderscore(endSettingId)
             }
         }
     } 
@@ -136,3 +136,5 @@ export function cancelNewConnector() {
         payload: 1
     }
 }
+
+const spaceToUnderscore = (text) => String(text).replace(" ", "_");

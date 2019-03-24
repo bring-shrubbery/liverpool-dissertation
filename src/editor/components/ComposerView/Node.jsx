@@ -242,7 +242,7 @@ export default class Node extends Component {
                 };
 
                 return (<li className="composer-node-input-labels" key={label.title}>
-                    {label.title}
+                    {displayWithoutLowdash(label.title)}
                     <span onMouseDown={(e) => {
                         e.stopPropagation();
 
@@ -435,4 +435,8 @@ export default class Node extends Component {
             </div>
         );
     }
+}
+
+function displayWithoutLowdash(text) {
+    return String(text).replace("_", " ");
 }

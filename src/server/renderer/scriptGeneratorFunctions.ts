@@ -6,11 +6,14 @@ export function separateNodes (allNodes: NodeCollection): {
         uncalculatedNodes: NodeCollection, 
         allScopes: NodeCollection,
         uiNodes: NodeCollection,
-        fftNodes: NodeCollection} {
+        fftNodes: NodeCollection,
+        time: NodeCollection
+    } {
     let uncalculated: NodeCollection = {};
     let scopes: NodeCollection = {};
     let uiNodes: NodeCollection = {};
     let fftNodes: NodeCollection = {};
+    let timeNodes: NodeCollection = {};
 
     for(let i in allNodes) {
         // Check if it is a UI node
@@ -24,6 +27,9 @@ export function separateNodes (allNodes: NodeCollection): {
         // Check if it is an fft scope
         const isFFT = String(i).substr(0, 3) === "fft";
 
+        // Check if it is a time node
+        const isTime = String(i).substr(0, 4) === "time";
+
         // Do separation
         if(isScope) {
             scopes[i] = allNodes[i];
@@ -31,6 +37,8 @@ export function separateNodes (allNodes: NodeCollection): {
             uiNodes[i] = allNodes[i];
         } else if(isFFT) {
             fftNodes[i] = allNodes[i];
+        } else if(isTime) {
+            timeNodes[i] = allNodes[i];
         } else {
             uncalculated[i] = allNodes[i];
         }
@@ -41,7 +49,8 @@ export function separateNodes (allNodes: NodeCollection): {
         uncalculatedNodes: uncalculated,
         allScopes: scopes,
         uiNodes: uiNodes,
-        fftNodes: fftNodes
+        fftNodes: fftNodes,
+        time: timeNodes
     };
 }
 

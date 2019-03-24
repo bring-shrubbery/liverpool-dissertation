@@ -94,7 +94,7 @@ export const tokenizeGenerator = (gen: string, nodeId: string): GeneratorSegment
             let nextThree = String(g[i] + g[i+1] + g[i+2]);
             
             // Check if next three chars are one of 
-            if(nextThree === "sin" || nextThree === "cos" || nextThree === "tan") {
+            if(nextThree === "sin" || nextThree === "cos" || nextThree === "tan" || nextThree === "sqw") {
                 // Adjust index to next character
                 i += 3;
 

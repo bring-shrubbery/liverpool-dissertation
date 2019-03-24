@@ -232,9 +232,7 @@ app.get("/createProject/:username/:title/:description", (req, res) => {
     let pid = database.newProject(username, title, description);
 
     res.status(301).send(`/editor/${username}/${pid}`);
-})
-
-
+});
 
 // Run server
 const port = process.env.PORT || 5000;

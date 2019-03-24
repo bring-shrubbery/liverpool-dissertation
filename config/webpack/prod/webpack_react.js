@@ -30,6 +30,16 @@ const editorConfig = {
                 "css-loader", // translates CSS into CommonJS
                 "sass-loader" // compiles Sass to CSS, using Node Sass by default
             ]
+        }, {
+            enforce: "pre",
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: [{
+                loader: 'eslint-loader',
+                options: {
+                    configFile: path.resolve(__dirname, "../../eslint/eslint_react.json")
+                }
+            }]
         }]
     },
     plugins: [

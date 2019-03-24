@@ -524,7 +524,7 @@ export default function reducer (state = defaultState, action) {
             let newInputs = [];
             for(let i = 1; i <= parseInt(newValue); i++) {
                 newInputs.push({
-                    title: `input${i}`,
+                    title: `input_${i}`,
                     type: "signal"
                 })
             }
@@ -622,6 +622,18 @@ export default function reducer (state = defaultState, action) {
                     break;
                 }
 
+                case "sqw": {
+                    newNodes[nodeKey].settings[settingId].value = "sqw";
+                    newNodes[nodeKey].generators = [
+                        {
+                            "title":"signal",
+                            "value": "[amplitude]*sqw(2*[PI]*[frequency]*[time]+[phase])+[offset]",
+                            "type": "signal"
+                        }
+                    ];
+                    break;
+                }
+
                 default: {
                     return {...state}
                 }
@@ -630,6 +642,89 @@ export default function reducer (state = defaultState, action) {
             return {
                 ...state,
                 allNodes: newNodes
+            }
+        }
+
+        case "SETTINGS_SCOPE_SIGNAL_NUMBER_UPDATE": {
+            const nodeKey = action.payload.nodeKey;
+            const newNumber = action.payload.newNumber;
+
+            let newNodes = {...state.allNodes};
+            let newConnections = [...state.allConnections];
+
+            let currentNode = newNodes[nodeKey];
+
+            const presetColors = [
+                "#e81438",
+                "#2c7bf9",
+                "#3cfce6",
+                "#f2be24",
+                "#a422f4",
+                "#00c638",
+                "#000000"
+            ];
+
+            const currentValue = parseInt(currentNode.settings[0].value);
+            const newValue = parseInt(newNumber)
+            if(currentValue < newValue) {
+                // Add new signal
+                currentNode.settings[0].value = newNumber;
+                
+                const newDifference = newValue - currentValue;
+                
+                for(let d = 0; d < newDifference; d++) {
+                    let randomColor = presetColors[Math.round(Math.random() * (presetColors.length - 1))];
+
+                    currentNode.settings.push({
+                        title: `${currentNode.inputs.length+d+1}_color`,
+                        value: randomColor,
+                        type: "color"
+                    }
+                    // , {
+                    //     title: "auto-scale",
+                    //     value: "true",
+                    //     type: "boolean"
+                    // }
+                    );
+
+                    currentNode.inputs.push({
+                        "title": `signal_${currentNode.inputs.length+d+1}`,
+                        "type": "signal"
+                    })
+                }
+            } else if(currentValue > newValue) {
+                // Delete last signal and connected connections
+                if(currentNode.settings.length > 3) {
+                    currentNode.settings[0].value = newNumber;
+    
+                    const newDifference = currentValue - newValue;
+                    for(let d = 0; d < newDifference; d++) {
+                        // Remove settings and inputs
+                        currentNode.settings.pop();
+                        // currentNode.settings.pop()
+                        const inputObject = currentNode.inputs.pop();
+
+                        // Remove connected connections
+                        for(let c = 0; c < newConnections.length; c++) {
+                            const end = newConnections[c].connectorEnd;
+                            if(String(end.nodeId) == String(nodeKey) &&
+                                String(end.settingId) == String(inputObject.title)) {
+                                    newConnections.splice(c, 1);
+                                    break;
+                                }
+                        }
+                    }
+                } else {
+                    return {...state}
+                }
+            } else {
+                return {...state}
+            }
+
+            return {
+                ...state,
+                allNodes: newNodes,
+                allConnections: newConnections
             }
         }
 

@@ -51,3 +51,13 @@ export function signalGeneratorTypeSet(nodeKey, settingId, mathType) {
         }
     }
 }
+
+export function scopeSignalNumberUpdate(nodeKey, newNumber) {
+    return {
+        type: "SETTINGS_SCOPE_SIGNAL_NUMBER_UPDATE",
+        payload: {
+            nodeKey: nodeKey,
+            newNumber: newNumber
+        }
+    }
+}
