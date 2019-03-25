@@ -24,9 +24,7 @@ export default function reducer (state = defaultState, action) {
                         const oldId = second_pass_id.substr(originalId.length, second_pass_id.length);
                         const oldNumericId = parseInt(oldId, 10);
                         
-
                         if(oldNumericId === id) id++;
-
                     }
 
                     newId = originalId + id;
@@ -726,6 +724,19 @@ export default function reducer (state = defaultState, action) {
                 allNodes: newNodes,
                 allConnections: newConnections
             }
+        }
+
+        case "SETTINGS_SETTING_SET_EXPAND": {
+            let newNodes = {...state.allNodes};
+            let currentNode = newNodes[action.payload.nodeKey];
+
+            currentNode.settings[action.payload.settingId].expanded = action.payload.newValue;
+
+            return {
+                ...state,
+                allNodes: newNodes
+            }
+
         }
 
         default: {

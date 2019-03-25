@@ -94,6 +94,8 @@ export default class Canvas extends Component {
         for(let i in lineCoordinates) {
             const pos = lineCoordinates[i];
 
+            if(typeof pos === 'undefined') continue;
+
             const x1 = pos.startPosition.x * 2 + 16;
             const y1 = pos.startPosition.y * 2 - 93;
             const x2 = pos.endPosition.x * 2 - 134;

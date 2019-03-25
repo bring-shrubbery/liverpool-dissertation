@@ -61,3 +61,14 @@ export function scopeSignalNumberUpdate(nodeKey, newNumber) {
         }
     }
 }
+
+export function setExpansionSetting(nodeKey, settingId, newValue) {
+    return {
+        type: "SETTINGS_SETTING_SET_EXPAND",
+        payload: {
+            nodeKey: String(nodeKey),
+            settingId: String(settingId),
+            newValue: Boolean(newValue)
+        }
+    }
+}

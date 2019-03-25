@@ -68,7 +68,7 @@ export const tokenizeGenerator = (gen: string, nodeId: string): GeneratorSegment
         }
         
         // --------------- MATH OPERATOR ----------------
-        if (g[i] === "*" || g[i] === "/" || g[i] === "+" || g[i] === "-") {
+        if (g[i] === "*" || g[i] === "/" || g[i] === "+" || g[i] === "-" || g[i] === "^" || g[i] === "%") {
             const operatorSnippet: GeneratorSegment = {
                 type: "operator",
                 value: g[i],
@@ -94,7 +94,7 @@ export const tokenizeGenerator = (gen: string, nodeId: string): GeneratorSegment
             let nextThree = String(g[i] + g[i+1] + g[i+2]);
             
             // Check if next three chars are one of 
-            if(nextThree === "sin" || nextThree === "cos" || nextThree === "tan" || nextThree === "sqw") {
+            if(nextThree === "sin" || nextThree === "cos" || nextThree === "tan" || nextThree === "sqw" || nextThree === "exp") {
                 // Adjust index to next character
                 i += 3;
 

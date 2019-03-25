@@ -175,6 +175,55 @@
                         background-color: lightblue;
                     }
                 }
+
+                .settings-item-array {
+                    width: 80%;
+
+                    .settings-item-array-selection {
+                        width: 100%;
+                        height: 100%;
+                        margin: 0;
+                        padding: 0;
+                        text-align: center;
+
+                        background: white;
+                    }
+
+                    .settings-item-array-selection:hover {
+                        cursor: pointer;
+                    }
+
+                    .settings-item-array-list {
+                        list-style: none;
+
+                        margin: 0;
+                        padding: 0;
+                        width: 100%;
+                        height: 100%;
+
+                        text-align: center;
+
+                        li {
+                            margin: 0;
+                            padding: 0;
+                            height: 21px;
+                            background: white;
+                            border-bottom: 1px solid #DDD;
+                        }
+
+                        li:last-child {
+                            border-bottom: none;
+                        }
+
+                        li:hover {
+                            cursor: pointer;
+                        }
+                    }  
+
+                    .array-hidden {
+                        display: none;
+                    }
+                }
             }
         }
     }

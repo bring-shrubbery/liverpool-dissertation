@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import './settings.scss';
 
-import { updateTitle, updateSetting, makeSettingAnInput, mathInputNumberUpdate, signalGeneratorTypeSet, scopeSignalNumberUpdate } from '../../redux/actions/settingsActions';
+import { updateTitle, updateSetting, makeSettingAnInput, mathInputNumberUpdate, signalGeneratorTypeSet, scopeSignalNumberUpdate, setExpansionSetting } from '../../redux/actions/settingsActions';
 
 import { connect } from 'react-redux';
 
@@ -222,6 +222,44 @@ function SettingDiv (props) {
                     </div>
                 </li>
             )
+        }
+
+        case "array": {
+            let arrayOptions = props.settingData.array_options.map((option, i) => {
+                return <li key={i} 
+                    id={props.nodeKey + option.title}
+                    title={option.description} 
+                    onClick={e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        props.dispatch(updateSetting(props.nodeKey, props.settingId, option.title));
+                        props.dispatch(setExpansionSetting(props.nodeKey, props.settingId, false))
+                    }
+                }>{option.title}</li>
+            });
+
+            return (
+                <li className={'settings-item'}>
+                    <h5 className={'settings-item-title'}>{displayWithoutLowdash(props.settingData.title)} :</h5>
+                    <div className={'settings-item-array'}>
+                        <div className={'settings-item-array-selection' + (Boolean(props.settingData.expanded) === true ? ' array-hidden' : '')}
+                            onClick={e => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                props.dispatch(setExpansionSetting(props.nodeKey, props.settingId, true));
+
+                                window.onclick = e => {
+                                    e.stopPropagation();
+                                    props.dispatch(setExpansionSetting(props.nodeKey, props.settingId, false));
+                                    window.onclick = null;
+                                }
+                            }}>{props.settingData.value}</div>
+                        <ul className={'settings-item-array-list ' + (props.settingData.expanded == true ? '' : 'array-hidden')}>
+                            {arrayOptions}
+                        </ul>
+                    </div>
+                </li>
+            );
         }
 
         default: {

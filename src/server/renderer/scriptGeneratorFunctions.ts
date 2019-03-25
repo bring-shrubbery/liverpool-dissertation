@@ -7,13 +7,15 @@ export function separateNodes (allNodes: NodeCollection): {
         allScopes: NodeCollection,
         uiNodes: NodeCollection,
         fftNodes: NodeCollection,
-        time: NodeCollection
+        time: NodeCollection,
+        animationNodes: NodeCollection
     } {
     let uncalculated: NodeCollection = {};
     let scopes: NodeCollection = {};
     let uiNodes: NodeCollection = {};
     let fftNodes: NodeCollection = {};
     let timeNodes: NodeCollection = {};
+    let animationNodes: NodeCollection = {};
 
     for(let i in allNodes) {
         // Check if it is a UI node
@@ -30,6 +32,9 @@ export function separateNodes (allNodes: NodeCollection): {
         // Check if it is a time node
         const isTime = String(i).substr(0, 4) === "time";
 
+        // CHeck if it is an animation node
+        const isAnimation = String(i).substr(0, 9) === "animation";
+
         // Do separation
         if(isScope) {
             scopes[i] = allNodes[i];
@@ -39,6 +44,8 @@ export function separateNodes (allNodes: NodeCollection): {
             fftNodes[i] = allNodes[i];
         } else if(isTime) {
             timeNodes[i] = allNodes[i];
+        } else if(isAnimation) {
+            animationNodes[i] = allNodes[i];
         } else {
             uncalculated[i] = allNodes[i];
         }
@@ -50,7 +57,8 @@ export function separateNodes (allNodes: NodeCollection): {
         allScopes: scopes,
         uiNodes: uiNodes,
         fftNodes: fftNodes,
-        time: timeNodes
+        time: timeNodes,
+        animationNodes: animationNodes
     };
 }
 
@@ -465,4 +473,27 @@ export function generateTouchControllers(nodes: NodeCollection): string {
     }
 
     return e;
+}
+
+export function saveAnimation(node: SignalNode, nodeKey: string): string {
+    const type = node.settings[2].value;
+
+    switch (type) {
+        case "oscillator": {
+            return `var ${nodeKey}${node.outputs[0].title} = function() { return Math.sin(Math.PI*2*animationTime*${node.settings[0].value}) + ${node.settings[1].value}};`;
+        }
+
+        default: {
+            return `var ${nodeKey}${node.outputs[0].title} = function() { return animationTime*(${node.settings[0].value}) + ${node.settings[1].value}};`;
+        }
+    }
+}
+
+export function initAnimationTime(): string {
+    return `if(typeof deltaTime == 'undefined') window.deltaTime = 60;
+    var animationTime = 0;
+    setInterval(function () {
+        animationTime += deltaTime/1000;
+        update();
+    }, deltaTime);`
 }

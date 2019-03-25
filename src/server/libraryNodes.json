@@ -84,6 +84,37 @@
                     "type": "signal_type"
                 }
             ]
+        }, "animation": {
+            "title": "Animation",
+            "description": "Animation controller. Can be used to animate properties without human interaction.",
+            "inputs": [],
+            "outputs": [{
+                "title": "output",
+                "type": "number"
+            }],
+            "default_settings": [{
+                "title": "speed",
+                "value": "1",
+                "type": "number"
+            }, {
+                "title": "origin",
+                "value": "0",
+                "type": "number_uncontrolled"
+            }, {
+                "title": "type",
+                "value": "linear",
+                "type": "array",
+                "expanded": false,
+                "array_options": [
+                    {
+                        "title": "linear",
+                        "description": "linearly increased value"
+                    }, {
+                        "title": "oscillator",
+                        "description": "oscillaces sinusoudally from 1 to -1"
+                    }
+                ]
+            }]
         }
     }, "processors": {
         "multiply": {
@@ -91,10 +122,10 @@
             "description": "Modulates two signals using AM modulation",
             "inputs": [
                 {
-                    "title": "input1",
+                    "title": "input_1",
                     "type": "signal"
                 }, {
-                    "title": "input2",
+                    "title": "input_2",
                     "type": "signal"
                 }
             ],
@@ -117,10 +148,10 @@
             "description": "Modulates two signals using AM modulation",
             "inputs": [
                 {
-                    "title": "input1",
+                    "title": "input_1",
                     "type": "signal"
                 }, {
-                    "title": "input2",
+                    "title": "input_2",
                     "type": "signal"
                 }
             ],
@@ -143,10 +174,10 @@
             "description": "Modulates two signals using AM modulation",
             "inputs": [
                 {
-                    "title": "input1",
+                    "title": "input_1",
                     "type": "signal"
                 }, {
-                    "title": "input2",
+                    "title": "input_2",
                     "type": "signal"
                 }
             ],
@@ -164,6 +195,38 @@
                 }
             ],
             "default_settings": []
+        }, "exponent": {
+            "title": "E^x",
+            "description": "E to the power of input",
+            "inputs": [{
+                "title": "x",
+                "type": "number"
+            }], "generators": [{
+                "title": "output",
+                "type": "number",
+                "value": "exp([x])"
+            }], "outputs": [{
+                "title": "output",
+                "type": "number"
+            }], "default_settings": []
+        }, "power": {
+            "title": "x^y",
+            "description": "x to the power of y",
+            "inputs": [{
+                "title": "x",
+                "type": "number"
+            }], "generators": [{
+                "title": "output",
+                "type": "number",
+                "value": "[x]^[y]"
+            }], "outputs": [{
+                "title": "output",
+                "type": "number"
+            }], "default_settings": [{
+                "title": "y",
+                "type": "number",
+                "value": "1"
+            }]
         }
     }, "output": {
         "scope": {
@@ -212,6 +275,24 @@
             }, {
                 "title": "Range (Hz)",
                 "value": "100",
+                "type": "number_uncontrolled"
+            }]
+        }, "time": {
+            "title": "Time Control",
+            "description": "Existance of this node in the canvas will animate time according to the vector in the settings.",
+            "inputs": [],
+            "outputs": [],
+            "default_settings": [{
+                "title": "Speed",
+                "value": "1",
+                "type": "number_uncontrolled"
+            }, {
+                "title": "Range",
+                "value": "2",
+                "type": "number_uncontrolled"
+            }, {
+                "title": "origin",
+                "value": "0",
                 "type": "number_uncontrolled"
             }]
         }
@@ -292,24 +373,6 @@
             }, {
                 "title": "Step",
                 "value": "0.1",
-                "type": "number_uncontrolled"
-            }]
-        }, "time": {
-            "title": "Time Control",
-            "description": "Existance of this node in the canvas will animate time according to the vector in the settings.",
-            "inputs": [],
-            "outputs": [],
-            "default_settings": [{
-                "title": "Speed",
-                "value": "1",
-                "type": "number_uncontrolled"
-            }, {
-                "title": "Range",
-                "value": "2",
-                "type": "number_uncontrolled"
-            }, {
-                "title": "origin",
-                "value": "0",
                 "type": "number_uncontrolled"
             }]
         }

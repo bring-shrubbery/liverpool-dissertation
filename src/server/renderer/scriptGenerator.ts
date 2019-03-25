@@ -8,7 +8,9 @@ import {
     getTouchInputs,
     initTime,
     generateTouchControllers,
-    getOtherSideOfConnector
+    getOtherSideOfConnector,
+    initAnimationTime,
+    saveAnimation
 } from './scriptGeneratorFunctions';
 
 const SAMPLE_RATE = 512; // Samples per second
@@ -48,7 +50,8 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
         allScopes, 
         uiNodes, 
         fftNodes,
-        time
+        time,
+        animationNodes
     } = separateNodes(allNodes);
 
     if(time["time"]) {
@@ -70,6 +73,19 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
     } else {
         // Setup default time
         executable += initTime(OFFSET - DURATION / 2, OFFSET + DURATION / 2, 1 / SAMPLE_RATE);
+    }
+
+    if(objectSize(animationNodes) > 0) {
+        executable += "var allTimers = [];";
+        for(let nodeKey in animationNodes) {
+            const currentNode = animationNodes[nodeKey];
+            const outputKey = currentNode.outputs[0].title;
+            
+            executable += saveAnimation(currentNode, nodeKey);
+            calculatedNodes.push(`${nodeKey}:${outputKey}`)
+        }
+
+        executable += initAnimationTime();
     }
     
     // Separate touch nodes form regular nodes
@@ -202,7 +218,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
         document.getElementById("signals-recording-start").style.display = "block";
         document.getElementById("signals-recording-stop").style.display = "none";
         `;
-    
+
     // Loop through time scopes
     for (let s in allScopes) {
         const currentScope = allScopes[s];
@@ -322,6 +338,8 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
         gifRecordingStop += `window.${s}gif.on('finished', function(blob) {
             // location.assign(URL.createObjectURL(blob));
             download(blob, "anim.gif", "image/gif");
+
+            delete window.${s}gif;
         });
 
         window.${s}gif.render();`
@@ -330,8 +348,8 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
         executable = "";
     }
 
-    executable += gifRecordingStart + "};";
-    executable += gifRecordingStop + "};";
+    executable += gifRecordingStart + "};\n";
+    executable += gifRecordingStop + "};\n";
 
     // Loop through fft scopes
     for(let f in fftNodes) {
@@ -344,9 +362,9 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
 
             let f = new FFT(data.length);
             let complexOutput = f.createComplexArray();
-            f.realTransform(complexOutput, data);
             let realOutput = new Array(data.length);
-            realOutput.fill(0);
+
+            f.realTransform(complexOutput, data);
             f.fromComplexArray(complexOutput, realOutput);
 
             // realOutput = realOutput.filter((val, i) => i%2 == 0 || i == 0);
@@ -393,15 +411,16 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
             realOutput = realOutput.map(val => val * 2 / data.length);
 
             var myChart = new Chart(ctx, {
-                type: 'bar',
+                type: 'line',
                 data: {
                     labels: realOutput.map((val, i) => parseFloat(i/2).toFixed(1)),
                     datasets: [
                         {
                             label: "signal",
-                            backgroundColor: 'rgba(245, 23, 54, 0.4)',
-                            borderColor: 'rgb(0, 0, 0)',
-                            data: realOutput
+                            backgroundColor: 'rgba(0, 0, 0, 0)',
+                            borderColor: '${currentScope.settings[1].value}',
+                            data: realOutput,
+                            steppedLine: 'middle'
                         }
                     ]
                 }, options: {
@@ -415,7 +434,10 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
                         display: true,
                         text: '${currentScope.title}',
                         position: 'left'
-                    }
+                    }, elements: { 
+                        line: { tension: 0 },
+                        point: { radius: 0, hitRadius: 0, hoverRadius: 0 }
+                    }, tooltips: { enabled: false }
                 }
             });
 
