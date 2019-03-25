@@ -140,7 +140,6 @@ export function getOtherSideOfConnector(
     }
 }
 
-
 // Check if all connected inputs in the node are connected to the outputs that were already calculated or are not connected
 export function allInputsCalculated(nodeId: string, inputs: NodeInputShape[], allConnections: Connector[], calculatedNodes: string[]): boolean {
     let data: boolean[] = [];
@@ -383,17 +382,13 @@ export function getTouchInputs(allNodes: NodeCollection): {uncalculatedNodes: No
 }
 
 export function initTime(start: number, stop: number, step: number) {
-    let e = "let t = ";
-
-    e+= `(function(){
+    return `let t = (function(){
         let r = [];
         for(let i = ${start}; i < ${stop}; i+=${step}) {
             r.push(i);
         }
         return r;
     })();`
-
-    return e;
 }
 
 export function generateTouchControllers(nodes: NodeCollection): string {

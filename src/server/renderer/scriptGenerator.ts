@@ -280,14 +280,9 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
             }
         } else {
             let canvasNode = document.getElementById("${s}");
-
-            var viewSize = {
-                x: canvasNode.parentNode.offsetWidth,
-                y: canvasNode.parentNode.offsetHeight
-            }
             
-            var w = viewSize.x;
-            var h = viewSize.y;
+            var w = canvasNode.parentNode.offsetWidth;
+            var h = canvasNode.parentNode.offsetHeight;
             
             canvasNode.width = w;
             canvasNode.height = h;
@@ -298,37 +293,19 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
 
             var myChart = new Chart(ctx, {
                 type: 'line',
-                data: {labels: t.map(ti => ti.toFixed(2)),
-                    datasets: ${datasetsArraySnippet}
-                }, options: {
-                    elements: {
-                        line: {
-                            tension: 0,
-                            stepped: false
-                        }, point: {
-                            radius: 0,
-                            hitRadius: 0,
-                            hoverRadius: 0
-                        }
-                    }, animation: {
-                        duration: 0
-                    }, tooltips: {
-                        enabled: false
-                    }, legend: {
-                        display: ${currentScope.inputs.length > 1 ? 'true' : 'false'}
-                    }${(currentScope.settings[1].value == "0") && (currentScope.settings[2].value == "0") ? '' : `, scales: {
-                        yAxes: [{
-                            ticks: {
-                                max: ${parseFloat(currentScope.settings[1].value) + parseFloat(currentScope.settings[2].value) / 2},
-                                min: ${parseFloat(currentScope.settings[1].value) - parseFloat(currentScope.settings[2].value) / 2},
-                                stepSize: ${parseFloat(currentScope.settings[2].value) / 10}
-                            }
-                        }]
-                    }`}, title: {
-                        display: true,
-                        text: '${currentScope.title}',
-                        position: 'left'
-                    }
+                data: { labels: t.map(ti => ti.toFixed(2)), datasets: ${datasetsArraySnippet}},
+                options: {
+                    elements: { line: { tension: 0, stepped: false }, point: { radius: 0, hitRadius: 0, hoverRadius: 0 } },
+                    animation: { duration: 0 },
+                    tooltips: { enabled: false }, 
+                    legend: { display: ${currentScope.inputs.length > 1 ? 'true' : 'false'} }
+                    ${(currentScope.settings[1].value == "0") && (currentScope.settings[2].value == "0") ? '' : `, scales: {
+                        yAxes: [{ticks: {
+                            max: ${parseFloat(currentScope.settings[1].value) + parseFloat(currentScope.settings[2].value) / 2},
+                            min: ${parseFloat(currentScope.settings[1].value) - parseFloat(currentScope.settings[2].value) / 2},
+                            stepSize: ${parseFloat(currentScope.settings[2].value) / 10}
+                        }}]
+                    }`}, title: { display: true, text: '${currentScope.title}', position: 'left' }
                 }
             });
 
@@ -361,8 +338,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
         const currentScope = fftNodes[f];
         const { otherNodeId, otherSettingId } = getOtherSideOfConnector(allConnections, null, { nodeId: f, settingId: "signal" });
 
-        executable += `
-        if(graphs.${f}) {
+        executable += `if(graphs.${f}) {
             let data = [];
             for(let i = 0; i < t.length; i++) {data.push(${otherNodeId}${otherSettingId}(t[i]));}
 
