@@ -1,4 +1,6 @@
 # Educational Signal Visualisation Toolbox
+DEMO: https://signals-app.herokuapp.com/
+DOCS: https://vincentrodriguez.github.io/signals-visualisation/
 
 ## Description
 
