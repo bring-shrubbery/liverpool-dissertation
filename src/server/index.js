@@ -118,12 +118,6 @@ app.get('/editor/:username/:id', (req, res) => {
             return res.status(500).send('An error occurred')
         }
 
-        // Set title
-        data = data.replace(
-            "<title></title>",
-            `<title>${projectId}</title>`
-        )
-
         let projectData;
 
         for (let i = 0; i < database.projectsInfo.length; i++) {
@@ -134,10 +128,18 @@ app.get('/editor/:username/:id', (req, res) => {
                 projectData = {
                     ...database.projectModels[pid],
                     pid: projectId,
-                    owner: username
-                }
+                    owner: username,
+                    title: project.title
+                };
+                break;
             }
         }
+
+        // Set title
+        data = data.replace(
+            "<title></title>",
+            `<title>${projectData.title}</title>`
+        )
 
         // Set data
         data = data.replace(
