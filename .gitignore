@@ -1,4 +1,6 @@
 # --- FOLDERS ---
+/build
+/build/**
 
 # Node Modules
 /node_modules
