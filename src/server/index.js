@@ -2,6 +2,11 @@
 import path from 'path'
 import fs from 'fs'
 
+// React SSR
+import React from 'react'
+import { renderToString } from 'react-dom/server'
+import ProjectManager from '../projectManager/components/ProjectManagerView/ProjectManagerView.jsx'
+
 // Server Setup
 import express from 'express'
 import morgan from 'morgan'
@@ -139,14 +144,14 @@ app.get('/editor/:username/:id', (req, res) => {
         data = data.replace(
             "<title></title>",
             `<title>${projectData.title}</title>`
-        )
+        );
 
         // Set data
         data = data.replace(
             '<script id="editor-data"></script>',
             `<script id="project-data">document.projectData = ${JSON.stringify(projectData)}</script>
             <script id="library-data">document.libraryNodes = ${JSON.stringify(libraryNodes)}</script>`
-        )
+        );
 
         res.setHeader('Content-Type', 'text/html');
         res.send(data);
@@ -168,18 +173,24 @@ app.get('/render/:username/:id', (req, res) => {
 })
 
 // For now, landing page is the projects page.
-app.get("/", (req, res) => {
+app.get("/projects/:username", (req, res) => {
+    const username = req.params.username;
+
     fs.readFile(path.resolve(__dirname, './public/projects.html'), 'utf8', (err, data) => {
         if (err) {
             console.error(err)
             return res.status(500).send('An error occurred')
         }
 
+        const ProjectManagerString = renderToString(<ProjectManager/>);
+
         // Set title
         data = data.replace(
             "<title></title>",
             `<title>Projects</title>`
         )
+
+        data = data.replace("<!--APP-CODE-GOES-HERE-->", ProjectManagerString);
 
         res.setHeader('Content-Type', 'text/html');
         res.end(data);

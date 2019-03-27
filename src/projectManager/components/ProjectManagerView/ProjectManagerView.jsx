@@ -45,6 +45,7 @@ export default class ProjectManagerView extends Component {
 
             return projectsDivs;
         } else {
+            // console.error("No projects info in the state!")
             return null;
         }
     }
@@ -52,25 +53,29 @@ export default class ProjectManagerView extends Component {
     fetchProjectsInfo() {
         let th = this;
 
-        fetch('/projects/info/admin')
-        .then(function (res) {
-            if(res.status >= 400) {
-                console.error("Server responded with "+res.status+" error.")
-                return;
-            }
+        if(typeof document !== 'undefined'){
+            fetch('/projects/info/admin')
+            .then(function (res) {
+                if(res.status >= 400) {
+                    console.error("Server responded with "+res.status+" error.")
+                    return;
+                }
 
-            return res.json();
-        }).then(function(res) {
-            th.setState({
-                existingProjects: res,
-                didJustLoad: true
-            });
-        })
+                return res.json();
+            }).then(function(res) {
+                th.setState({
+                    existingProjects: res,
+                    didJustLoad: true
+                });
+            })
+        }
     }
 
     render() {
         if(!this.state.didJustLoad) this.fetchProjectsInfo();
-        console.log("Rendered!");
+        // console.log("Rendered!");
+
+        const projectItems = this.renderProjects();
 
         return (
             <div id={'project-manager'}>
@@ -79,9 +84,20 @@ export default class ProjectManagerView extends Component {
                         <div className={'projects-user-avatar-main'}></div>
                         <h1 className={'projects-user-name-main'}>admin</h1>
                     </div>
+                    <div className={'reload-button'} onClick={e => {
+                            e.stopPropagation();
+                            e.persist();
+                            this.reload();
+
+                            e.target.className = "rotating";
+
+                            setTimeout(function () { this.target.className = ""; }.bind(e), 1000);
+                        }}>
+                        <img src="/reload.png" alt="reload" width="16" height="16"/>
+                    </div>
                 </div>
                 <div className={'project-list'}>
-                    {this.renderProjects()}
+                    {projectItems}
                 </div>
             </div>
         )
@@ -117,23 +133,25 @@ class NewProject extends Component {
             isSubmitting: true
         })
 
-        fetch(`/createProject/admin/${this.state.title}/${this.state.description}`)
-        .then((res) => {
-            this.cancelFill();
-
-            let getText = res.text();
-
-            getText.then(t => {
-                window.location.assign(t);
-            });
-        })
-        .catch((err) => {
-            that.setState({
-                isFilling: false,
-                isSubmitting: false,
-                isFailed: true
+        if(typeof document !== 'undefined'){
+            fetch(`/createProject/admin/${this.state.title}/${this.state.description}`)
+            .then((res) => {
+                this.cancelFill();
+    
+                let getText = res.text();
+    
+                getText.then(t => {
+                    window.location.assign(t);
+                });
             })
-        })
+            .catch((err) => {
+                that.setState({
+                    isFilling: false,
+                    isSubmitting: false,
+                    isFailed: true
+                })
+            })
+        }
     }
 
     moveToFilling (e) {
@@ -151,15 +169,14 @@ class NewProject extends Component {
             isFilling: false,
             isSubmitting: false,
             isFailed: false,
-            title: "New Project",
-            description: "Please enter description..."
+            title: "",
+            description: ""
         });
 
         this.props.reload();
     }
 
     render () {
-
         return (
             <div key={'new-project'} className={'project-item project-new'}>
                 <NewProjectDiv  isHidden={this.state.isFilling || this.state.isSubmitting || this.state.isFailed} 

@@ -108,7 +108,9 @@
                 #description {
                     font-style: italic;
                     text-align: center;
-                    padding: 5px;
+                    font-size: 10pt;
+                    padding: 5px 10px;
+                    padding-top: 0;
                     height: fit-content;
                 }
 
@@ -302,8 +304,11 @@
 
         box-shadow: 1px 1px 4px 0px rgba(0,0,0,0.25);
 
+        display: flex;
+
         .projects-user-data-1 {
             margin: 30px 50px;
+            margin-right: 10px;
 
             display: flex;
 
@@ -316,9 +321,32 @@
             }
 
             .projects-user-name-main {
-                margin: 22px;
+                margin: 23px;
+                margin-right: 10px;
 
                 font-weight: 400;
+            }
+        }
+
+        .reload-button {
+            margin: 30px 0px;
+            margin-right: 10px;
+
+            display: flex;
+
+            img {
+                align-self: center;
+                transform: rotate(0);
+
+            }
+
+            img:hover {
+                cursor: pointer;
+            }
+
+            img.rotating {
+                transform: rotate(360deg);
+                transition: transform 1s;
             }
         }
     }
