@@ -73,7 +73,15 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
     };
     Math.__proto__.noise = function (x) {
         return Math.random();
-    };`;
+    };
+    document.body.ontouchend = function (e) {
+        e.prefentDefault();
+    };
+    const allInputs = document.getElementsByTagName("input");
+    for(let i = 0; i < allInputs.length; i++) {
+        let currentInput = allInputs.item(i);
+        document.getElementById(currentInput.id).readOnly = false;
+    }\n`;
 
     // Calculated nodes have following shape: "nodeId:outputId"
     let calculatedNodes: string[] = [];
