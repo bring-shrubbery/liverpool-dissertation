@@ -1,22 +1,18 @@
 #library-view {
     width: 100%;
-    height: 100%;
-    max-height: 100vh;
-    overflow-x: hidden;
-    overflow-y: auto;
+    height: calc(100vh - 30px) !important;
+    overflow: hidden;
     position: relative;
 
     background-color: #EBEBEB;
-
-    // grid-row: 2 / 3;
 
     #library-view-search-bar {
         background-color: #EBEBEB;
         position: sticky;
         top: 0;
         z-index: 10;
-        
-        box-shadow: none;
+
+        box-shadow: 0px -1px 4px #555;
         transition: box-shadow 1s;
 
         input {
@@ -44,7 +40,10 @@
         margin: 0;
         padding: 0;
         width: 100%;
-        height: fit-content;
+        height: calc(100vh - 112px);
+
+        overflow-x: hidden;
+        overflow-y: auto;
 
         li {
             margin: 10px;
@@ -81,6 +80,10 @@
         li:active {
             cursor: grabbing;
         }
+
+        li:last-child {
+            margin-bottom: 10px;
+        }
     }
 
     #library-view-category-selector {
@@ -88,6 +91,7 @@
         grid-template-columns: auto auto auto auto;
         text-align: center;
         position: absolute;
+        z-index: 10;
         bottom: 0;
         width: 100%;
         color: #363636;

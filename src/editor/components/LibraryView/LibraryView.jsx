@@ -27,7 +27,7 @@ export default class LibraryView extends Component {
 
     // Applies specific class to search bar when content goes under it
     searchShadowCheck(e) {
-        const shadowDiv = e.target.getElementsByTagName("div")[0];
+        const shadowDiv = e.target.getElementsByTagName("li")[0];
 
         if(e.target.scrollTop > 8) {
             shadowDiv.classList.add('search-shadow');

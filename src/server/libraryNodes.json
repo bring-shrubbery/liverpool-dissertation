@@ -301,6 +301,23 @@
                 "type": "signal"
             }],
             "default_settings": []
+        }, "rect": {
+            "title": "Rectifier",
+            "description": "Rectifies signal",
+            "inputs": [{
+                "title": "input",
+                "type": "signal"
+            }],
+            "generators": [{
+                "title": "output",
+                "value": "abs([input])",
+                "type": "signal"
+            }],
+            "outputs": [{
+                "title": "output",
+                "type": "signal"
+            }],
+            "default_settings": []
         }
     }, "output": {
         "scope": {

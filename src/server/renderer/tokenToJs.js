@@ -84,11 +84,15 @@ function calculateCode(json) {
                 executableString += "Math.sawtooth(";
                 executableString += calculateCode(token.code);
                 executableString += ")";
-            }   else if(value === "pyr") {
+            } else if(value === "pyr") {
                 executableString += "Math.pyramid(";
                 executableString += calculateCode(token.code);
                 executableString += ")";
-            }  else {
+            } else if(value === "abs") {
+                executableString += "Math.abs(";
+                executableString += calculateCode(token.code);
+                executableString += ")";
+            } else {
                 // If not supported function, throw error to the console
                 console.error("Unsupported math function !!!");
             }

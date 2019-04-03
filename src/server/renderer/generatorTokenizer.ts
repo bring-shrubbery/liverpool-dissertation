@@ -105,8 +105,9 @@ export const tokenizeGenerator = (gen: string, nodeId: string): GeneratorSegment
         const isNoise = nextThree === "nos";
         const isPyramid = nextThree === "pyr";
         const isSawtooth = nextThree === "saw";
+        const isAbsolute = nextThree === "abs";
 
-        if(isSin || isCos || isTan || isSquare || isExponent || isSinc || isUnitStep || isUnitRamp || isUnitPulse || isNoise || isPyramid || isSawtooth) {
+        if(isSin || isCos || isTan || isSquare || isExponent || isSinc || isUnitStep || isUnitRamp || isUnitPulse || isNoise || isPyramid || isSawtooth || isAbsolute) {
             // Adjust index to next character
             i += 3;
 
