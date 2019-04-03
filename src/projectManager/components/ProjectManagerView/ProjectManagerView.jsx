@@ -9,7 +9,7 @@ export default class ProjectManagerView extends Component {
 
         this.state = {
             existingProjects: [],
-            userData: {},
+            username: this.props.username,
             didJustLoad: false
         }
 
@@ -27,8 +27,9 @@ export default class ProjectManagerView extends Component {
     }
 
     renderProjects() {
+        let projectsDivs = [];
         if(this.state.existingProjects.length > 0) {
-            let projectsDivs = this.state.existingProjects.map(project => {
+            projectsDivs = this.state.existingProjects.map(project => {
                 return (<div key={project.projectId} className={'project-item project-info'}>
                     <div id={'data-container'}>
                         <div id={'title'}>{project.title}</div>
@@ -41,20 +42,19 @@ export default class ProjectManagerView extends Component {
                 </div>);
             });
 
-            projectsDivs.push(<NewProject key={'new-project'} reload={this.reload}/>);
-
-            return projectsDivs;
-        } else {
-            // console.error("No projects info in the state!")
-            return null;
+            
         }
+
+        projectsDivs.push(<NewProject key={'new-project'} username={this.state.username} reload={this.reload}/>);
+
+        return projectsDivs;
     }
 
     fetchProjectsInfo() {
         let th = this;
 
         if(typeof document !== 'undefined'){
-            fetch('/projects/info/admin')
+            fetch('/projects/info/'+this.state.username)
             .then(function (res) {
                 if(res.status >= 400) {
                     console.error("Server responded with "+res.status+" error.")
@@ -82,7 +82,7 @@ export default class ProjectManagerView extends Component {
                 <div className={'projects-user-data'}>
                     <div className={'projects-user-data-1'}>
                         <div className={'projects-user-avatar-main'}></div>
-                        <h1 className={'projects-user-name-main'}>admin</h1>
+                        <h1 className={'projects-user-name-main'}>{this.state.username}</h1>
                     </div>
                     <div className={'reload-button'} onClick={e => {
                             e.stopPropagation();
@@ -94,6 +94,11 @@ export default class ProjectManagerView extends Component {
                             setTimeout(function () { this.target.className = ""; }.bind(e), 1000);
                         }}>
                         <img src="/reload.png" alt="reload" width="16" height="16"/>
+                    </div>
+                    <div className={'logout-button'} onClick={e => {
+                        window.location.assign('/');
+                    }}>
+                        <h6>logout</h6>
                     </div>
                 </div>
                 <div className={'project-list'}>
@@ -134,7 +139,7 @@ class NewProject extends Component {
         })
 
         if(typeof document !== 'undefined'){
-            fetch(`/createProject/admin/${this.state.title}/${this.state.description}`)
+            fetch(`/createProject/${this.props.username}/${this.state.title}/${this.state.description}`)
             .then((res) => {
                 this.cancelFill();
     

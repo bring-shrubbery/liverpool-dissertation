@@ -5,9 +5,9 @@
   "private": true,
   "scripts": {
     "start": "echo 'No start script!'",
-    "build": "rm -rf ./build && webpack --config ./config/webpack/webpack.config.prod.js && cp ./src/gif/gif.worker.js ./build/public/static/gif.worker.js && cp -a ./src/public/. ./build/public/static/",
-    "server": "rm -rf ./build && webpack --config ./config/webpack/webpack.config.dev.js && cp ./src/gif/gif.worker.js ./build/public/static/gif.worker.js && cp -a ./src/public/. ./build/public/static/ && node ./build/server.js",
-    "lines": "go run linecounter.go",
+    "build": "./utils/build.sh",
+    "server": "./utils/devServer.sh",
+    "lines": "go run ./utils/linecounter.go",
     "test": "jest --no-cache"
   },
   "engines": {

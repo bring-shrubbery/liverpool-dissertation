@@ -22,7 +22,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
     let exeArray: string[] = [];
     let executable = "var graphs = {};\n";
 
-    // Init square wave function
+    // Init additional math functions
     executable += `Math.__proto__.sqw = function (x) {
         let val = x >= 0 ? ((x/(2*Math.PI))%1) : (((-x-Math.PI)/(2*Math.PI))%1);
         if(val >= 0 && val <= 0.5) {
@@ -30,6 +30,49 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
         } else {
             return -0.5;
         }
+    };
+    Math.__proto__.sinc = function (x) {
+        if(x == 0) return 1;
+        return Math.sin(x)/x;
+    };
+    Math.__proto__.pulse = function (x) {
+        const xi = x/(2*Math.PI);
+        if(xi > 1) return 0;
+        if(xi < -1) return 0;
+        return 1;
+    };
+    Math.__proto__.pyramid = function (x) {
+        const xi = x/(2*Math.PI);
+        let output = 1;
+        if(xi > 1) output = 0;
+        if(xi < -1) output = 0;
+        if(xi > 0) output = 1-xi;
+        if(xi < 0) output = 1+xi;
+        if(output < 0) output = 0;
+        return output;
+    };
+    Math.__proto__.sawtooth = function (x) {
+        if(x < 0) {
+            const xi = (x/(2*Math.PI))%1;
+            if(xi > 0.5) return -xi-Math.floor(x);
+            if(xi < 0.5) return xi-Math.floor(x);
+        } else {
+            const xi = (-x/(2*Math.PI))%1;
+            if(xi > 0.5) return -xi-Math.floor(x);
+            if(xi < 0.5) return xi+Math.floor(x);
+        }
+        return 0;
+    };
+    Math.__proto__.ramp = function (x) {
+        if(x < 0) return 0;
+        return x/(2*Math.PI);
+    };
+    Math.__proto__.step = function (x) {
+        if(x < 0) return 0;
+        return 1;
+    };
+    Math.__proto__.noise = function (x) {
+        return Math.random();
     };`;
 
     // Calculated nodes have following shape: "nodeId:outputId"
@@ -51,7 +94,11 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
         uiNodes, 
         fftNodes,
         time,
-        animationNodes
+        animationNodes,
+        filterNodes,
+        derivativeNodes,
+        integralNodes,
+        reverseNodes
     } = separateNodes(allNodes);
 
     if(time["time"]) {
@@ -60,10 +107,10 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
         const timeRange = parseFloat(timeNode.settings[1].value);
         const timeOrigin = parseFloat(timeNode.settings[2].value);
 
-        // TODO: SOLVE SAMPLE RATE AUTOMATIC CALCULATION
         const timeStart = timeOrigin - timeRange / 2;
         const timeStop = timeOrigin + timeRange / 2;
-        executable += initTime(timeStart, timeStop, 1 / SAMPLE_RATE);
+        const timeStep = timeRange / 1024;
+        executable += initTime(timeStart, timeStop, timeStep);
         executable += "var deltaTime = 60;"
 
         executable += `setInterval(function () {
@@ -159,6 +206,135 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
         
         delete uncalculatedNodes[nodeKey];
     }
+
+    // 0.1 Loop through filter nodes and save them
+    for(let f in filterNodes) {
+        const currentNode = filterNodes[f];
+        let { otherNodeId, otherSettingId } = getOtherSideOfConnector(allConnections, null, {nodeId: f, settingId: currentNode.inputs[0].title});
+
+        executable += `var ${f}${currentNode.outputs[0].title} = function(time) {
+            // if(typeof window.${f}${currentNode.outputs[0].title}LastOutput == 'undefined') {
+            //     return ${otherNodeId}${otherSettingId}(time);
+            // }
+            const lastValue = typeof window.${f}${currentNode.outputs[0].title}LastOutput == 'number' ? window.${f}${currentNode.outputs[0].title}LastOutput : 0;
+            const currentValue = ${otherNodeId}${otherSettingId}(time);
+            const newValue = lastValue + (currentValue - lastValue) * ${currentNode.settings[0].value};
+            window.${f}${currentNode.outputs[0].title}LastOutput = newValue;
+            return window.${f}${currentNode.outputs[0].title}LastOutput;
+        };\n`;
+
+        calculatedNodes.push(`${f}:${currentNode.outputs[0].title}`);
+        // delete uncalculatedNodes[f];
+    }
+
+    // 0.2 Save derivative nodes
+    for(let d in derivativeNodes) {
+        const currentNode = derivativeNodes[d];
+        let {otherNodeId, otherSettingId} = getOtherSideOfConnector(allConnections, null, {nodeId: d, settingId: currentNode.inputs[0].title});
+
+        executable += `var ${d}${currentNode.outputs[0].title} = function(time) {
+            const lastValue = typeof window.${d}${currentNode.outputs[0].title}LastOutput == 'number' ? window.${d}${currentNode.outputs[0].title}LastOutput : 0;
+            const currentValue = ${otherNodeId}${otherSettingId}(time);
+            const newValue = (currentValue - lastValue) * 16.3;
+            window.${d}${currentNode.outputs[0].title}LastOutput = ${otherNodeId}${otherSettingId}(time);
+            return newValue;
+        };\n`;
+
+        calculatedNodes.push(`${d}:${currentNode.outputs[0].title}`);
+        // delete uncalculatedNodes[d];
+    }
+
+    // 0.3 Save integral nodes
+    for(let i in integralNodes) {
+        const currentNode = integralNodes[i];
+        const isCompare = Boolean(currentNode.settings[0].value);
+        let { otherNodeId, otherSettingId } = getOtherSideOfConnector(allConnections, null, { nodeId: i, settingId: currentNode.inputs[0].title });
+        let signal2otherNodeId: string;
+        let signal2otherSettingId: string;
+        if(isCompare) {
+            let sig2data = getOtherSideOfConnector(allConnections, null, { nodeId: i, settingId: currentNode.inputs[1].title });
+            signal2otherNodeId = sig2data.otherNodeId;
+            signal2otherSettingId = sig2data.otherSettingId;
+        }
+
+        executable += `var ${i}${currentNode.outputs[0].title} = function (time) {
+            const timeStep = Math.abs(t[1] - t[0]);
+            const scaleFactor = 0.1;
+            if(typeof window.${i}${currentNode.outputs[0].title}Done == 'undefined') window.${i}${currentNode.outputs[0].title}Done = true;
+            const timeIndex = t.length/2 + parseInt(time / timeStep);
+            ${isCompare ? `if(${i}${currentNode.outputs[0].title}Done) {
+                window.${i}${currentNode.outputs[0].title}Signal1 = new Array(t.length*0.25).fill(0);
+                window.${i}${currentNode.outputs[0].title}Signal2 = new Array(t.length*0.75).fill(0);
+
+                for(let tt = t[0]; tt < t[t.length - 1]; tt+=timeStep) {
+                    window.${i}${currentNode.outputs[0].title}Signal1.push(${otherNodeId}${otherSettingId}(tt));
+                    window.${i}${currentNode.outputs[0].title}Signal2.push(${signal2otherNodeId}${signal2otherSettingId}(tt));
+                }
+
+                for(let f = 0; f <= t.length*0.75; f++) {
+                    window.${i}${currentNode.outputs[0].title}Signal1.push(0);
+                }
+
+                for(let f = 0; f <= t.length*0.25; f++) {
+                    window.${i}${currentNode.outputs[0].title}Signal2.push(0);
+                }
+                
+                let result = [];
+                
+                const sig1length = window.${i}${currentNode.outputs[0].title}Signal1.length;
+                const sig2length = window.${i}${currentNode.outputs[0].title}Signal2.length;
+
+                console.log(window.${i}${currentNode.outputs[0].title}Signal1);
+                console.log(sig1length, sig2length);
+
+                for(let ti = 0; ti < sig2length; ti++) {
+                    const sig1data = window.${i}${currentNode.outputs[0].title}Signal1.slice(0, ti);
+                    const sig2data = window.${i}${currentNode.outputs[0].title}Signal2.slice(sig2length - ti, sig2length);
+
+                    let currentSum = 0;
+                    for(let s = 0; s < sig2data.length; s++) {
+                        currentSum += sig1data[s]*sig2data[s]*scaleFactor;
+                    }
+
+                    result.push(currentSum);
+                }
+
+                window.${i}${currentNode.outputs[0].title}Done = false;
+                window.${i}${currentNode.outputs[0].title}result = result.slice(sig2length/2, sig2length);
+            }
+
+            if(time == t[t.length - 1]) { window.${i}${currentNode.outputs[0].title}Done = true; }
+            return window.${i}${currentNode.outputs[0].title}result[timeIndex];
+            ` : `if(${i}${currentNode.outputs[0].title}Done) {
+                window.${i}${currentNode.outputs[0].title}Integral = 0;
+
+                for(let tt = t[0]; tt < t[t.length - 1]; tt+=timeStep) {
+                    window.${i}${currentNode.outputs[0].title}Integral += ${otherNodeId}${otherSettingId}(tt)*scaleFactor;
+                }
+
+                window.${i}${currentNode.outputs[0].title}Done = false;
+            }
+
+            if(time == t[t.length - 1]) { window.${i}${currentNode.outputs[0].title}Done = true; }
+            return window.${i}${currentNode.outputs[0].title}Integral;
+            `}
+        };\n`;
+
+        calculatedNodes.push(`${i}:${currentNode.outputs[0].title}`);
+    }
+
+    // 0.4 Save reverse nodes
+    for(let r in reverseNodes) {
+        const currentNode = reverseNodes[r];
+        let { otherNodeId, otherSettingId } = getOtherSideOfConnector(allConnections, null, { nodeId: r, settingId: currentNode.inputs[0].title });
+        
+        executable += `var ${r}${currentNode.outputs[0].title} = function (time) {
+            return ${otherNodeId}${otherSettingId}(-time);
+        };\n`;
+
+        calculatedNodes.push(`${r}:${currentNode.outputs[0].title}`);
+    }
+
     // 1. Loop until all nodes are calculated and count number of iterations for statistics
     for (statistics.loopCounter = 0; objectSize(uncalculatedNodes) > 0; statistics.loopCounter++) {
         
@@ -321,7 +497,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
                             min: ${parseFloat(currentScope.settings[1].value) - parseFloat(currentScope.settings[2].value) / 2},
                             stepSize: ${parseFloat(currentScope.settings[2].value) / 10}
                         }}]
-                    }`}, title: { display: true, text: '${currentScope.title}', position: 'left' }
+                    }`}, title: { display: true, text: '${currentScope.title}', position: 'bottom' }
                 }
             });
 
@@ -362,18 +538,14 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
 
             let f = new FFT(data.length);
             let complexOutput = f.createComplexArray();
-            let realOutput = new Array(data.length);
 
             f.realTransform(complexOutput, data);
-            f.fromComplexArray(complexOutput, realOutput);
 
-            // realOutput = realOutput.filter((val, i) => i%2 == 0 || i == 0);
-
-            realOutput = realOutput.splice(0, ${parseInt(currentScope.settings[2].value)});
+            complexOutput = complexOutput.splice(0, ${parseInt(currentScope.settings[2].value)});
             
-            realOutput = realOutput.map(val => val * 2 / data.length);
+            complexOutput = complexOutput.map(val => val * 2 / data.length);
 
-            graphs.${f}.data.datasets[0].data = realOutput;
+            graphs.${f}.data.datasets[0].data = complexOutput;
             graphs.${f}.update();
         } else {
             let canvasNode = document.getElementById("${f}");
@@ -400,26 +572,21 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
             let f = new FFT(data.length);
             let complexOutput = f.createComplexArray();
             f.realTransform(complexOutput, data);
-            let realOutput = new Array(data.length);
-            realOutput.fill(0);
-            f.fromComplexArray(complexOutput, realOutput);
 
-            // realOutput = realOutput.filter((val, i) => i%2 == 0 || i == 0);
+            complexOutput = complexOutput.splice(0, ${parseInt(currentScope.settings[2].value)});
 
-            realOutput = realOutput.splice(0, ${parseInt(currentScope.settings[2].value)});
-
-            realOutput = realOutput.map(val => val * 2 / data.length);
+            complexOutput = complexOutput.map(val => val * 2 / data.length);
 
             var myChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: realOutput.map((val, i) => parseFloat(i/2).toFixed(1)),
+                    labels: complexOutput.map((val, i) => parseFloat(i/2).toFixed(1)),
                     datasets: [
                         {
                             label: "signal",
                             backgroundColor: 'rgba(0, 0, 0, 0)',
                             borderColor: '${currentScope.settings[1].value}',
-                            data: realOutput,
+                            data: complexOutput,
                             steppedLine: 'middle'
                         }
                     ]
@@ -433,7 +600,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
                     }, title: {
                         display: true,
                         text: '${currentScope.title}',
-                        position: 'left'
+                        position: 'bottom'
                     }, elements: { 
                         line: { tension: 0 },
                         point: { radius: 0, hitRadius: 0, hoverRadius: 0 }

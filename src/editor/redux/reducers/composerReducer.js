@@ -516,8 +516,25 @@ export default function reducer (state = defaultState, action) {
             const mathType = String(action.payload.mathType);
 
             const newNodes = {...state.allNodes};
-
+            const newConnections = [...state.allConnections];
+            
             let selectedNode = newNodes[nodeKey];
+
+            if(newValue < parseInt(selectedNode.inputs.length)) {
+                const diff = parseInt(selectedNode.inputs.length) - newValue;
+
+                for(let i = 0; i < diff; i++) {
+                    for(let c in newConnections) {
+                        const end = newConnections[c].connectorEnd;
+    
+                        if(end.nodeId == action.payload.nodeKey) {
+                            if(end.settingId ==  selectedNode.inputs[selectedNode.inputs.length-1-i].title) {
+                                newConnections.splice(c, 1);
+                            }
+                        }
+                    }
+                }
+            }
 
             let newInputs = [];
             for(let i = 1; i <= parseInt(newValue); i++) {
@@ -571,7 +588,8 @@ export default function reducer (state = defaultState, action) {
 
             return {
                 ...state,
-                allNodes: newNodes
+                allNodes: newNodes,
+                allConnections: newConnections
             }
         }
 
@@ -583,59 +601,14 @@ export default function reducer (state = defaultState, action) {
 
             const newNodes = {...state.allNodes};
 
-            switch(mathType) {
-                case "sin": {
-                    newNodes[nodeKey].settings[settingId].value = "sin";
-                    newNodes[nodeKey].generators = [
-                        {
-                            "title":"signal",
-                            "value": "[amplitude]*sin(2*[PI]*[frequency]*[time]+[phase])+[offset]",
-                            "type": "signal"
-                        }
-                    ];
-                    break;
+            newNodes[nodeKey].settings[settingId].value = mathType;
+            newNodes[nodeKey].generators = [
+                {
+                    "title":"signal",
+                    "value": "[amplitude]*"+mathType+"(2*[PI]*[frequency]*[time]+[phase])+[offset]",
+                    "type": "signal"
                 }
-
-                case "cos": {
-                    newNodes[nodeKey].settings[settingId].value = "cos";
-                    newNodes[nodeKey].generators = [
-                        {
-                            "title":"signal",
-                            "value": "[amplitude]*cos(2*[PI]*[frequency]*[time]+[phase])+[offset]",
-                            "type": "signal"
-                        }
-                    ];
-                    break;
-                }
-
-                case "tan": {
-                    newNodes[nodeKey].settings[settingId].value = "tan";
-                    newNodes[nodeKey].generators = [
-                        {
-                            "title":"signal",
-                            "value": "[amplitude]*tan(2*[PI]*[frequency]*[time]+[phase])+[offset]",
-                            "type": "signal"
-                        }
-                    ];
-                    break;
-                }
-
-                case "sqw": {
-                    newNodes[nodeKey].settings[settingId].value = "sqw";
-                    newNodes[nodeKey].generators = [
-                        {
-                            "title":"signal",
-                            "value": "[amplitude]*sqw(2*[PI]*[frequency]*[time]+[phase])+[offset]",
-                            "type": "signal"
-                        }
-                    ];
-                    break;
-                }
-
-                default: {
-                    return {...state}
-                }
-            }
+            ];
 
             return {
                 ...state,
@@ -737,6 +710,41 @@ export default function reducer (state = defaultState, action) {
                 allNodes: newNodes
             }
 
+        }
+
+        case "SETTINGS_INTEGRAL_SET": {
+            let newNodes = {...state.allNodes};
+            let newConnections = {...state.allConnections};
+            let currentNode = newNodes[action.payload.nodeKey];
+
+            let newVal = Boolean(action.payload.newValue);
+            currentNode.settings[0].value = newVal;
+
+            if(newVal) {
+                // Add signal to inputs
+                currentNode.inputs.push({
+                    title: "signal_2",
+                    type: "signal"
+                })
+            } else {
+                // Remove signal from inputs
+                for(let c in newConnections) {
+                    const end = newConnections[c].connectorEnd;
+
+                    if(end.nodeId == action.payload.nodeKey) {
+                        if(end.settingId ==  currentNode.inputs[1].title) {
+                            newConnections.splice(c, 1);
+                        }
+                    }
+                }
+                currentNode.inputs.pop();
+            }
+
+            return {
+                ...state,
+                allNodes: newNodes,
+                allConnections: newConnections
+            }
         }
 
         default: {

@@ -72,3 +72,13 @@ export function setExpansionSetting(nodeKey, settingId, newValue) {
         }
     }
 }
+
+export function integralSet(nodeKey, newValue) {
+    return {
+        type: "SETTINGS_INTEGRAL_SET",
+        payload: {
+            nodeKey: nodeKey,
+            newValue: newValue
+        }
+    }
+}

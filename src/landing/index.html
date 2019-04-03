@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="landing.css">
+    <title>Welcome</title>
+</head>
+<body>
+    <nav id="navbar">
+        <div class="navbar-section">
+            <label for="name">Name:</label>
+            <input type="text" name="name" id="name-input"/>
+            <button onclick="register()">register</button>
+            <button onclick="login()">login</button>
+        </div>
+    </nav>
+    <div id="page1">
+        <img src="landing.png"/>
+    </div>
+    </div>
+    <script>
+        function register() {
+            var loginName = document.getElementById("name-input").value;
+            fetch("/register/"+loginName+"/pass").then(function (res) { 
+                window.location.assign("/projects/"+loginName) 
+            }).catch(function () {
+                alert("Could not register!");
+            })
+        }
+
+        function login() {
+            var loginName = document.getElementById("name-input").value;
+            fetch("/projects/"+loginName).then(function () { 
+                window.location.assign("/projects/"+loginName) 
+            }).catch(function () {
+                alert("Could not login!");
+            })
+        } 
+    </script>
+</body>
+</html>

@@ -14,6 +14,16 @@ export default class Toolbar extends Component {
     constructor(props) {
         super(props);
 
+        if(!window.localStorage.getItem('loggedInUser')) {
+            window.localStorage.setItem('loggedInUser', 'admin');
+        }
+
+        const currentUser = window.localStorage.getItem('loggedInUser');
+
+        this.state = {
+            user: currentUser
+        }
+
         this.saveProject = this.saveProject.bind(this);
         this.renderProject = this.renderProject.bind(this);
         this.exportJson = this.exportJson.bind(this);
@@ -74,7 +84,7 @@ export default class Toolbar extends Component {
     render () {
         return (
             <div id={'editor-toolbar'}>
-                <div className={'menu-button'}><a href={'/'}>home</a></div>
+                <div className={'menu-button'}><a href={`/projects/${this.state.user}`}>home</a></div>
                 <div className={'menu-button'} onClick={this.saveProject}>save</div>
                 <div className={'menu-button'} onClick={this.renderProject}>render</div>
                 <div className={'menu-button'} onClick={this.exportJson}>json</div>                

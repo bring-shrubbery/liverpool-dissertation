@@ -337,7 +337,6 @@
             img {
                 align-self: center;
                 transform: rotate(0);
-
             }
 
             img:hover {
@@ -347,6 +346,26 @@
             img.rotating {
                 transform: rotate(360deg);
                 transition: transform 1s;
+            }
+        }
+
+        .logout-button {
+            margin: 30px 0px;
+            margin-right: 30px;
+
+            display: flex;
+            margin-left: auto;
+
+            h6 {
+                align-self: center;
+                color: black;
+                font-size: 12pt;
+                font-weight: 300;
+            }
+            
+            h6:hover {
+                color: lightblue;
+                cursor: pointer;
             }
         }
     }

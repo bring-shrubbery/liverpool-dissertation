@@ -83,6 +83,13 @@ export default class ComposerView extends Component {
                     y: this.props.composerCoordinates.y
                 }}
                 connectors={this.props.allConnections}
+                isCreatingConnection={() => {
+                    for(let c in this.props.allConnections) {
+                        if(typeof this.props.allConnections[c].connectorEnd.x !== 'undefined') return true;
+                    }
+
+                    return false;
+                }}
             />);
         }
         

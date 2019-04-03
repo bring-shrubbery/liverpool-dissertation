@@ -8,7 +8,11 @@ export function separateNodes (allNodes: NodeCollection): {
         uiNodes: NodeCollection,
         fftNodes: NodeCollection,
         time: NodeCollection,
-        animationNodes: NodeCollection
+        animationNodes: NodeCollection,
+        filterNodes: NodeCollection,
+        derivativeNodes: NodeCollection,
+        integralNodes: NodeCollection,
+        reverseNodes: NodeCollection
     } {
     let uncalculated: NodeCollection = {};
     let scopes: NodeCollection = {};
@@ -16,6 +20,10 @@ export function separateNodes (allNodes: NodeCollection): {
     let fftNodes: NodeCollection = {};
     let timeNodes: NodeCollection = {};
     let animationNodes: NodeCollection = {};
+    let filterNodes: NodeCollection = {};
+    let derivativeNodes: NodeCollection = {};
+    let integralNodes: NodeCollection = {};
+    let reverseNodes: NodeCollection = {};
 
     for(let i in allNodes) {
         // Check if it is a UI node
@@ -35,6 +43,18 @@ export function separateNodes (allNodes: NodeCollection): {
         // CHeck if it is an animation node
         const isAnimation = String(i).substr(0, 9) === "animation";
 
+        // Check if it is a filter node
+        const isFilter = String(i).substr(0, 6) === "filter";
+
+        // Check if it is a derivative node
+        const isDerivative = String(i).substr(0, 10) === "derivative";
+
+        // Chech if it is an integral node
+        const isIntegral = String(i).substr(0, 8) === "integral";
+
+        // Check if it is reverse node
+        const isReverse = String(i).substr(0, 7) === "reverse";
+
         // Do separation
         if(isScope) {
             scopes[i] = allNodes[i];
@@ -46,6 +66,14 @@ export function separateNodes (allNodes: NodeCollection): {
             timeNodes[i] = allNodes[i];
         } else if(isAnimation) {
             animationNodes[i] = allNodes[i];
+        } else if (isFilter) {
+            filterNodes[i] = allNodes[i];
+        } else if (isDerivative) {
+            derivativeNodes[i] = allNodes[i];
+        } else if (isIntegral) {
+            integralNodes[i] = allNodes[i];
+        } else if (isReverse) {
+            reverseNodes[i] = allNodes[i];
         } else {
             uncalculated[i] = allNodes[i];
         }
@@ -58,7 +86,11 @@ export function separateNodes (allNodes: NodeCollection): {
         uiNodes: uiNodes,
         fftNodes: fftNodes,
         time: timeNodes,
-        animationNodes: animationNodes
+        animationNodes: animationNodes,
+        filterNodes: filterNodes,
+        derivativeNodes: derivativeNodes,
+        integralNodes: integralNodes,
+        reverseNodes: reverseNodes
     };
 }
 

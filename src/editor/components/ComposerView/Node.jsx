@@ -252,14 +252,29 @@ export default class Node extends Component {
                             this.props.dispatch(disconnectNode(this.props.functionId , label.title));
 
                             e.target.onmouseup = endConnectorFunction;
+                            e.target.style.cursor = "url('/unallowed.png') 8 8, not-allowed";
                         }
 
                         window.onmouseup = ev => {
-                            e.target.onmouseup = endConnectorFunction;
-
+                            ev.stopPropagation();
+                            this.props.dispatch(cancelNewConnector());
+                            
                             window.onmousemove = null;
                             window.onmouseup = null;
+                            e.target.onmouseup = endConnectorFunction;
                         }
+                    }}
+                    onMouseEnter={e => {
+                        if(!e.target.classList.contains("connected")) {
+                            if(this.props.isCreatingConnection()) {
+                                e.target.style.cursor = "copy";
+                            } else {
+                                e.target.style.cursor = "url('/unallowed.png') 8 8, not-allowed";
+                            }
+                        }
+                    }}
+                    onMouseLeave={e => {
+                        e.target.style.cursor = "auto";
                     }}
                     onMouseUp={endConnectorFunction}
                     onTouchStart={e => {
@@ -322,7 +337,7 @@ export default class Node extends Component {
                         e.target.onmouseup = e => {
                             e.stopPropagation();
 
-                            this.props.dispatch(cancelNewConnector(this.props.functionId, label.title));
+                            this.props.dispatch(cancelNewConnector());
 
                             window.onmousemove = null;
                             window.onmouseup = null;
@@ -346,7 +361,7 @@ export default class Node extends Component {
                         };
 
                         window.onmouseup = ev => {
-                            this.props.dispatch(cancelNewConnector(this.props.functionId, label.title));
+                            this.props.dispatch(cancelNewConnector());
 
                             window.onmousemove = null;
                             window.onmouseup = null;
@@ -371,7 +386,7 @@ export default class Node extends Component {
                         e.target.ontouchend = e => {
                             e.stopPropagation();
 
-                            this.props.dispatch(cancelNewConnector(this.props.functionId, label.title));
+                            this.props.dispatch(cancelNewConnector());
 
                             window.ontouchmove = null;
                             window.ontouchend = null;
@@ -395,7 +410,7 @@ export default class Node extends Component {
                         };
 
                         window.ontouchend = e => {
-                            this.props.dispatch(cancelNewConnector(this.props.functionId, label.title));
+                            this.props.dispatch(cancelNewConnector());
 
                             window.ontouchmove = null;
                             window.ontouchend = null;

@@ -60,7 +60,35 @@ function calculateCode(json) {
                 executableString += "Math.exp(";
                 executableString += calculateCode(token.code);
                 executableString += ")";
-            } else {
+            } else if(value === "snc") {
+                executableString += "Math.sinc(";
+                executableString += calculateCode(token.code);
+                executableString += ")";
+            } else if(value === "stp") {
+                executableString += "Math.step(";
+                executableString += calculateCode(token.code);
+                executableString += ")";
+            } else if(value === "rmp") {
+                executableString += "Math.ramp(";
+                executableString += calculateCode(token.code);
+                executableString += ")";
+            } else if(value === "ups") {
+                executableString += "Math.pulse(";
+                executableString += calculateCode(token.code);
+                executableString += ")";
+            } else if(value === "nos") {
+                executableString += "Math.noise(";
+                executableString += calculateCode(token.code);
+                executableString += ")";
+            } else if(value === "saw") {
+                executableString += "Math.sawtooth(";
+                executableString += calculateCode(token.code);
+                executableString += ")";
+            }   else if(value === "pyr") {
+                executableString += "Math.pyramid(";
+                executableString += calculateCode(token.code);
+                executableString += ")";
+            }  else {
                 // If not supported function, throw error to the console
                 console.error("Unsupported math function !!!");
             }

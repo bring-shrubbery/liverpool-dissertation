@@ -1,8 +1,8 @@
 {
     "input": {
         "touchInput": {
-            "title": "Touch Input",
-            "description": "Gets touch input from the scope.",
+            "title": "Drag Control",
+            "description": "Lets you control signal by dragging over canvas.",
             "inputs": [],
             "outputs": [
                 {
@@ -13,7 +13,7 @@
                     "type": "number"
                 }
             ], 
-            "generators": [], 
+            "generators": [],
             "default_settings": [
                 {
                     "title": "Sensitivity",
@@ -111,9 +111,23 @@
                         "description": "linearly increased value"
                     }, {
                         "title": "oscillator",
-                        "description": "oscillaces sinusoudally from 1 to -1"
+                        "description": "oscillaces sinusoidally from 1 to -1"
                     }
                 ]
+            }]
+        }, "customEquation": {
+            "title": "Equation",
+            "description": "Allows to enter custom equation for processing",
+            "inputs": [],
+            "outputs": [{
+                "title": "output",
+                "type": "signal"
+            }],
+            "generators": [],
+            "default_settings": [{
+                "title": "# of inputs",
+                "type": "number_uncontrolled",
+                "value": "0"
             }]
         }
     }, "processors": {
@@ -138,7 +152,7 @@
             "generators": [
                 {
                     "title": "output",
-                    "value": "[input1]*[input2]",
+                    "value": "[input_1]*[input_2]",
                     "type": "signal"
                 }
             ],
@@ -164,7 +178,7 @@
             "generators": [
                 {
                     "title": "output",
-                    "value": "[input1]+[input2]",
+                    "value": "[input_1]+[input_2]",
                     "type": "signal"
                 }
             ],
@@ -190,7 +204,7 @@
             "generators": [
                 {
                     "title": "output",
-                    "value": "[input1]-[input2]",
+                    "value": "[input_1]-[input_2]",
                     "type": "signal"
                 }
             ],
@@ -227,6 +241,66 @@
                 "type": "number",
                 "value": "1"
             }]
+        },"filterLowPass": {
+            "title": "Low Pass",
+            "description": "Low pass filter",
+            "inputs": [{
+                "title": "input",
+                "type": "number"
+            }],
+            "generators": [],
+            "outputs": [{
+                "title": "output",
+                "type": "signal"
+            }],
+            "default_settings": [{
+                "title": "Smoothing",
+                "type": "number",
+                "value": "0.1"
+            }]
+        }, "derivative": {
+            "title": "Derivative",
+            "description": "Produces a derivative of an input signal",
+            "inputs": [{
+                "title": "input",
+                "type": "signal"
+            }],
+            "generators": [],
+            "outputs": [{
+                "title": "output",
+                "type": "signal"
+            }],
+            "default_settings": []
+        }, "integral": {
+            "title": "Integral",
+            "description": "Calculates derivative of an input",
+            "inputs": [{
+                "title": "signal_1",
+                "type": "signal"
+            }],
+            "generators": [],
+            "outputs": [{
+                "title": "output",
+                "type": "signal"
+            }],
+            "default_settings": [{
+                "title": "compare",
+                "type": "boolean",
+                "value": false
+            }]
+        }, "reverse": {
+            "title": "Reverse",
+            "description": "Reverses input signal",
+            "inputs": [{
+                "title": "input",
+                "type": "signal"
+            }],
+            "generators": [],
+            "outputs": [{
+                "title": "output",
+                "type": "signal"
+            }],
+            "default_settings": []
         }
     }, "output": {
         "scope": {
@@ -255,7 +329,7 @@
                 "type": "color"
             }]
         }, "fft": {
-            "title": "FFT Scope",
+            "title": "Fourier Transform",
             "description": "Displays frequency domain representation of the signal.",
             "inputs": [
                 {

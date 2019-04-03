@@ -89,60 +89,71 @@ export const tokenizeGenerator = (gen: string, nodeId: string): GeneratorSegment
         }
         
         // --------------- MATH FUNCTION ----------------
-        if(g[i] === "s" || g[i] === "c" || g[i] === "t") {
-            // Mathematical formulas are coded in three letters
-            let nextThree = String(g[i] + g[i+1] + g[i+2]);
-            
-            // Check if next three chars are one of 
-            if(nextThree === "sin" || nextThree === "cos" || nextThree === "tan" || nextThree === "sqw" || nextThree === "exp") {
-                // Adjust index to next character
-                i += 3;
+        // Mathematical formulas are coded in three letters
+        let nextThree = String(g[i] + g[i+1] + g[i+2]);
+        
+        // Check if next three chars are one of 
+        const isSin = nextThree === "sin";
+        const isCos = nextThree === "cos";
+        const isTan =nextThree === "tan";
+        const isSquare = nextThree === "sqw"
+        const isExponent = nextThree === "exp";
+        const isSinc = nextThree === "snc";
+        const isUnitStep = nextThree === "stp";
+        const isUnitRamp = nextThree === "rmp";
+        const isUnitPulse = nextThree === "ups";
+        const isNoise = nextThree === "nos";
+        const isPyramid = nextThree === "pyr";
+        const isSawtooth = nextThree === "saw";
 
-                // Search for opening brackets
-                while(g[i] !== "(") {
-                    i++;
+        if(isSin || isCos || isTan || isSquare || isExponent || isSinc || isUnitStep || isUnitRamp || isUnitPulse || isNoise || isPyramid || isSawtooth) {
+            // Adjust index to next character
+            i += 3;
 
-                    if(i >= g.length) {
-                        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        // TODO: throw error
-                        // ERROR REASON: should provide brackets for math operators
-                        console.error("should provide brackets for math operators");
-                        return null
-                    }
+            // Search for opening brackets
+            while(g[i] !== "(") {
+                i++;
+
+                if(i >= g.length) {
+                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    // TODO: throw error
+                    // ERROR REASON: should provide brackets for math operators
+                    console.error("should provide brackets for math operators");
+                    return null
                 }
-                
-                // Check if provided space or a character after three math chars
-                // if (g[i+1] === "(") i++;
-
-                const mathSnippet: GeneratorSegment = {
-                    type: "math",
-                    value: nextThree,
-                    code: []
-                };
-
-                if(topStackObject) {
-                    // If scope exists push it to the top scope
-                    const stackTopIndex = stack.length - 1;
-                    stack[stackTopIndex].code.push(mathSnippet);
-
-                    const scopeTopIndex = stack[stackTopIndex].code.length - 1;
-
-                    stack.push(
-                        stack[stackTopIndex].code[scopeTopIndex]
-                    )
-                } else {
-                    // Otherwise push it to root level
-                    pgen.push(mathSnippet);
-
-                    stack.push(
-                        pgen[pgen.length - 1]
-                    );
-                }
-                
-
-                // Continue parsing code
-                continue;
             }
+            
+            // Check if provided space or a character after three math chars
+            // if (g[i+1] === "(") i++;
+
+            const mathSnippet: GeneratorSegment = {
+                type: "math",
+                value: nextThree,
+                code: []
+            };
+
+            if(topStackObject) {
+                // If scope exists push it to the top scope
+                const stackTopIndex = stack.length - 1;
+                stack[stackTopIndex].code.push(mathSnippet);
+
+                const scopeTopIndex = stack[stackTopIndex].code.length - 1;
+
+                stack.push(
+                    stack[stackTopIndex].code[scopeTopIndex]
+                )
+            } else {
+                // Otherwise push it to root level
+                pgen.push(mathSnippet);
+
+                stack.push(
+                    pgen[pgen.length - 1]
+                );
+            }
+            
+
+            // Continue parsing code
+            continue;
         }
 
         // --------------- REGULAR SCOPE ----------------

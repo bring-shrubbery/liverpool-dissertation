@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import './settings.scss';
 
-import { updateTitle, updateSetting, makeSettingAnInput, mathInputNumberUpdate, signalGeneratorTypeSet, scopeSignalNumberUpdate, setExpansionSetting } from '../../redux/actions/settingsActions';
+import { updateTitle, updateSetting, makeSettingAnInput, mathInputNumberUpdate, signalGeneratorTypeSet, scopeSignalNumberUpdate, setExpansionSetting, integralSet } from '../../redux/actions/settingsActions';
 
 import { connect } from 'react-redux';
 
@@ -138,6 +138,20 @@ function SettingDiv (props) {
         }
 
         case "boolean": {
+            if(props.nodeKey.substr(0, 8) === "integral") {
+                return (
+                    <li className={'settings-item'}>
+                        <h5 className={'settings-item-title'}>{displayWithoutLowdash(props.settingData.title)} :</h5>
+                        <div className={'settings-item-input settings-item-boolean'}>
+                            <input type={'checkbox'} checked={Boolean(props.settingData.value)} onChange={e => {
+                                // Update setting
+                                props.dispatch(integralSet(props.nodeKey, Boolean(e.target.checked)));
+                            }}/>
+                        </div>
+                    </li>
+                );
+            }
+
             return (
                 <li className={'settings-item'}>
                     <h5 className={'settings-item-title'}>{displayWithoutLowdash(props.settingData.title)} :</h5>
@@ -361,20 +375,24 @@ class SignalGeneratorSelector extends Component {
 
     render () {
         let availableSignalGenerators = [
-            "sin",
-            "cos",
-            "tan",
-            "sqw"
+            ["sin", "sine"],
+            ["cos", "cosine"],
+            ["tan", "tangent"],
+            ["sqw", "sqare"],
+            ["snc", "sinc"],
+            ["stp", "step"],
+            ["rmp", "ramp"],
+            ["ups", "pulse"],
+            ["nos", "noise"],
+            ["pyr", "pyramid"],
+            ["saw", "sawtooth"]
         ];
 
         let scopeListElements = availableSignalGenerators.map(name => {
-            return (<li key={name} id={name} className={`settings-item-array-item`} onClick={e => {
-                this.setState({
-                    isOpen: false
-                })
-
-                this.props.dispatch(signalGeneratorTypeSet(this.props.nodeKey, this.props.settingId, name));
-            }}>{name}</li>)
+            return (<li key={name[0]} id={name[0]} className={`settings-item-array-item`} onClick={e => {
+                this.setState({isOpen: false});
+                this.props.dispatch(signalGeneratorTypeSet(this.props.nodeKey, this.props.settingId, name[0]));
+            }}>{name[1]}</li>)
         })
 
         if(this.state.isOpen) {

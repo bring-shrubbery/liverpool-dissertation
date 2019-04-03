@@ -26,7 +26,6 @@ function renderHtml (requestJson) {
 
     // Package imports
     let scripts = `<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>\n`;
-    scripts += `<script src="/CCapture.all.min.js"></script>`;
     scripts += `<script src="https://unpkg.com/js-untar@2.0.0/build/dist/untar"></script>`;
     scripts += `<script src="https://unpkg.com/downloadjs@1.4.7/download.js"></script>`;
     scripts += `<script src="https://unpkg.com/gif.js@0.2.0/dist/gif.js"></script>`;

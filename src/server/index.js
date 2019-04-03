@@ -27,6 +27,8 @@ import libraryNodes from './libraryNodes.json'
 // Project presets
 import modulation from './project_presets/modulation.json'
 import fourierSeries from './project_presets/fourierSeries.json'
+import autoCorrelation from './project_presets/autoCorrelation.json'
+import crossCorrelation from './project_presets/crossCorrelation.json'
 
 let database = {
     projectsInfo: [{
@@ -39,13 +41,22 @@ let database = {
         title: "Fourier Series",
         description: "Attempt at creating fourier series using this tool.",
         owner: "admin"
+    }, {
+        projectId: "3",
+        title: "Cross-Correlation",
+        description: "Cross-Correlation implementation",
+        owner: "admin"
+    }, {
+        projectId: "4",
+        title: "Auto-Correlation",
+        description: "Auto-Correlation implementation",
+        owner: "admin"
     }],
-    projectModels: [{
-            ...modulation
-        },
-        {
-            ...fourierSeries
-        }
+    projectModels: [
+        {...modulation},
+        {...fourierSeries},
+        {...crossCorrelation},
+        {...autoCorrelation}
     ],
     users: {
         admin: {
@@ -86,6 +97,12 @@ let database = {
         }
 
         this.projectModels[projectId - 1] = newProjectVersion;
+    },
+    newUser: function (username, password) {
+        this.users[username] = {
+            username: username,
+            password: password
+        }
     }
 }
 
@@ -109,6 +126,9 @@ app.use(express.static(__dirname + '/public/static'))
 
 // Logging
 app.use(morgan('tiny'));
+
+// JSON parsing
+app.use(bodyParser.json());
 
 // --- ROUTES ---
 app.get('/editor/:username/:id', (req, res) => {
@@ -182,15 +202,11 @@ app.get("/projects/:username", (req, res) => {
             return res.status(500).send('An error occurred')
         }
 
-        const ProjectManagerString = renderToString(<ProjectManager/>);
-
         // Set title
         data = data.replace(
             "<title></title>",
             `<title>Projects</title>`
         )
-
-        data = data.replace("<!--APP-CODE-GOES-HERE-->", ProjectManagerString);
 
         res.setHeader('Content-Type', 'text/html');
         res.end(data);
@@ -215,8 +231,6 @@ app.get("/projects/info/:username", (req, res) => {
 
 })
 
-
-app.use(bodyParser.json());
 app.post("/save/:username/:id", function (req, res) {
     // Save existing project
     const username = req.params.username;
@@ -245,6 +259,19 @@ app.get("/createProject/:username/:title/:description", (req, res) => {
     let pid = database.newProject(username, title, description);
 
     res.status(301).send(`/editor/${username}/${pid}`);
+});
+
+app.get("/", (req, res) => {
+    res.sendFile(path.resolve("./build/public/landing.html"));
+})
+
+app.get("/register/:username/:password", (req, res) => {
+    const username = req.params.username;
+    const password = req.params.password;
+
+    database.newUser(username, password);
+
+    res.sendStatus(200);
 });
 
 // Run server
