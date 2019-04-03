@@ -13,8 +13,14 @@ const styles = (settingsCount, scopeCount) => {
         margin: 0;
         padding: 0;
 
+        overflow: hidden;
+
         display: grid;
         grid-template-rows: 30px auto;
+    }
+
+    html, body {
+        overflow: hidden;
     }
 
     input {
