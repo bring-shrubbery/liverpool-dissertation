@@ -256,7 +256,7 @@ export default class Node extends Component {
                         }
 
                         window.onmouseup = ev => {
-                            ev.stopPropagation();
+                            // ev.stopPropagation();
                             this.props.dispatch(cancelNewConnector());
                             
                             window.onmousemove = null;

@@ -714,7 +714,7 @@ export default function reducer (state = defaultState, action) {
 
         case "SETTINGS_INTEGRAL_SET": {
             let newNodes = {...state.allNodes};
-            let newConnections = {...state.allConnections};
+            let newConnections = [...state.allConnections];
             let currentNode = newNodes[action.payload.nodeKey];
 
             let newVal = Boolean(action.payload.newValue);

@@ -29,6 +29,7 @@ import modulation from './project_presets/modulation.json'
 import fourierSeries from './project_presets/fourierSeries.json'
 import autoCorrelation from './project_presets/autoCorrelation.json'
 import crossCorrelation from './project_presets/crossCorrelation.json'
+import convolution from './project_presets/convolution.json'
 
 let database = {
     projectsInfo: [{
@@ -51,12 +52,18 @@ let database = {
         title: "Auto-Correlation",
         description: "Auto-Correlation implementation",
         owner: "admin"
+    }, {
+        projectId: "5",
+        title: "Convolution",
+        description: "Convolution implementation",
+        owner: "admin"
     }],
     projectModels: [
         {...modulation},
         {...fourierSeries},
         {...crossCorrelation},
-        {...autoCorrelation}
+        {...autoCorrelation},
+        {...convolution}
     ],
     users: {
         admin: {
