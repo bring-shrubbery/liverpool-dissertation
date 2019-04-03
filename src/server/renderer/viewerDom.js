@@ -18,7 +18,7 @@ const styles = (settingsCount, scopeCount) => {
     }
 
     input {
-        -webkit-tap-highlight-color: transparent;
+        -webkit-tap-highlight-color: none;
     }
 
     #signals-embedding-controls {
