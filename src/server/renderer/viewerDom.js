@@ -17,6 +17,10 @@ const styles = (settingsCount, scopeCount) => {
         grid-template-rows: 30px auto;
     }
 
+    input {
+        -webkit-tap-highlight-color: transparent;
+    }
+
     #signals-embedding-controls {
         width: 100%;
         height: 100%;
