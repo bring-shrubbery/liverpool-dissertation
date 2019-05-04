@@ -14,6 +14,7 @@ const app = express()
 
 // Middleware
 import bodyParser from 'body-parser'
+import compression from 'compression'
 
 // Data Parsing
 import {
@@ -143,6 +144,9 @@ app.use(morgan('tiny'));
 
 // JSON parsing
 app.use(bodyParser.json());
+
+// Compression
+app.use(compression())
 
 // --- ROUTES ---
 app.get('/editor/:username/:id', (req, res) => {
@@ -289,7 +293,9 @@ app.get("/register/:username/:password", (req, res) => {
 });
 
 // Run server
+// Either get port number from onvironment variables or set it to a default 5000
 const port = process.env.PORT || 5000;
+// Start listening
 app.listen(port, () => {
     console.log("\nListening on: https://localhost:" + port + "\n");
 });

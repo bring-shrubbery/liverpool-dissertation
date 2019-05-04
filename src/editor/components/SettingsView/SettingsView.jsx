@@ -114,7 +114,7 @@ function SettingDiv (props) {
                             props.dispatch(updateSetting(props.nodeKey, props.settingId, e.target.value));
                         }}/> : <div className={'settings-item-controlled'}>Controlled</div>}
 
-                        <input className={'settings-item-is-input'} type={'checkbox'} checked={Boolean(props.settingData.isInput)} onChange={e => {
+                        <input className={'settings-item-is-input'} id={'settings-item-is-input-'+props.settingId} type={'checkbox'} checked={Boolean(props.settingData.isInput)} onChange={e => {
                             // Convert setting to an input
                             props.dispatch(makeSettingAnInput(props.nodeKey, props.settingId, Boolean(e.target.checked)));
                         }}/>

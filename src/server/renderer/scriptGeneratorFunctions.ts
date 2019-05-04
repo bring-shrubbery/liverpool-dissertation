@@ -529,3 +529,65 @@ export function initAnimationTime(): string {
         update();
     }, deltaTime);`
 }
+
+export function setupCustomMath(): string {
+    return `Math.__proto__.sqw = function (x) {
+        let val = x >= 0 ? ((x/(2*Math.PI))%1) : (((-x-Math.PI)/(2*Math.PI))%1);
+        if(val >= 0 && val <= 0.5) {
+            return 0.5;
+        } else {
+            return -0.5;
+        }
+    };
+    Math.__proto__.sinc = function (x) {
+        if(x == 0) return 1;
+        return Math.sin(x)/x;
+    };
+    Math.__proto__.pulse = function (x) {
+        const xi = x/(2*Math.PI);
+        if(xi > 1) return 0;
+        if(xi < -1) return 0;
+        return 1;
+    };
+    Math.__proto__.pyramid = function (x) {
+        const xi = x/(2*Math.PI);
+        let output = 1;
+        if(xi > 1) output = 0;
+        if(xi < -1) output = 0;
+        if(xi > 0) output = 1-xi;
+        if(xi < 0) output = 1+xi;
+        if(output < 0) output = 0;
+        return output;
+    };
+    Math.__proto__.sawtooth = function (x) {
+        if(x < 0) {
+            const xi = (x/(2*Math.PI))%1;
+            if(xi > 0.5) return -xi-Math.floor(x);
+            if(xi < 0.5) return xi-Math.floor(x);
+        } else {
+            const xi = (-x/(2*Math.PI))%1;
+            if(xi > 0.5) return -xi-Math.floor(x);
+            if(xi < 0.5) return xi+Math.floor(x);
+        }
+        return 0;
+    };
+    Math.__proto__.ramp = function (x) {
+        if(x < 0) return 0;
+        return x/(2*Math.PI);
+    };
+    Math.__proto__.step = function (x) {
+        if(x < 0) return 0;
+        return 1;
+    };
+    Math.__proto__.noise = function (x) {
+        return Math.random();
+    };
+    document.body.ontouchend = function (e) {
+        e.prefentDefault();
+    };
+    const allInputs = document.getElementsByTagName("input");
+    for(let i = 0; i < allInputs.length; i++) {
+        let currentInput = allInputs.item(i);
+        document.getElementById(currentInput.id).readOnly = false;
+    }\n`;
+}

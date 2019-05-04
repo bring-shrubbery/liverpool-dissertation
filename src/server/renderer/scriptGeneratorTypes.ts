@@ -1,14 +1,12 @@
 // Connector Interface from the data graph model
 interface Connector {
-    connectorStart: {
-        nodeId: string,
-        settingId: string
-    }
-    
-    connectorEnd: {
-        nodeId: string,
-        settingId: string
-    }
+    connectorStart: ConnectorEndpoint
+    connectorEnd: ConnectorEndpoint
+}
+
+interface ConnectorEndpoint {
+    nodeId: string,
+    settingId: string
 }
 
 // Signals Nodes interface
@@ -55,4 +53,14 @@ interface NodeSettingsShape {
 
 interface NodeCollection {
     [signalId: string]: SignalNode
+}
+
+interface ComposerCoordinates {
+    focused: boolean
+    gridSize: number
+    height: number
+    width: number
+    x: number
+    y: number
+    zoomLevel: number
 }

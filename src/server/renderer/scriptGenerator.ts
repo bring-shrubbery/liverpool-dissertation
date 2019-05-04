@@ -10,7 +10,8 @@ import {
     generateTouchControllers,
     getOtherSideOfConnector,
     initAnimationTime,
-    saveAnimation
+    saveAnimation,
+    setupCustomMath
 } from './scriptGeneratorFunctions';
 
 const SAMPLE_RATE = 512; // Samples per second
@@ -23,65 +24,7 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
     let executable = "var graphs = {};\n";
 
     // Init additional math functions
-    executable += `Math.__proto__.sqw = function (x) {
-        let val = x >= 0 ? ((x/(2*Math.PI))%1) : (((-x-Math.PI)/(2*Math.PI))%1);
-        if(val >= 0 && val <= 0.5) {
-            return 0.5;
-        } else {
-            return -0.5;
-        }
-    };
-    Math.__proto__.sinc = function (x) {
-        if(x == 0) return 1;
-        return Math.sin(x)/x;
-    };
-    Math.__proto__.pulse = function (x) {
-        const xi = x/(2*Math.PI);
-        if(xi > 1) return 0;
-        if(xi < -1) return 0;
-        return 1;
-    };
-    Math.__proto__.pyramid = function (x) {
-        const xi = x/(2*Math.PI);
-        let output = 1;
-        if(xi > 1) output = 0;
-        if(xi < -1) output = 0;
-        if(xi > 0) output = 1-xi;
-        if(xi < 0) output = 1+xi;
-        if(output < 0) output = 0;
-        return output;
-    };
-    Math.__proto__.sawtooth = function (x) {
-        if(x < 0) {
-            const xi = (x/(2*Math.PI))%1;
-            if(xi > 0.5) return -xi-Math.floor(x);
-            if(xi < 0.5) return xi-Math.floor(x);
-        } else {
-            const xi = (-x/(2*Math.PI))%1;
-            if(xi > 0.5) return -xi-Math.floor(x);
-            if(xi < 0.5) return xi+Math.floor(x);
-        }
-        return 0;
-    };
-    Math.__proto__.ramp = function (x) {
-        if(x < 0) return 0;
-        return x/(2*Math.PI);
-    };
-    Math.__proto__.step = function (x) {
-        if(x < 0) return 0;
-        return 1;
-    };
-    Math.__proto__.noise = function (x) {
-        return Math.random();
-    };
-    document.body.ontouchend = function (e) {
-        e.prefentDefault();
-    };
-    const allInputs = document.getElementsByTagName("input");
-    for(let i = 0; i < allInputs.length; i++) {
-        let currentInput = allInputs.item(i);
-        document.getElementById(currentInput.id).readOnly = false;
-    }\n`;
+    executable += setupCustomMath();
 
     // Calculated nodes have following shape: "nodeId:outputId"
     let calculatedNodes: string[] = [];
@@ -208,7 +151,9 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
             document.getElementById("${nodeKey}Indicator").innerText = e.target.value;
             update();
         };\n`;
-        executable += `var ${nodeKey}${outputKey} = function (t) { return ${uiNodes[nodeKey].settings[3].value}};\n`;
+        
+        executable += `var ${nodeKey}${outputKey} 
+        = function (t) { return ${uiNodes[nodeKey].settings[3].value}};\n`;
 
         calculatedNodes.push(`${nodeKey}:${outputKey}`);
         
@@ -345,7 +290,6 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
 
     // 1. Loop until all nodes are calculated and count number of iterations for statistics
     for (statistics.loopCounter = 0; objectSize(uncalculatedNodes) > 0; statistics.loopCounter++) {
-        
         // Loop through all uncalculated nodes
         for (let nodeKey in uncalculatedNodes) {
             // Save current node into a constant
