@@ -1,0 +1,12 @@
+{
+    "name": "Signals Visualisation",
+    "short_name": "Signals",
+    "start_url": "/",
+    "display": "standalone",
+    "icons": [{
+        "src": "/apple-touch-icon.png",
+        "sizes": "180x180",
+        "type": "image/png"
+    }]
+
+}
