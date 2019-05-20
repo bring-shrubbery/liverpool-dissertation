@@ -13,14 +13,25 @@ const styles = (settingsCount, scopeCount) => {
         margin: 0;
         padding: 0;
 
-        overflow: hidden;
+        overflow: hidden !important;
 
         display: grid;
-        grid-template-rows: 30px auto;
+        grid-template-rows: 30px calc(90% - 30px);
+
+        position: absolute;
+        top: 0;
+        left: 0;
     }
 
     html, body {
         overflow: hidden;
+        width: 100%;
+        height: 100%;
+        
+        margin: 0;
+        padding: 0;
+
+        position: relative;
     }
 
     input {
