@@ -22,6 +22,12 @@ export function scriptGenerator(allNodes: NodeCollection, allConnections: Connec
     // Executable to store generated javascript code. Any initialisation code should be here.
     let exeArray: string[] = [];
     let executable = "var graphs = {};\n";
+    executable += `function isRunningStandalone() {
+        return (window.matchMedia('(display-mode: standalone)').matches);
+    }
+    if (isRunningStandalone()) {
+        alert("Running as a standalone app!");
+    }`;
 
     // Init additional math functions
     executable += setupCustomMath();
