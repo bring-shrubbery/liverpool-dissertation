@@ -1,5 +1,5 @@
 # Educational Signal Visualisation Toolbox
-DEMO: https://signals-app.herokuapp.com/ <br/>
+DEMO: https://signals-app.herokuapp.com/projects/admin <br/>
 DOCS: https://antoni-silvestrovic.gitbook.io/workspace/
 
 ## Description
