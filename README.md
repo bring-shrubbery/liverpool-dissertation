@@ -15,7 +15,7 @@ You can get it from [here](https://nodejs.org/en/).
 
 To get your hand on the source code of the project you have to clone it from the github:
 
-`git clone https://github.com/vincentrodriguez/signals-visualisation.git`
+`git clone https://github.com/bring-shrubbery/signals-visualisation.git`
 
 Before you can run it you have to intall dependencies:
 
@@ -31,7 +31,7 @@ or build it into static files:
 
 ## Usage
 
-If you run this app as a server, then you just need to visit localhost on port 3000. To do that, go to the browser and type `http://localhost:3000/` into the address bar.
+If you run this app as a server, then you just need to visit localhost on port 5000. To do that, go to the browser and type `http://localhost:5000/` into the address bar.
 
 If you're building the project into static files, then you'll need to host your own server. If you want to host those files locally you can use `serve` tool from npm.
 Run `npm install -g serve` in your command line, go to the root directory of the project and type `serve ./build`. This will host 
