@@ -38,7 +38,7 @@ Run `npm install -g serve` in your command line, go to the root directory of the
 
 ## Contributing
 
-Contributions are welcome. You can learn more about contributing on the [wiki page](https://github.com/vincentrodriguez/signals-visualisation/wiki/Contributing).
+Contributions are welcome. You can learn more about contributing on the [wiki page](https://github.com/bring-shrubbery/signals-visualisation/wiki/Contributing).
 
 ## Credits
 
