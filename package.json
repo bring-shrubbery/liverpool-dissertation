@@ -10,7 +10,7 @@
     "test": "jest --no-cache"
   },
   "engines": {
-    "node": "^10"
+    "node": "^10.0.0"
   },
   "repository": "https://github.com/vincentrodriguez/signals-app.git",
   "author": "Antoni Silvestrovic",
