@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-rm -rf ./build
-echo "removed ./build"
 webpack --config ./config/webpack/webpack.config.prod.js
 cp ./src/gif/gif.worker.js ./build/public/static/gif.worker.js
 cp -a ./src/public/. ./build/public/static/
