@@ -5,7 +5,6 @@
   "private": true,
   "scripts": {
     "build": "./utils/build.sh",
-    "postinstall": "npm run build",
     "server": "./utils/devServer.sh",
     "test": "jest --no-cache"
   },
