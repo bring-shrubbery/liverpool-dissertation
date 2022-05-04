@@ -314,5 +314,5 @@ app.get("/register/:username/:password", (req, res) => {
 const port = process.env.PORT || 5555;
 // Start listening
 app.listen(port, () => {
-  console.log("\nListening on: https://localhost:" + port + "\n");
+  console.log("\nListening on: http://localhost:" + port + "/\n");
 });
