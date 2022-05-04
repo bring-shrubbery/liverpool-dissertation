@@ -7,7 +7,6 @@
     "build": "./utils/build.sh",
     "postinstall": "npm run build",
     "server": "./utils/devServer.sh",
-    "lines": "go run ./utils/linecounter.go",
     "test": "jest --no-cache"
   },
   "engines": {
