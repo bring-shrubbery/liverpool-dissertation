@@ -4,7 +4,6 @@
   "description": "The project is intended to be used as a supplemental material for Liverpool University Module ELEC270 *(Signals and Systems)* as well as to be available to other Universities that might be interested in using it in their lectures or labs.",
   "private": true,
   "scripts": {
-    "start": "echo 'No start script!'",
     "build": "./utils/build.sh",
     "server": "./utils/devServer.sh",
     "lines": "go run ./utils/linecounter.go",
