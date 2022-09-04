@@ -1,6 +1,6 @@
 # Educational Signal Visualisation Toolbox
 
-- DEMO: https://liverpool-dissertation-production.up.railway.app/projects/admin
+- DEMO: https://liverpool.antoni.ai/projects/admin
 - DOCS: https://antoni-silvestrovic.gitbook.io/workspace/
 
 ## Description
